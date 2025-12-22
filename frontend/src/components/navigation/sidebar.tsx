@@ -1,16 +1,4 @@
-import {
-    Box,
-    Flex,
-    Text,
-    VStack,
-    Span,
-    Link,
-    Avatar,
-    Input,
-    InputGroup,
-    IconButton,
-    ClientOnly,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, VStack, Span, Link, Avatar, Input, InputGroup, IconButton, ClientOnly, } from '@chakra-ui/react';
 import { useColorMode } from '../ui/color-mode';
 import React from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
@@ -51,10 +39,25 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
     const searchIconColor = "textSub";
     const location = useLocation();
     const { colorMode, toggleColorMode } = useColorMode();
-
     const isActive = (path: string) => location.pathname === path;
+    const getPageTitle = (path: string) => {
+        switch (path) {
+            case '/':
+            case '/dashboard':
+                return "Vue d'ensemble";
+            case '/stock':
+                return "Gestion des stocks";
+            case '/customers':
+                return "Gestion des Clients";
+            case '/products':
+                return "Gestion des Produits";
+            case '/orders':
+                return "Gestion des commandes";
+            default:
+                return "Gestion des Stocks";
+        }
+    };
 
-    // Define button styles based on color mode
     const buttonIconColor = colorMode === 'light' ? "black" : "white";
     const buttonBg = colorMode === 'light' ? "#e7e7e7ff" : "#1a1a1a";
 
@@ -77,7 +80,6 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                             <SidebarItem icon="group" label="Client" href="/customers" active={isActive('/customers')} />
                             <SidebarItem icon="sell" label="Produit" href="/products" active={isActive('/products')} />
                             <SidebarItem icon="shopping_cart" label="Commandes" href="/orders" active={isActive('/orders')} />
-
                             <Box mt="4" pt="4" borderTop="1px" borderColor={borderColor}>
                                 <Text px="3" fontSize="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wider" mb="2" color={subText}>
                                     Rapports
@@ -107,12 +109,12 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                     {/* Main Content Area (Header included based on snippet) */}
                     <Flex flex="1" direction="column" minW="0" h="full">
                         <Box as="header" h="16" px="6" bg={bg} borderBottom="1px" borderColor={borderColor} position="sticky" top="0" zIndex="10" display="flex" alignItems="center" justifyContent="space-between">
-                            <Flex align="center" gap="4">
-                                <IconButton display={{ base: "flex", md: "none" }} aria-label="Menu" variant="ghost" size="sm" color={mainText}>
+                            <Flex align="center" gap="4" className='title-page'>
+                                <IconButton display={{ base: "flex", md: "none" }} aria-label="Menu" variant="ghost" size="sm" color={mainText} _focusVisible={{ outline: 'none' }}>
                                     <span className="material-symbols-outlined">menu</span>
                                 </IconButton>
                                 <Text fontSize="lg" fontWeight="bold" color={mainText}>
-                                    Gestion des Stocks
+                                    {getPageTitle(location.pathname)}
                                 </Text>
                             </Flex>
                             <Flex align="center" gap="4">
@@ -124,16 +126,16 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                 </InputGroup>
                                 <Flex align="center" gap="2">
                                     <Box position="relative">
-                                        <IconButton aria-label="Notifications" bg={buttonBg} color={buttonIconColor}>
+                                        <IconButton aria-label="Notifications" bg={buttonBg} color={buttonIconColor} _focusVisible={{ outline: 'none' }}>
                                             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>notifications</span>
                                         </IconButton>
                                         <Box position="absolute" top="-2px" right="-2px" boxSize="2" bg="red.500" rounded="full" border="2px" borderColor={bg} />
                                     </Box>
-                                    <IconButton aria-label="Settings" bg={buttonBg} color={buttonIconColor}>
+                                    <IconButton aria-label="Settings" bg={buttonBg} color={buttonIconColor} _focusVisible={{ outline: 'none' }}>
                                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>settings</span>
                                     </IconButton>
                                     <ClientOnly>
-                                        <IconButton aria-label="Toggle Theme" bg={buttonBg} color={buttonIconColor} onClick={toggleColorMode}>
+                                        <IconButton aria-label="Toggle Theme" bg={buttonBg} color={buttonIconColor} onClick={toggleColorMode} _focusVisible={{ outline: 'none' }}>
                                             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
                                                 {colorMode === 'dark' ? 'light_mode' : 'dark_mode'}
                                             </span>
