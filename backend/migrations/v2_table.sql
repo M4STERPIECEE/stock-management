@@ -59,6 +59,18 @@ CREATE TABLE IF NOT EXISTS order_items (
         -- Price at the moment of purchase
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+-- TABLE: ADMIN_USER (Gestion utilisateur/Rôle uniquement Administrateur)
+-- Only one admin should exist, we enforce this with a logical check or by constraints if needed, but here we provide the structure.
+CREATE TABLE IF NOT EXISTS admin_users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT 'ADMIN' CHECK (role = 'ADMIN'),
+    -- Enforce ADMIN role
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 -- Indexes for performance
 CREATE INDEX idx_products_category ON products(category);
 CREATE INDEX idx_products_reference ON products(reference);
