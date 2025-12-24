@@ -9,21 +9,20 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'http://127.0.0.1:5173',
-    ],
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // 2. Global Validation Pipe
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    transform: true,
-    forbidNonWhitelisted: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   // 3. API Versioning
   app.enableVersioning({
@@ -44,6 +43,8 @@ async function bootstrap() {
 
   await app.listen(configService.get<number>('port') || 3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
-  console.log(`Swagger documentation is available at: ${await app.getUrl()}/doc/api`);
+  console.log(
+    `Swagger documentation is available at: ${await app.getUrl()}/doc/api`,
+  );
 }
-bootstrap();
+void bootstrap();

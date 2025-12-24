@@ -8,37 +8,37 @@ import { join } from 'path';
 
 @Global()
 @Module({
-    imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            envFilePath: ['../.env', '.env'],
-            load: [configuration],
-        }),
-        MailerModule.forRootAsync({
-            useFactory: (configService: ConfigService) => ({
-                transport: {
-                    host: configService.get('mail.host'),
-                    secure: false,
-                    auth: {
-                        user: configService.get('mail.user'),
-                        pass: configService.get('mail.password'),
-                    },
-                },
-                defaults: {
-                    from: configService.get('mail.from'),
-                },
-                template: {
-                    dir: join(process.cwd(), 'templates'),
-                    adapter: new HandlebarsAdapter(),
-                    options: {
-                        strict: true,
-                    },
-                },
-            }),
-            inject: [ConfigService],
-        }),
-        DatabaseModule,
-    ],
-    exports: [DatabaseModule, MailerModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['../.env', '.env'],
+      load: [configuration],
+    }),
+    MailerModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get('mail.host'),
+          secure: false,
+          auth: {
+            user: configService.get('mail.user'),
+            pass: configService.get('mail.password'),
+          },
+        },
+        defaults: {
+          from: configService.get('mail.from'),
+        },
+        template: {
+          dir: join(process.cwd(), 'templates'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    DatabaseModule,
+  ],
+  exports: [DatabaseModule, MailerModule],
 })
-export class CoreModule { }
+export class CoreModule {}

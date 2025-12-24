@@ -9,20 +9,21 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-    imports: [
-        UsersModule,
-        PassportModule,
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('jwt.secret'),
-                signOptions: { expiresIn: '1d' },
-            }),
-            inject: [ConfigService],
-        }),
-    ],
-    providers: [AuthService, LocalStrategy, JwtStrategy],
-    controllers: [AuthController],
-    exports: [AuthService],
+  imports: [
+    UsersModule,
+    PassportModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      // eslint-disable-next-line @typescript-eslint/require-await
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('jwt.secret'),
+        signOptions: { expiresIn: '1d' },
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
+  controllers: [AuthController],
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}
