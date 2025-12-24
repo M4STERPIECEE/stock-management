@@ -26,6 +26,8 @@ export const system = createSystem(
           textMain: { value: { _light: "#0d141b", _dark: "#e2e8f0" } },
           textSub: { value: { _light: "#4c739a", _dark: "#94a3b8" } },
           border: { value: { _light: "#e7edf3", _dark: "#334155" } },
+          inputBg: { value: { _light: "#f8fafc", _dark: "#1e293b" } },
+          inputBorder: { value: { _light: "#cfdbe7", _dark: "#475569" } },
         },
       }),
     },
