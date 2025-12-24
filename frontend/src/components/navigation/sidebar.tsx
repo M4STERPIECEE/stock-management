@@ -39,6 +39,31 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
     const searchIconColor = "textSub";
     const location = useLocation();
     const { colorMode, toggleColorMode } = useColorMode();
+    const [user, setUser] = React.useState<{ username: string; email: string; role: string } | null>(null);
+
+    React.useEffect(() => {
+        const fetchProfile = async () => {
+            const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
+            if (!token) return;
+
+            try {
+                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+                const response = await fetch(`${baseUrl}/api/v1/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setUser(data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch profile", error);
+            }
+        };
+        fetchProfile();
+    }, []);
+
     const isActive = (path: string) => location.pathname === path;
     const getPageTitle = (path: string) => {
         switch (path) {
@@ -88,25 +113,22 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                             </Box>
                         </VStack>
 
-                        <Box p="4" borderTop="1px" borderColor={borderColor}>
+                        <Box p="4" borderTop="1px" borderColor={borderColor} className='profile-admin'>
                             <Flex align="center" gap="3">
                                 <Avatar.Root size="sm">
-                                    <Avatar.Image src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyGE9_jaCHsIhA_wo4JKLDfRxhoHuGBRHuQf1aPH9v-sA0vIJRDc8Kt89d9RHtiGFlv40VMPN5hYKXykFacmpuImgaaNCRjraFOqdxoJ1rZMbPB0yoWBmTlKiHtMlsFr8FZqDREEOwFd0Tx2-npsDXf-eZ8OOrM1pFPv2OpHFiMxQY3sJ9EfwK4bI1H7rYSxSdRr0M3B3Wcid7E1ZqPCiz2FX7rgb9Xd5R_E-Q5V0eQER82r287tSzbzNpPrB4na6CEKsHxkN0dJ5Z" />
-                                    <Avatar.Fallback name="Jean Dupont" />
+                                    <Avatar.Fallback name={user?.username || "Admin"} />
                                 </Avatar.Root>
                                 <Flex direction="column" overflow="hidden">
                                     <Text fontSize="sm" fontWeight="medium" lineClamp={1} color={mainText}>
-                                        Jean Dupont
+                                        {user?.username || "Chargement..."}
                                     </Text>
                                     <Text fontSize="xs" lineClamp={1} color={subText}>
-                                        Admin
+                                        {user?.email || "admin@example.com"}
                                     </Text>
                                 </Flex>
                             </Flex>
                         </Box>
                     </Box>
-
-                    {/* Main Content Area (Header included based on snippet) */}
                     <Flex flex="1" direction="column" minW="0" h="full">
                         <Box as="header" h="16" px="6" bg={bg} borderBottom="1px" borderColor={borderColor} position="sticky" top="0" zIndex="10" display="flex" alignItems="center" justifyContent="space-between">
                             <Flex align="center" gap="4" className='title-page'>
