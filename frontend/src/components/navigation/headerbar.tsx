@@ -7,14 +7,9 @@ const HeaderBar = () => {
     const { colorMode } = useColorMode();
     const navigate = useNavigate();
     const location = useLocation();
-
-    // Determine current page type
     const isForgotPassword = location.pathname === '/forgot-password';
     const isLinkVerification = location.pathname === '/link-verification';
-
-    const cardBg = "card"; // Utilizing semantic token if available, or fallback
-    // Since this component is inside the Theme Provider from the parent page, tokens should work.
-    // However, to be safe and consistent with the previous inline styles:
+    const cardBg = "card";
     const borderColor = "border";
     const mainText = "textMain";
     const subText = "textSub";
@@ -31,18 +26,13 @@ const HeaderBar = () => {
                         </Box>
                         <Text fontSize="lg" fontWeight="bold" lineHeight="tight" letterSpacing="tight">GestionStock</Text>
                     </Flex>
-
                     {!isLinkVerification && (isForgotPassword ? (
                         <Flex align="center" gap={{ base: 4, sm: 8 }}>
                             <Flex display={{ base: "none", sm: "flex" }} gap="6">
                                 <Link fontSize="sm" fontWeight="medium" color={subText} _hover={{ color: "primary" }} href="#">Aide</Link>
                                 <Link fontSize="sm" fontWeight="medium" color={subText} _hover={{ color: "primary" }} href="#">Contact Support</Link>
                             </Flex>
-                            <Button size="sm"
-                                bg="blue.50"
-                                color="primary"
-                                _hover={{ bg: "primary", color: "white" }}
-                                _dark={{ bg: "blue.900", color: "blue.200", _hover: { bg: "primary", color: "white" } }} borderRadius="lg" fontWeight="bold" onClick={() => navigate('/login')}>
+                            <Button size="sm" bg="blue.50" color="primary" _hover={{ bg: "primary", color: "white" }} _dark={{ bg: "blue.900", color: "blue.200", _hover: { bg: "primary", color: "white" } }} borderRadius="lg" fontWeight="bold" onClick={() => navigate('/login')}>
                                 Se connecter
                             </Button>
                         </Flex>

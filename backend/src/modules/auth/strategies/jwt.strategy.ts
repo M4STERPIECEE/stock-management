@@ -24,6 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       role: payload.role,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       username: payload.username,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      profilePicture: payload.profilePicture,
     };
   }
 }
