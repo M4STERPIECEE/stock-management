@@ -19,13 +19,10 @@ CREATE TABLE IF NOT EXISTS customers (
     email VARCHAR(255),
     phone VARCHAR(50),
     address TEXT,
-    -- 'historique' is usually a count of orders, best calculated dynamically.
-    -- We will not store it to avoid synchronization errors, but we keep the column if explicitely requested as a cache.
     order_count INTEGER DEFAULT 0,
     status VARCHAR(50) DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    -- Constaint: At least one contact method must be present
     CONSTRAINT check_contact_info CHECK (
         (
             email IS NOT NULL
@@ -56,7 +53,6 @@ CREATE TABLE IF NOT EXISTS order_items (
     SET NULL,
         quantity INTEGER NOT NULL CHECK (quantity > 0),
         unit_price DECIMAL(10, 2) NOT NULL,
-        -- Price at the moment of purchase
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 -- TABLE: ADMIN_USER (Gestion utilisateur/Rôle uniquement Administrateur)
@@ -67,6 +63,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) DEFAULT 'ADMIN' CHECK (role = 'ADMIN'),
+    profile_picture VARCHAR(255),
     -- Enforce ADMIN role
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

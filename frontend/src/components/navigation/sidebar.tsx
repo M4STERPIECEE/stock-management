@@ -1,7 +1,7 @@
-import { Box, Flex, Text, VStack, Span, Link, Avatar, Input, InputGroup, IconButton, ClientOnly, } from '@chakra-ui/react';
+import { Box, Flex, Text, VStack, Span, Link, Avatar, Input, InputGroup, IconButton, ClientOnly, Popover, Dialog, Button, Separator, } from '@chakra-ui/react';
 import { useColorMode } from '../ui/color-mode';
-import React from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 
 const SidebarItem = ({ icon, label, active = false, href = "#" }: {
     icon: string,
@@ -36,10 +36,14 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
     const mainText = "textMain";
     const subText = "textSub";
     const contentBg = "background";
+    const hoverBg = "background";
     const searchIconColor = "textSub";
     const location = useLocation();
+    const navigate = useNavigate();
     const { colorMode, toggleColorMode } = useColorMode();
-    const [user, setUser] = React.useState<{ username: string; email: string; role: string } | null>(null);
+    const [user, setUser] = React.useState<{ username: string; email: string; role: string; profilePicture?: string } | null>(null);
+    const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
     React.useEffect(() => {
         const fetchProfile = async () => {
@@ -78,6 +82,8 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                 return "Gestion des Produits";
             case '/orders':
                 return "Gestion des commandes";
+            case '/profile':
+                return "Profil Administrateur";
             default:
                 return "Gestion des Stocks";
         }
@@ -85,6 +91,27 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
 
     const buttonIconColor = colorMode === 'light' ? "black" : "white";
     const buttonBg = colorMode === 'light' ? "#e7e7e7ff" : "#1a1a1a";
+
+    const handleLogout = async () => {
+        const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
+        if (token) {
+            try {
+                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+                await fetch(`${baseUrl}/api/v1/auth/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            } catch (error) {
+                console.error("Logout request failed", error);
+            }
+        }
+        window.localStorage.removeItem('access_token');
+        window.sessionStorage.removeItem('access_token');
+        setIsLogoutDialogOpen(false);
+        navigate('/login', { replace: true });
+    };
 
     return (
         <Span display="contents" className={`chakra-theme ${colorMode}`}>
@@ -99,36 +126,65 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                 StockManager
                             </Text>
                         </Flex>
+                        <Separator />
                         <VStack flex="1" overflowY="auto" py="4" px="3" gap="4" align="stretch">
                             <SidebarItem icon="dashboard" label="Dashboard" href="/dashboard" active={isActive('/dashboard')} />
                             <SidebarItem icon="package_2" label="Stock" href="/stock" active={isActive('/stock')} />
                             <SidebarItem icon="group" label="Client" href="/customers" active={isActive('/customers')} />
                             <SidebarItem icon="sell" label="Produit" href="/products" active={isActive('/products')} />
                             <SidebarItem icon="shopping_cart" label="Commandes" href="/orders" active={isActive('/orders')} />
-                            <Box mt="4" pt="4" borderTop="1px" borderColor={borderColor}>
+                            <Separator />
+                            <Box mt="0" pt="4" borderTop="1px" borderColor={borderColor}>
                                 <Text px="3" fontSize="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wider" mb="2" color={subText}>
                                     Rapports
                                 </Text>
                                 <SidebarItem icon="bar_chart" label="Analyses" />
                             </Box>
                         </VStack>
-
-                        <Box p="4" borderTop="1px" borderColor={borderColor} className='profile-admin'>
-                            <Flex align="center" gap="3">
-                                <Avatar.Root size="sm">
-                                    <Avatar.Fallback name={user?.username || "Admin"} />
-                                </Avatar.Root>
-                                <Flex direction="column" overflow="hidden">
-                                    <Text fontSize="sm" fontWeight="medium" lineClamp={1} color={mainText}>
-                                        {user?.username || "Chargement..."}
-                                    </Text>
-                                    <Text fontSize="xs" lineClamp={1} color={subText}>
-                                        {user?.email || "admin@example.com"}
-                                    </Text>
-                                </Flex>
-                            </Flex>
+                        <Box p="4" borderTop="1px" borderColor={borderColor}>
+                            <Popover.Root open={isProfileMenuOpen} onOpenChange={(e) => setIsProfileMenuOpen(e.open)} portalled={false} positioning={{ placement: 'top-start', sameWidth: true, fitViewport: true, overflowPadding: 8 }}>
+                                <Popover.Trigger asChild>
+                                    <Flex align="center" gap="3" className='profile-admin' cursor="pointer" p="2" rounded="lg" _hover={{ bg: hoverBg }} transition="all 0.2s">
+                                        <Avatar.Root size="sm">
+                                            <Avatar.Image src={user?.profilePicture} />
+                                            <Avatar.Fallback name={user?.username || "Admin"} />
+                                        </Avatar.Root>
+                                        <Flex direction="column" overflow="hidden" flex="1">
+                                            <Text fontSize="sm" fontWeight="medium" lineClamp={1} color={mainText}>
+                                                {user?.username}
+                                            </Text>
+                                            <Text fontSize="xs" lineClamp={1} color={subText}>
+                                                {user?.email}
+                                            </Text>
+                                        </Flex>
+                                        <Box color={subText}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>expand_more</span>
+                                        </Box>
+                                    </Flex>
+                                </Popover.Trigger>
+                                <Popover.Positioner>
+                                    <Popover.Content bg={bg} borderColor={borderColor} borderWidth="1px" borderRadius="xl" p="2" w="full" maxW="full" shadow="lg">
+                                        <VStack align="stretch" gap="1">
+                                            <Button variant="ghost" justifyContent="flex-start" h="10" w="full" color={subText} bg="transparent" borderWidth="1px" borderColor="transparent" _hover={colorMode === 'dark' ? { bg: hoverBg, color: '#137fec' } : { bg: 'transparent', color: 'primary' }} onClick={() => { setIsProfileMenuOpen(false); navigate('/profile'); }}>
+                                                <Flex align="center" gap="2" w="full">
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>account_circle</span>
+                                                    <Text fontSize="sm" fontWeight="500">Profil</Text>
+                                                </Flex>
+                                            </Button>
+                                            <Separator />
+                                            <Button variant="ghost" justifyContent="flex-start" h="10" colorPalette="red" w="full" bg="transparent" color="red.500" borderWidth="1px" borderColor="transparent" _hover={colorMode === 'dark' ? { bg: '#101922', borderColor: 'red.500' } : { bg: 'red.50', borderColor: 'red.500' }} onClick={() => { setIsProfileMenuOpen(false); setIsLogoutDialogOpen(true); }}>
+                                                <Flex align="center" gap="2" w="full">
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>logout</span>
+                                                    <Text fontSize="sm" fontWeight="500">Log out</Text>
+                                                </Flex>
+                                            </Button>
+                                        </VStack>
+                                    </Popover.Content>
+                                </Popover.Positioner>
+                            </Popover.Root>
                         </Box>
                     </Box>
+                    <Separator />
                     <Flex flex="1" direction="column" minW="0" h="full">
                         <Box as="header" h="16" px="6" bg={bg} borderBottom="1px" borderColor={borderColor} position="sticky" top="0" zIndex="10" display="flex" alignItems="center" justifyContent="space-between">
                             <Flex align="center" gap="4" className='title-page'>
@@ -140,22 +196,12 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                 </Text>
                             </Flex>
                             <Flex align="center" gap="4">
-                                <InputGroup w="64" display={{ base: "none", md: "flex" }} startElement={
-                                    <span className="material-symbols-outlined" style={{ color: searchIconColor, fontSize: '20px' }}>
-                                        search
-                                    </span>}>
-                                    <Input placeholder="Rechercher produit..." bg={contentBg} border="1px" borderRadius="4px" borderColor="transparent" _focus={{ borderColor: "primary" }} fontSize="sm" />
-                                </InputGroup>
                                 <Flex align="center" gap="2">
                                     <Box position="relative">
                                         <IconButton aria-label="Notifications" bg={buttonBg} color={buttonIconColor} _focusVisible={{ outline: 'none' }}>
                                             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>notifications</span>
                                         </IconButton>
-                                        <Box position="absolute" top="-2px" right="-2px" boxSize="2" bg="red.500" rounded="full" border="2px" borderColor={bg} />
                                     </Box>
-                                    <IconButton aria-label="Settings" bg={buttonBg} color={buttonIconColor} _focusVisible={{ outline: 'none' }}>
-                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>settings</span>
-                                    </IconButton>
                                     <ClientOnly>
                                         <IconButton aria-label="Toggle Theme" bg={buttonBg} color={buttonIconColor} onClick={toggleColorMode} _focusVisible={{ outline: 'none' }}>
                                             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
@@ -166,13 +212,45 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                 </Flex>
                             </Flex>
                         </Box>
-                        <Box flex="1" p="6" bg={contentBg} overflowY="auto">
+                        <Box id="main-content-area" flex="1" p="6" bg={contentBg} overflowY="auto">
                             {children}
                         </Box>
                     </Flex>
-                </Flex>
-            </Flex>
-        </Span>
+                </Flex >
+            </Flex >
+            <Dialog.Root open={isLogoutDialogOpen} onOpenChange={(e) => setIsLogoutDialogOpen(e.open)} placement="center" size="sm" closeOnInteractOutside={false}>
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                    <Dialog.Content bg={bg} color={mainText} borderColor={borderColor} borderWidth="1px" borderRadius="2xl" p="4" shadow="2xl">
+                        <Dialog.Header>
+                            <Flex direction="column" align="center" gap="4" pt="4" w="full" textAlign="center">
+                                <Box boxSize="14" mx="auto" rounded="full" bg="red.50" color="red.500" display="flex" alignItems="center" justifyContent="center">
+                                    <span className="material-symbols-outlined" style={{ fontSize: '40px' }}>logout</span>
+                                </Box>
+                                <Dialog.Title fontSize="xl" fontWeight="bold" textAlign="center" w="full" color={mainText}>
+                                    Confirmation de déconnexion
+                                </Dialog.Title>
+                            </Flex>
+                        </Dialog.Header>
+                        <Dialog.Body pt="2" pb="6">
+                            <Text color={subText} textAlign="center">
+                                Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre inventaire
+                            </Text>
+                        </Dialog.Body>
+                        <Dialog.Footer gap="3">
+                            <Dialog.ActionTrigger asChild>
+                                <Button variant="outline" flex="1" h="11" bg={colorMode === 'dark' ? 'transparent' : 'card'} color={mainText} borderColor={borderColor} _hover={{ bg: hoverBg, borderColor: 'transparent' }} onClick={() => setIsLogoutDialogOpen(false)}>
+                                    Annuler
+                                </Button>
+                            </Dialog.ActionTrigger>
+                            <Button colorPalette="red" flex="1" h="11" bg="red.500" color="white" borderWidth="1px" borderColor="transparent" _hover={{ bg: 'red.600', borderColor: 'transparent' }} _focusVisible={{ outline: 'none', boxShadow: 'none', borderColor: 'transparent' }} onClick={handleLogout}>
+                                Se déconnecter
+                            </Button>
+                        </Dialog.Footer>
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Dialog.Root>
+        </Span >
     );
 };
 

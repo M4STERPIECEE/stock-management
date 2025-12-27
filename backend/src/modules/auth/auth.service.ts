@@ -33,6 +33,8 @@ export class AuthService {
       role: user.role,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       username: user.username,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      profilePicture: user.profilePicture,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -65,7 +67,6 @@ export class AuthService {
         );
       }
     }
-    // Always return success to prevent email enumeration
     return { message: 'If the email exists, a reset link has been sent.' };
   }
 
@@ -91,5 +92,19 @@ export class AuthService {
       const _ = error;
       throw new Error('Invalid or expired token');
     }
+  }
+
+  async updateProfilePicture(userId: string, profilePicture: string) {
+    await this.usersService.updateProfilePicture(userId, profilePicture);
+    const user = await this.usersService.findOneById(userId);
+    return this.login(user);
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.usersService.findOneById(userId);
+    if (!user) return null;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash, ...result } = user;
+    return result;
   }
 }

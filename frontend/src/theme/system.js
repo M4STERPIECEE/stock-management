@@ -30,6 +30,14 @@ export const system = createSystem(
           inputBorder: { value: { _light: "#cfdbe7", _dark: "#475569" } },
         },
       }),
+      recipes: {
+        button: {
+          base: {
+            _focus: { outline: "none", boxShadow: "none" },
+            _focusVisible: { outline: "none", boxShadow: "none" },
+          },
+        },
+      },
     },
   })
 );

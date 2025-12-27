@@ -1,0 +1,14 @@
+{
+    "name": "stock-management-root",
+    "version": "1.0.0",
+    "scripts": {
+        "db": "docker-compose up -d",
+        "backend": "cd backend && npm run start:dev",
+        "frontend": "cd frontend && pnpm run dev",
+        "dev": "npx concurrently \"npm run backend\" \"npm run frontend\"",
+        "start": "npm run db && npm run dev"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
