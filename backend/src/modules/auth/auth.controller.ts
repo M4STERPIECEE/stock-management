@@ -96,7 +96,6 @@ export class AuthController {
   @Post('upload-avatar')
   @UseInterceptors(
     FileInterceptor('file', {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       storage: diskStorage({
         destination: './uploads',
         filename: (_req, file, cb) => {
@@ -104,7 +103,7 @@ export class AuthController {
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))
             .join('');
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+
           return cb(null, `${randomName}${extname(file.originalname)}`);
         },
       }),
