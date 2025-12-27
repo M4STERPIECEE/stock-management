@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -29,7 +30,7 @@ import {
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -38,8 +39,10 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Return JWT access token' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiBody({ type: LoginDto })
-  async login(@Body() loginDto: LoginDto, @Request() req: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  async login(
+    @Body() loginDto: LoginDto,
+    @Request() req: ExpressRequest & { user: any },
+  ) {
     return this.authService.login(req.user);
   }
 
@@ -49,7 +52,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Successfully logged out' })
-  async logout() {
+  logout() {
     return { message: 'Logged out successfully' };
   }
 
@@ -58,8 +61,9 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user profile' })
   @ApiResponse({ status: 200, description: 'Return user profile' })
-  async getProfile(@Request() req: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  async getProfile(
+    @Request() req: ExpressRequest & { user: { userId: string } },
+  ) {
     const userId = req.user.userId;
     return this.authService.getProfile(userId);
   }
@@ -92,13 +96,15 @@ export class AuthController {
   @Post('upload-avatar')
   @UseInterceptors(
     FileInterceptor('file', {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       storage: diskStorage({
         destination: './uploads',
-        filename: (req, file, cb) => {
+        filename: (_req, file, cb) => {
           const randomName = Array(32)
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))
             .join('');
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           return cb(null, `${randomName}${extname(file.originalname)}`);
         },
       }),
@@ -107,10 +113,14 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Upload user profile picture' })
   @ApiResponse({ status: 200, description: 'Profile picture uploaded' })
-  async uploadAvatar(@Request() req: any, @UploadedFile() file: any) {
+  async uploadAvatar(
+    @Request() req: ExpressRequest & { user: { userId: string } },
+
+    @UploadedFile() file: any,
+  ) {
     const baseUrl =
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       req.protocol + '://' + req.get('host') + '/uploads/' + file.filename;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
     return this.authService.updateProfilePicture(req.user.userId, baseUrl);
   }
 }
