@@ -10,7 +10,7 @@ export class UsersService implements OnModuleInit {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   async onModuleInit() {
     await this.seedAdminUser();

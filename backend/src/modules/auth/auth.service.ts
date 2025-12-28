@@ -10,7 +10,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private mailerService: MailerService,
-  ) { }
+  ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
@@ -105,12 +105,14 @@ export class AuthService {
   }
 
   async updateProfile(userId: string, updateData: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (updateData.password) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       updateData.passwordHash = await bcrypt.hash(updateData.password, 10);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       delete updateData.password;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     await this.usersService.updateUser(userId, updateData);
     const user = await this.usersService.findOneById(userId);
     return this.login(user);
