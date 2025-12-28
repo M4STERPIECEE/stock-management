@@ -35,6 +35,10 @@ export class AuthService {
       username: user.username,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       profilePicture: user.profilePicture,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      firstName: user.firstName,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      lastName: user.lastName,
     };
     return {
       access_token: this.jwtService.sign(payload),
@@ -96,6 +100,20 @@ export class AuthService {
 
   async updateProfilePicture(userId: string, profilePicture: string) {
     await this.usersService.updateProfilePicture(userId, profilePicture);
+    const user = await this.usersService.findOneById(userId);
+    return this.login(user);
+  }
+
+  async updateProfile(userId: string, updateData: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (updateData.password) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+      updateData.passwordHash = await bcrypt.hash(updateData.password, 10);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      delete updateData.password;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    await this.usersService.updateUser(userId, updateData);
     const user = await this.usersService.findOneById(userId);
     return this.login(user);
   }

@@ -39,6 +39,10 @@ export class UsersService implements OnModuleInit {
     await this.usersRepository.update(id, { profilePicture });
   }
 
+  async updateUser(id: string, updateData: Partial<User>): Promise<void> {
+    await this.usersRepository.update(id, updateData);
+  }
+
   private async seedAdminUser() {
     const adminEmail = this.configService.get<string>('admin.email');
     const adminPassword = this.configService.get<string>('admin.password');

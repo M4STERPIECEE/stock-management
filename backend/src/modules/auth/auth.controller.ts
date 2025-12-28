@@ -68,6 +68,21 @@ export class AuthController {
     return this.authService.getProfile(userId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('update-profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'Profile updated and new token returned',
+  })
+  async updateProfile(
+    @Request() req: ExpressRequest & { user: { userId: string } },
+    @Body() body: any,
+  ) {
+    return this.authService.updateProfile(req.user.userId, body);
+  }
+
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset' })
