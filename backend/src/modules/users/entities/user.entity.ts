@@ -19,11 +19,20 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ name: 'first_name', nullable: true })
+  firstName: string;
+
+  @Column({ name: 'last_name', nullable: true })
+  lastName: string;
+
   @Column({ name: 'password_hash' })
   passwordHash: string;
 
   @Column({ default: 'ADMIN' })
   role: string;
+
+  @Column({ name: 'phone_number', nullable: true })
+  phoneNumber: string;
 
   @Column({ name: 'profile_picture', nullable: true })
   profilePicture: string;

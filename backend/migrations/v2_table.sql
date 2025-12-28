@@ -61,8 +61,11 @@ CREATE TABLE IF NOT EXISTS admin_users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) DEFAULT 'ADMIN' CHECK (role = 'ADMIN'),
+    phone_number VARCHAR(50),
     profile_picture VARCHAR(255),
     -- Enforce ADMIN role
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

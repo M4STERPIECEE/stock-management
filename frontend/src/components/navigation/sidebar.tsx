@@ -2,6 +2,7 @@ import { Box, Flex, Text, VStack, Span, Link, Avatar, Input, InputGroup, IconBut
 import { useColorMode } from '../ui/color-mode';
 import React, { useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const SidebarItem = ({ icon, label, active = false, href = "#" }: {
     icon: string,
@@ -31,6 +32,7 @@ const SidebarItem = ({ icon, label, active = false, href = "#" }: {
 };
 
 const NavigationContent = ({ children }: { children: React.ReactNode }) => {
+    const { t } = useTranslation();
     const bg = "card";
     const borderColor = "border";
     const mainText = "textMain";
@@ -73,19 +75,19 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
         switch (path) {
             case '/':
             case '/dashboard':
-                return "Vue d'ensemble";
+                return t('sidebar.dashboard');
             case '/stock':
-                return "Gestion des stocks";
+                return t('sidebar.stock');
             case '/customers':
-                return "Gestion des Clients";
+                return t('sidebar.customers');
             case '/products':
-                return "Gestion des Produits";
+                return t('sidebar.products');
             case '/orders':
-                return "Gestion des commandes";
+                return t('sidebar.orders');
             case '/profile':
-                return "Profil Administrateur";
+                return t('sidebar.profile');
             default:
-                return "Gestion des Stocks";
+                return "StockManager";
         }
     };
 
@@ -128,17 +130,17 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                         </Flex>
                         <Separator />
                         <VStack flex="1" overflowY="auto" py="4" px="3" gap="4" align="stretch">
-                            <SidebarItem icon="dashboard" label="Dashboard" href="/dashboard" active={isActive('/dashboard')} />
-                            <SidebarItem icon="package_2" label="Stock" href="/stock" active={isActive('/stock')} />
-                            <SidebarItem icon="group" label="Client" href="/customers" active={isActive('/customers')} />
-                            <SidebarItem icon="sell" label="Produit" href="/products" active={isActive('/products')} />
-                            <SidebarItem icon="shopping_cart" label="Commandes" href="/orders" active={isActive('/orders')} />
+                            <SidebarItem icon="dashboard" label={t('sidebar.dashboard')} href="/dashboard" active={isActive('/dashboard')} />
+                            <SidebarItem icon="package_2" label={t('sidebar.stock')} href="/stock" active={isActive('/stock')} />
+                            <SidebarItem icon="group" label={t('sidebar.customers')} href="/customers" active={isActive('/customers')} />
+                            <SidebarItem icon="sell" label={t('sidebar.products')} href="/products" active={isActive('/products')} />
+                            <SidebarItem icon="shopping_cart" label={t('sidebar.orders')} href="/orders" active={isActive('/orders')} />
                             <Separator />
                             <Box mt="0" pt="4" borderTop="1px" borderColor={borderColor}>
                                 <Text px="3" fontSize="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wider" mb="2" color={subText}>
-                                    Rapports
+                                    {t('sidebar.reports')}
                                 </Text>
-                                <SidebarItem icon="bar_chart" label="Analyses" />
+                                <SidebarItem icon="bar_chart" label={t('sidebar.analysis')} />
                             </Box>
                         </VStack>
                         <Box p="4" borderTop="1px" borderColor={borderColor}>
@@ -168,14 +170,14 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                             <Button variant="ghost" justifyContent="flex-start" h="10" w="full" color={subText} bg="transparent" borderWidth="1px" borderColor="transparent" _hover={colorMode === 'dark' ? { bg: hoverBg, color: '#137fec' } : { bg: 'transparent', color: 'primary' }} onClick={() => { setIsProfileMenuOpen(false); navigate('/profile'); }}>
                                                 <Flex align="center" gap="2" w="full">
                                                     <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>account_circle</span>
-                                                    <Text fontSize="sm" fontWeight="500">Profil</Text>
+                                                    <Text fontSize="sm" fontWeight="500">{t('sidebar.profile')}</Text>
                                                 </Flex>
                                             </Button>
                                             <Separator />
                                             <Button variant="ghost" justifyContent="flex-start" h="10" colorPalette="red" w="full" bg="transparent" color="red.500" borderWidth="1px" borderColor="transparent" _hover={colorMode === 'dark' ? { bg: '#101922', borderColor: 'red.500' } : { bg: 'red.50', borderColor: 'red.500' }} onClick={() => { setIsProfileMenuOpen(false); setIsLogoutDialogOpen(true); }}>
                                                 <Flex align="center" gap="2" w="full">
                                                     <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>logout</span>
-                                                    <Text fontSize="sm" fontWeight="500">Log out</Text>
+                                                    <Text fontSize="sm" fontWeight="500">{t('sidebar.logout')}</Text>
                                                 </Flex>
                                             </Button>
                                         </VStack>
@@ -228,23 +230,23 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                     <span className="material-symbols-outlined" style={{ fontSize: '40px' }}>logout</span>
                                 </Box>
                                 <Dialog.Title fontSize="xl" fontWeight="bold" textAlign="center" w="full" color={mainText}>
-                                    Confirmation de déconnexion
+                                    {t('sidebar.logout_confirm')}
                                 </Dialog.Title>
                             </Flex>
                         </Dialog.Header>
                         <Dialog.Body pt="2" pb="6">
                             <Text color={subText} textAlign="center">
-                                Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre inventaire
+                                {t('sidebar.logout_desc')}
                             </Text>
                         </Dialog.Body>
                         <Dialog.Footer gap="3">
                             <Dialog.ActionTrigger asChild>
                                 <Button variant="outline" flex="1" h="11" bg={colorMode === 'dark' ? 'transparent' : 'card'} color={mainText} borderColor={borderColor} _hover={{ bg: hoverBg, borderColor: 'transparent' }} onClick={() => setIsLogoutDialogOpen(false)}>
-                                    Annuler
+                                    {t('profile.cancel')}
                                 </Button>
                             </Dialog.ActionTrigger>
                             <Button colorPalette="red" flex="1" h="11" bg="red.500" color="white" borderWidth="1px" borderColor="transparent" _hover={{ bg: 'red.600', borderColor: 'transparent' }} _focusVisible={{ outline: 'none', boxShadow: 'none', borderColor: 'transparent' }} onClick={handleLogout}>
-                                Se déconnecter
+                                {t('sidebar.logout')}
                             </Button>
                         </Dialog.Footer>
                     </Dialog.Content>

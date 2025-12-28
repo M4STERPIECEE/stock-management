@@ -30,7 +30,7 @@ import {
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -66,6 +66,21 @@ export class AuthController {
   ) {
     const userId = req.user.userId;
     return this.authService.getProfile(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'Profile updated and new token returned',
+  })
+  async updateProfile(
+    @Request() req: ExpressRequest & { user: { userId: string } },
+    @Body() body: any,
+  ) {
+    return this.authService.updateProfile(req.user.userId, body);
   }
 
   @Post('forgot-password')

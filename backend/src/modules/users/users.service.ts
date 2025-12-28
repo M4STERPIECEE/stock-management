@@ -10,7 +10,7 @@ export class UsersService implements OnModuleInit {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     await this.seedAdminUser();
@@ -37,6 +37,10 @@ export class UsersService implements OnModuleInit {
     profilePicture: string,
   ): Promise<void> {
     await this.usersRepository.update(id, { profilePicture });
+  }
+
+  async updateUser(id: string, updateData: Partial<User>): Promise<void> {
+    await this.usersRepository.update(id, updateData);
   }
 
   private async seedAdminUser() {
