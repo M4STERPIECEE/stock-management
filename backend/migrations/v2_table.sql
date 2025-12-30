@@ -1,9 +1,18 @@
+-- TABLE: CATEGORIES (Must be created before products)
+CREATE TABLE IF NOT EXISTS categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- TABLE: PRODUCTS (Combines PRODUIT and STOCK concepts)
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
     reference VARCHAR(100) UNIQUE NOT NULL,
-    category VARCHAR(100),
+    category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
     unit_price DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     stock_quantity INTEGER NOT NULL DEFAULT 0,
     -- Status is stored, but could be calculated. 
@@ -12,7 +21,10 @@ CREATE TABLE IF NOT EXISTS products (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
--- TABLE: CUSTOMERS (CLIENT)
+
+-- Indexes for performance
+CREATE INDEX idx_products_category_id ON products(category_id);
+CREATE INDEX idx_products_reference ON products(reference);
 CREATE TABLE IF NOT EXISTS customers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
@@ -72,7 +84,5 @@ CREATE TABLE IF NOT EXISTS admin_users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 -- Indexes for performance
-CREATE INDEX idx_products_category ON products(category);
-CREATE INDEX idx_products_reference ON products(reference);
 CREATE INDEX idx_orders_customer ON orders(customer_id);
 CREATE INDEX idx_orders_status ON orders(status);
