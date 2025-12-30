@@ -19,7 +19,7 @@ const Dashboard = () => {
   const statsCardsData = [
     {
       titleKey: 'dashboard.total_revenue',
-      value: '124 500 €',
+      value: '124 500 Ar',
       icon: 'payments',
       iconBg: 'green.50',
       iconColor: 'green.600',
@@ -49,7 +49,7 @@ const Dashboard = () => {
     },
     {
       titleKey: 'dashboard.stock_value',
-      value: '45 200 €',
+      value: '45 200 Ar',
       icon: 'inventory',
       iconBg: 'orange.50',
       iconColor: 'orange.600',
@@ -90,7 +90,7 @@ const Dashboard = () => {
       statusColor: 'green.800',
       statusBgDark: 'green.900/30',
       statusColorDark: 'green.400',
-      amount: '2 450 €'
+      amount: '2 450 Ar'
     },
     {
       id: '#4531',
@@ -101,7 +101,7 @@ const Dashboard = () => {
       statusColor: 'yellow.800',
       statusBgDark: 'yellow.900/30',
       statusColorDark: 'yellow.400',
-      amount: '1 290 €'
+      amount: '1 290 Ar'
     },
     {
       id: '#4530',
@@ -112,7 +112,7 @@ const Dashboard = () => {
       statusColor: 'blue.800',
       statusBgDark: 'blue.900/30',
       statusColorDark: 'blue.400',
-      amount: '350 €'
+      amount: '350 Ar'
     }
   ];
 

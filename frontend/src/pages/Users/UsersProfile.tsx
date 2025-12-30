@@ -133,12 +133,9 @@ const UsersProfile = () => {
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
-        // Convert to Base64
         const reader = new FileReader();
         reader.onloadend = async () => {
             const base64String = reader.result as string;
-
             const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
             const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
 

@@ -14,6 +14,14 @@ i18n
         resources: {
             en: {
                 translation: {
+                    "common": {
+                        "loading": "Loading...",
+                        "no_results": "No results found",
+                        "cancel": "Cancel",
+                        "save": "Save",
+                        "delete": "Delete",
+                        "edit": "Edit"
+                    },
                     "dashboard": {
                         "overview": "Overview",
                         "total_revenue": "Total Revenue",
@@ -103,6 +111,53 @@ i18n
                         "logout_confirm": "Logout Confirmation",
                         "logout_desc": "Are you sure you want to log out? You will need to log back in to access your inventory."
                     },
+                    "products": {
+                        "title": "Products",
+                        "categories_title": "Categories",
+                        "export": "Export",
+                        "add_product": "Add product",
+                        "list_tab": "Products List",
+                        "categories_tab": "Categories",
+                        "search_placeholder": "Search by name, SKU, ref...",
+                        "all_categories": "All categories",
+                        "stock_status": "Stock status",
+                        "in_stock": "In stock",
+                        "low_stock": "Low stock",
+                        "out_of_stock": "Out of stock",
+                        "table": {
+                            "ref": "REF",
+                            "name": "Product Name",
+                            "category": "Category",
+                            "price": "Price",
+                            "stock": "Stock",
+                            "actions": "Actions",
+                            "description": "Description",
+                            "status": "Status",
+                            "products_count": "Products",
+                            "min_stock": "Min Stock Threshold"
+                        },
+                        "placeholders": {
+                            "name": "Product name",
+                            "description": "Product description"
+                        },
+                        "add_product_description": "Fill in the information below to add a new product.",
+                        "pagination": {
+                            "showing": "Showing",
+                            "to": "to",
+                            "of": "of",
+                            "results": "results",
+                            "categories": "categories"
+                        },
+                        "categories": {
+                            "new_category": "New category",
+                            "search_placeholder": "Search a category...",
+                            "active": "Active",
+                            "inactive": "Inactive",
+                            "add_description": "Add a new category to organize your products.",
+                            "name_placeholder": "Category name",
+                            "desc_placeholder": "Category description"
+                        }
+                    },
                     "login": {
                         "title": "Admin Login",
                         "subtitle": "Please authenticate to access the management dashboard.",
@@ -123,6 +178,14 @@ i18n
             },
             fr: {
                 translation: {
+                    "common": {
+                        "loading": "Chargement...",
+                        "no_results": "Aucun résultat trouvé",
+                        "cancel": "Annuler",
+                        "save": "Enregistrer",
+                        "delete": "Supprimer",
+                        "edit": "Modifier"
+                    },
                     "dashboard": {
                         "overview": "Vue d'ensemble",
                         "total_revenue": "Revenu Total",
@@ -212,6 +275,53 @@ i18n
                         "logout_confirm": "Confirmation de déconnexion",
                         "logout_desc": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre inventaire."
                     },
+                    "products": {
+                        "title": "Produits",
+                        "categories_title": "Catégories",
+                        "export": "Exporter",
+                        "add_product": "Ajouter un produit",
+                        "list_tab": "Liste des produits",
+                        "categories_tab": "Catégories",
+                        "search_placeholder": "Rechercher par nom, SKU, ref...",
+                        "all_categories": "Toutes les catégories",
+                        "stock_status": "Statut du stock",
+                        "in_stock": "En stock",
+                        "low_stock": "Faible stock",
+                        "out_of_stock": "Rupture",
+                        "table": {
+                            "ref": "REF",
+                            "name": "Nom du produit",
+                            "category": "Catégorie",
+                            "price": "Prix",
+                            "stock": "Stock",
+                            "actions": "Actions",
+                            "description": "Description",
+                            "status": "Statut",
+                            "products_count": "Produits",
+                            "min_stock": "Seuil d'alerte"
+                        },
+                        "placeholders": {
+                            "name": "Nom du produit",
+                            "description": "Description du produit"
+                        },
+                        "add_product_description": "Remplissez les informations ci-dessous pour ajouter un nouveau produit.",
+                        "pagination": {
+                            "showing": "Affichage de",
+                            "to": "à",
+                            "of": "sur",
+                            "results": "résultats",
+                            "categories": "catégories"
+                        },
+                        "categories": {
+                            "new_category": "Nouvelle catégorie",
+                            "search_placeholder": "Rechercher une catégorie...",
+                            "active": "Actif",
+                            "inactive": "Inactif",
+                            "add_description": "Ajoutez une nouvelle catégorie pour organiser vos produits.",
+                            "name_placeholder": "Nom de la catégorie",
+                            "desc_placeholder": "Description de la catégorie"
+                        }
+                    },
                     "login": {
                         "title": "Connexion Admin",
                         "subtitle": "Veuillez vous authentifier pour accéder au tableau de bord de gestion.",
@@ -232,6 +342,14 @@ i18n
             },
             mg: {
                 translation: {
+                    "common": {
+                        "loading": "Eo am-pikirakirana...",
+                        "no_results": "Tsy misy vokatra hita",
+                        "cancel": "Hanafoana",
+                        "save": "Hitehirizana",
+                        "delete": "Hamafa",
+                        "edit": "Hanova"
+                    },
                     "dashboard": {
                         "overview": "Fijery ankapobeny",
                         "total_revenue": "Vola miditra",
@@ -320,6 +438,53 @@ i18n
                         "logout": "Hiala",
                         "logout_confirm": "Fanamarinana ny fialana",
                         "logout_desc": "Tena te hiala ve ianao? Mila miditra indray ianao vao afaka mijery ny tahiry."
+                    },
+                    "products": {
+                        "title": "Entana",
+                        "categories_title": "Sokajy",
+                        "export": "Hamoaka",
+                        "add_product": "Hanampy entana",
+                        "list_tab": "Lisitry ny entana",
+                        "categories_tab": "Sokajy",
+                        "search_placeholder": "Hitady amin'ny anarana, SKU, ref...",
+                        "all_categories": "Ny sokajy rehetra",
+                        "stock_status": "Toe-javatra tahiry",
+                        "in_stock": "Misy tahiry",
+                        "low_stock": "Tahiry ambany",
+                        "out_of_stock": "Lany",
+                        "table": {
+                            "ref": "REF",
+                            "name": "Anaran'ny entana",
+                            "category": "Sokajy",
+                            "price": "Vidiny",
+                            "stock": "Tahiry",
+                            "actions": "Hetsika",
+                            "description": "Famaritana",
+                            "status": "Toe-javatra",
+                            "products_count": "Entana",
+                            "min_stock": "Fetran'ny tahiry"
+                        },
+                        "placeholders": {
+                            "name": "Anaran'ny entana",
+                            "description": "Famaritana ny entana"
+                        },
+                        "add_product_description": "Fenoy ny fampahalalana eto ambany mba hanampiana vokatra vaovao.",
+                        "pagination": {
+                            "showing": "Mampiseho",
+                            "to": "hatramin'ny",
+                            "of": "amin'ny",
+                            "results": "vokatra",
+                            "categories": "sokajy"
+                        },
+                        "categories": {
+                            "new_category": "Sokajy vaovao",
+                            "search_placeholder": "Hitady sokajy...",
+                            "active": "Mandeha",
+                            "inactive": "Tsy mandeha",
+                            "add_description": "Manampia sokajy vaovao handaminana ny vokatrao.",
+                            "name_placeholder": "Anaran'ny sokajy",
+                            "desc_placeholder": "Famaritana ny sokajy"
+                        }
                     },
                     "login": {
                         "title": "Fidiran'ny Mpandraharaha",
