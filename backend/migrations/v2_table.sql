@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) DEFAULT 'ADMIN' CHECK (role = 'ADMIN'),
     phone_number VARCHAR(50),
-    profile_picture VARCHAR(255),
+    profile_picture TEXT,
     -- Enforce ADMIN role
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

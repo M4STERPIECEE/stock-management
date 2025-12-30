@@ -134,32 +134,40 @@ const UsersProfile = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append('file', file);
+        // Convert to Base64
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64String = reader.result as string;
 
-        const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
-        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+            const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
+            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
 
-        try {
-            const response = await fetch(`${baseUrl}/api/v1/auth/upload-avatar`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
+            try {
+                const response = await fetch(`${baseUrl}/api/v1/auth/update-profile`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        profilePicture: base64String
+                    })
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data.access_token) {
-                    const storage = window.localStorage.getItem('access_token') ? window.localStorage : window.sessionStorage;
-                    storage.setItem('access_token', data.access_token);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.access_token) {
+                        const storage = window.localStorage.getItem('access_token') ? window.localStorage : window.sessionStorage;
+                        storage.setItem('access_token', data.access_token);
+                    }
+                    setShowSuccessSnackbar(true);
+                    fetchProfile();
                 }
-                fetchProfile();
+            } catch (error) {
+                console.error("Upload failed", error);
             }
-        } catch (error) {
-            console.error("Upload failed", error);
-        }
+        };
+        reader.readAsDataURL(file);
     };
 
     const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);

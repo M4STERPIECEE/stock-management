@@ -34,7 +34,7 @@ export class User {
   @Column({ name: 'phone_number', nullable: true })
   phoneNumber: string;
 
-  @Column({ name: 'profile_picture', nullable: true })
+  @Column({ name: 'profile_picture', nullable: true, type: 'text' })
   profilePicture: string;
 
   @CreateDateColumn({ name: 'created_at' })
