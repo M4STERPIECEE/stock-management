@@ -13,15 +13,15 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
   });
+  app.useBodyParser('json', { limit: '10mb' });
+  app.useBodyParser('urlencoded', { limit: '10mb', extended: true });
 
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: true, // Reflect request origin
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
-
-  // 2. Global Validation Pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -30,14 +30,14 @@ async function bootstrap() {
     }),
   );
 
-  // 3. API Versioning
+  //API Versioning
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
   });
   app.setGlobalPrefix('api');
 
-  // 5. Swagger Configuration
+  //Swagger Config
   const config = new DocumentBuilder()
     .setTitle('Stock Management API')
     .setDescription('The Stock Management API description')
