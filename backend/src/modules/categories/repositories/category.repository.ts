@@ -11,9 +11,12 @@ export class CategoryRepository {
     private readonly repository: Repository<Category>,
   ) {}
 
-  async findAll(filter: CategoryFilterDto): Promise<{ items: any[]; total: number }> {
+  async findAll(
+    filter: CategoryFilterDto,
+  ): Promise<{ items: any[]; total: number }> {
     const { search, status, page = 1, limit = 10 } = filter;
-    const query = this.repository.createQueryBuilder('category')
+    const query = this.repository
+      .createQueryBuilder('category')
       .select([
         'category.id',
         'category.name',
@@ -24,9 +27,12 @@ export class CategoryRepository {
       ]);
 
     if (search) {
-      query.andWhere('(category.name ILIKE :search OR category.description ILIKE :search)', {
-        search: `%${search}%`,
-      });
+      query.andWhere(
+        '(category.name ILIKE :search OR category.description ILIKE :search)',
+        {
+          search: `%${search}%`,
+        },
+      );
     }
 
     if (status) {
@@ -54,7 +60,10 @@ export class CategoryRepository {
     return this.repository.save(newCategory);
   }
 
-  async update(id: string, category: Partial<Category>): Promise<Category | null> {
+  async update(
+    id: string,
+    category: Partial<Category>,
+  ): Promise<Category | null> {
     await this.repository.update(id, category);
     return this.findById(id);
   }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { ProductRepository } from './repositories/product.repository';
 import { ProductCacheService } from './services/product-cache.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -6,6 +10,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductFilterDto } from './dto/product-filter.dto';
 import { Product } from './entities/product.entity';
 import { CategoriesService } from '../categories/categories.service';
+import { Category } from '../categories/entities/category.entity';
 
 @Injectable()
 export class ProductsService {
@@ -17,7 +22,9 @@ export class ProductsService {
 
   async findAll(filter: ProductFilterDto) {
     const cacheKey = `products_list_${JSON.stringify(filter)}`;
-    const cached = this.cacheService.get(cacheKey);
+    const cached = this.cacheService.get<{ items: Product[]; total: number }>(
+      cacheKey,
+    );
     if (cached) return cached;
 
     const result = await this.productRepository.findAll(filter);
@@ -40,9 +47,13 @@ export class ProductsService {
       productData.reference = await this.generateReference();
     }
 
-    const existing = await this.productRepository.findByReference(productData.reference);
+    const existing = await this.productRepository.findByReference(
+      productData.reference,
+    );
     if (existing) {
-      throw new ConflictException(`Product with reference ${productData.reference} already exists`);
+      throw new ConflictException(
+        `Product with reference ${productData.reference} already exists`,
+      );
     }
 
     const category = await this.categoriesService.findOne(categoryId);
@@ -70,18 +81,27 @@ export class ProductsService {
     return `REF-${nextNumber.toString().padStart(5, '0')}`;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
     const product = await this.findOne(id);
     const { categoryId, ...productData } = updateProductDto;
-    
+
     if (productData.reference && productData.reference !== product.reference) {
-      const existing = await this.productRepository.findByReference(productData.reference);
+      const existing = await this.productRepository.findByReference(
+        productData.reference,
+      );
       if (existing) {
-        throw new ConflictException(`Product with reference ${productData.reference} already exists`);
+        throw new ConflictException(
+          `Product with reference ${productData.reference} already exists`,
+        );
       }
     }
 
-    const updateData: any = { ...productData };
+    const updateData: Partial<Product> & { category?: Category } = {
+      ...productData,
+    };
     if (categoryId) {
       updateData.category = await this.categoriesService.findOne(categoryId);
     }

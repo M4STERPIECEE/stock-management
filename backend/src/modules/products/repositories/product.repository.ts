@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { ProductFilterDto } from '../dto/product-filter.dto';
 
@@ -11,9 +11,12 @@ export class ProductRepository {
     private readonly repository: Repository<Product>,
   ) {}
 
-  async findAll(filter: ProductFilterDto): Promise<{ items: Product[]; total: number }> {
+  async findAll(
+    filter: ProductFilterDto,
+  ): Promise<{ items: Product[]; total: number }> {
     const { search, category, stockStatus, page = 1, limit = 10 } = filter;
-    const query = this.repository.createQueryBuilder('product')
+    const query = this.repository
+      .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category');
 
     if (search) {
@@ -24,14 +27,18 @@ export class ProductRepository {
     }
 
     if (category) {
-      query.andWhere('(category.id = :category OR category.name = :category)', { category });
+      query.andWhere('(category.id = :category OR category.name = :category)', {
+        category,
+      });
     }
 
     if (stockStatus) {
       if (stockStatus === 'OUT_OF_STOCK') {
         query.andWhere('product.stockQuantity = 0');
       } else if (stockStatus === 'LOW_STOCK') {
-        query.andWhere('product.stockQuantity > 0 AND product.stockQuantity <= product.minStockThreshold');
+        query.andWhere(
+          'product.stockQuantity > 0 AND product.stockQuantity <= product.minStockThreshold',
+        );
       } else if (stockStatus === 'IN_STOCK') {
         query.andWhere('product.stockQuantity > product.minStockThreshold');
       }
@@ -45,9 +52,9 @@ export class ProductRepository {
   }
 
   async findById(id: string): Promise<Product | null> {
-    return this.repository.findOne({ 
+    return this.repository.findOne({
       where: { id },
-      relations: ['category']
+      relations: ['category'],
     });
   }
 

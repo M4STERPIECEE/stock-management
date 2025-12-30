@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { CategoryRepository } from './repositories/category.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -21,20 +25,28 @@ export class CategoriesService {
   }
 
   async create(createCategoryDto: CreateCategoryDto) {
-    const existing = await this.categoryRepository.findByName(createCategoryDto.name);
+    const existing = await this.categoryRepository.findByName(
+      createCategoryDto.name,
+    );
     if (existing) {
-      throw new ConflictException(`Category with name ${createCategoryDto.name} already exists`);
+      throw new ConflictException(
+        `Category with name ${createCategoryDto.name} already exists`,
+      );
     }
     return this.categoryRepository.create(createCategoryDto);
   }
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     const category = await this.findOne(id);
-    
+
     if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
-      const existing = await this.categoryRepository.findByName(updateCategoryDto.name);
+      const existing = await this.categoryRepository.findByName(
+        updateCategoryDto.name,
+      );
       if (existing) {
-        throw new ConflictException(`Category with name ${updateCategoryDto.name} already exists`);
+        throw new ConflictException(
+          `Category with name ${updateCategoryDto.name} already exists`,
+        );
       }
     }
 

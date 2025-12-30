@@ -8,10 +8,7 @@ import { ProductCacheService } from './services/product-cache.service';
 import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Product]),
-    CategoriesModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Product]), CategoriesModule],
   controllers: [ProductsController],
   providers: [ProductsService, ProductRepository, ProductCacheService],
   exports: [ProductsService],
