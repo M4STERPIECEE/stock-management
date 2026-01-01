@@ -93,7 +93,7 @@ const LoginFormContent = () => {
 
     return (
         <Span display="contents" className={`chakra-theme ${colorMode}`}>
-            <Flex direction="column" minH="100vh" fontFamily="'Poppins', sans-serif" bg="background" color={mainText}>
+            <Flex direction="column" minH="100vh" bg="background" color={mainText}>
                 <Box as="header" w="full" borderBottom="1px" borderColor={borderColor} bg={cardBg} pos="sticky" top="0" zIndex="50">
                     <Container maxW="1280px" px={{ base: 4, sm: 10 }} py="3">
                         <Flex align="center" justify="space-between">
@@ -184,7 +184,7 @@ const LoginFormContent = () => {
                 </Flex>
                 <Box as="footer" w="full" py="6" textAlign="center" zIndex="10">
                     <Text fontSize="sm" color={subText}>
-                        {t('login.copyright')}
+                        {t('login.copyright', { year: new Date().getFullYear() })}
                     </Text>
                 </Box>
             </Flex>

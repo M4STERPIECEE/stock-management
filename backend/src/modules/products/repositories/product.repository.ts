@@ -14,7 +14,15 @@ export class ProductRepository {
   async findAll(
     filter: ProductFilterDto,
   ): Promise<{ items: Product[]; total: number }> {
-    const { search, category, stockStatus, page = 1, limit = 10 } = filter;
+    const {
+      search,
+      category,
+      stockStatus,
+      page = 1,
+      limit = 10,
+      sortBy,
+      sortOrder = 'DESC',
+    } = filter;
     const query = this.repository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category');
@@ -45,7 +53,13 @@ export class ProductRepository {
     }
 
     query.skip((page - 1) * limit).take(limit);
-    query.orderBy('product.createdAt', 'DESC');
+
+    if (sortBy) {
+      const sortField = sortBy.includes('.') ? sortBy : `product.${sortBy}`;
+      query.orderBy(sortField, sortOrder);
+    } else {
+      query.orderBy('product.createdAt', 'DESC');
+    }
 
     const [items, total] = await query.getManyAndCount();
     return { items, total };

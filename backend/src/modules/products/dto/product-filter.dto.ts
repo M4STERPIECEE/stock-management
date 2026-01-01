@@ -15,6 +15,14 @@ export class ProductFilterDto {
   stockStatus?: 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
 
   @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @IsOptional()
+  @IsString()
+  sortOrder?: 'ASC' | 'DESC';
+
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
   @Min(1)

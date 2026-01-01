@@ -468,7 +468,7 @@ const UsersProfile = () => {
                                                 </Popover.Trigger>
                                                 <Portal>
                                                     <Popover.Positioner>
-                                                        <Popover.Content bg={cardBg} borderColor={borderColor} boxShadow="xl" p={1} borderRadius="lg" zIndex="popover" minW="180px">
+                                                        <Popover.Content bg={cardBg} borderColor={borderColor} boxShadow="xl" p={1} borderRadius="lg" zIndex="popover" width="var(--trigger-width)">
                                                             <VStack gap={1} align="stretch">
                                                                 {languages.map((lang) => (
                                                                     <Button key={lang.code} variant="ghost" justifyContent="flex-start" h="10" px={3} gap={3} bg={currentLang.code === lang.code ? (colorMode === 'light' ? "blue.50" : "blue.900/20") : "transparent"} color={currentLang.code === lang.code ? "primary" : mainText} fontWeight={currentLang.code === lang.code ? "bold" : "medium"} _hover={{ bg: colorMode === 'light' ? "gray.50" : "whiteAlpha.100" }} onClick={() => { i18n.changeLanguage(lang.code); setIsLangMenuOpen(false); }}>
