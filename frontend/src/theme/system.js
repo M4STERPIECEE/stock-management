@@ -15,8 +15,8 @@ export const system = createSystem(
           primary: { value: "#137fec" },
         },
         fonts: {
-          heading: { value: "'Poppins', sans-serif" },
-          body: { value: "'Poppins', sans-serif" },
+          heading: { value: "'JetBrains Mono', monospace" },
+          body: { value: "'JetBrains Mono', monospace" },
         },
       }),
       semanticTokens: defineSemanticTokens({

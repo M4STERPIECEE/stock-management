@@ -127,6 +127,50 @@ const PopoverSelect = ({
 	);
 };
 
+const SortableHeader = ({ 
+	label, 
+	field, 
+	currentSortBy, 
+	currentSortOrder, 
+	onSort, 
+	subText 
+}: { 
+	label: string; 
+	field: string; 
+	currentSortBy: string; 
+	currentSortOrder: 'ASC' | 'DESC'; 
+	onSort: (field: string) => void;
+	subText: string;
+}) => {
+	const isSorted = currentSortBy === field;
+	return (
+		<TableColumnHeader 
+			px="4" 
+			py="4" 
+			fontSize="xs" 
+			color={subText} 
+			textTransform="uppercase" 
+			letterSpacing="wider"
+			cursor="pointer"
+			onClick={() => onSort(field)}
+			_hover={{ color: 'primary' }}
+		>
+			<HStack gap="1">
+				<Text>{label}</Text>
+				{isSorted ? (
+					<span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+						{currentSortOrder === 'ASC' ? 'arrow_upward' : 'arrow_downward'}
+					</span>
+				) : (
+					<span className="material-symbols-outlined" style={{ fontSize: '16px', opacity: 0.3 }}>
+						swap_vert
+					</span>
+				)}
+			</HStack>
+		</TableColumnHeader>
+	);
+};
+
 const ProductsListTabContent = () => {
 	const { t } = useTranslation();
 	const { colorMode } = useColorMode();
@@ -144,9 +188,29 @@ const ProductsListTabContent = () => {
 	const [categoryValue, setCategoryValue] = useState('');
 	const [stockValue, setStockValue] = useState('');
 	const [products, setProducts] = useState<Product[]>([]);
+	const [categories, setCategories] = useState<Category[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [selectedIds, setSelectedIds] = useState<string[]>([]);
 	const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+	const [sortBy, setSortBy] = useState<string>('createdAt');
+	const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC');
+
+	const fetchCategories = useCallback(async () => {
+		try {
+			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+			const response = await fetch('http://localhost:3000/api/v1/categories', {
+				headers: {
+					'Authorization': `Bearer ${token}`,
+				}
+			});
+			if (response.ok) {
+				const data = await response.json();
+				setCategories(data.items || []);
+			}
+		} catch (error) {
+			console.error('Error fetching categories:', error);
+		}
+	}, []);
 
 	const fetchProducts = useCallback(async () => {
 		setLoading(true);
@@ -154,6 +218,18 @@ const ProductsListTabContent = () => {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 			const url = new URL('http://localhost:3000/api/v1/products');
 			if (searchTerm) url.searchParams.append('search', searchTerm);
+			if (sortBy) url.searchParams.append('sortBy', sortBy);
+			if (sortOrder) url.searchParams.append('sortOrder', sortOrder);
+			if (categoryValue) url.searchParams.append('category', categoryValue);
+			if (stockValue) {
+				const statusMap: Record<string, string> = {
+					'En stock': 'IN_STOCK',
+					'Faible stock': 'LOW_STOCK',
+					'Rupture': 'OUT_OF_STOCK'
+				};
+				url.searchParams.append('stockStatus', statusMap[stockValue]);
+			}
+			
 			const response = await fetch(url.toString(), {
 				headers: {
 					'Authorization': `Bearer ${token}`,
@@ -168,7 +244,11 @@ const ProductsListTabContent = () => {
 		} finally {
 			setLoading(false);
 		}
-	}, [searchTerm]);
+	}, [searchTerm, sortBy, sortOrder, categoryValue, stockValue]);
+
+	useEffect(() => {
+		fetchCategories();
+	}, [fetchCategories]);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -177,19 +257,22 @@ const ProductsListTabContent = () => {
 		return () => clearTimeout(timer);
 	}, [fetchProducts]);
 
+	const handleSort = (field: string) => {
+		if (sortBy === field) {
+			setSortOrder(sortOrder === 'ASC' ? 'DESC' : 'ASC');
+		} else {
+			setSortBy(field);
+			setSortOrder('ASC');
+		}
+	};
+
 	const filteredProducts = useMemo(() => {
-		return products.filter(p => {
-			const matchesCategory = !categoryValue || p.category?.name === categoryValue;
-			const stockStatus = p.stockQuantity <= 0 ? 'Rupture' : p.stockQuantity <= p.minStockThreshold ? 'Faible stock' : 'En stock';
-			const matchesStock = !stockValue || stockStatus === stockValue;
-			return matchesCategory && matchesStock;
-		});
-	}, [products, categoryValue, stockValue]);
+		return products;
+	}, [products]);
 
 	const categoryOptions: PopoverOption[] = useMemo(() => {
-		const uniqueCategories = Array.from(new Set(products.map(p => p.category?.name).filter(Boolean)));
-		return uniqueCategories.map(name => ({ value: name, label: name }));
-	}, [products]);
+		return categories.map(cat => ({ value: cat.name, label: cat.name }));
+	}, [categories]);
 
 	const stockOptions: PopoverOption[] = useMemo(
 		() => [
@@ -310,21 +393,11 @@ const ProductsListTabContent = () => {
 											onCheckedChange={toggleSelectAll}
 										/>
 									</TableColumnHeader>
-									<TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider">
-										{t('products.table.ref')}
-									</TableColumnHeader>
-									<TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider">
-										{t('products.table.name')}
-									</TableColumnHeader>
-									<TableColumnHeader px="4" py="4" fontSize="xs" color={subText}	textTransform="uppercase" letterSpacing="wider">
-										{t('products.table.category')}
-									</TableColumnHeader>
-									<TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider" >
-										{t('products.table.price')}
-									</TableColumnHeader>
-									<TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider">
-										{t('products.table.stock')}
-									</TableColumnHeader>
+									<SortableHeader label={t('products.table.ref')} field="reference" currentSortBy={sortBy} currentSortOrder={sortOrder} onSort={handleSort} subText={subText} />
+									<SortableHeader label={t('products.table.name')} field="name" currentSortBy={sortBy} currentSortOrder={sortOrder} onSort={handleSort} subText={subText} />
+									<SortableHeader label={t('products.table.category')} field="category.name" currentSortBy={sortBy} currentSortOrder={sortOrder} onSort={handleSort} subText={subText} />
+									<SortableHeader label={t('products.table.price')} field="price" currentSortBy={sortBy} currentSortOrder={sortOrder} onSort={handleSort} subText={subText} />
+									<SortableHeader label={t('products.table.stock')} field="stockQuantity" currentSortBy={sortBy} currentSortOrder={sortOrder} onSort={handleSort} subText={subText} />
 									<TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider" textAlign="right" >
 										{t('products.table.actions')}
 									</TableColumnHeader>

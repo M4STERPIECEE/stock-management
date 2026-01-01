@@ -89,7 +89,7 @@ const ForgotPasswordFormContent = () => {
 
     return (
         <Span display="contents" className={`chakra-theme ${colorMode}`}>
-            <Flex direction="column" minH="100vh" fontFamily="'Poppins', sans-serif" bg="background" color={mainText}>
+            <Flex direction="column" minH="100vh" bg="background" color={mainText}>
                 <HeaderBar />
                 <Flex flex="1" align="center" justify="center" p={{ base: 4, sm: 6, lg: 8 }}>
                     <Box w="full" maxW="480px" bg={cardBg} borderRadius="xl" boxShadow="lg" overflow="hidden" display="flex" flexDirection="column" borderColor={borderColor} border="1px">
@@ -136,7 +136,7 @@ const ForgotPasswordFormContent = () => {
                                 <Box flex="1" h="1px" bg={borderColor} />
                             </Flex>
                             <Flex justify="center">
-                                <Button onClick={() => navigate('/login')} display="flex" alignItems="center" gap="2" bg={colorMode === 'light' ? "slate.800" : "slate.400"}  color={colorMode === 'light' ? "slate.400" : "slate.800"}  _hover={{ opacity: 0.9 }} fontSize="sm" fontWeight="medium" h="10" px="6" borderRadius="lg">
+                                <Button onClick={() => navigate('/login')} display="flex" alignItems="center" gap="2" bg={colorMode === 'light' ? "slate.800" : "slate.400"} color={colorMode === 'light' ? "slate.400" : "slate.800"} _hover={{ opacity: 0.9 }} fontSize="sm" fontWeight="medium" h="10" px="6" borderRadius="lg">
                                     <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
                                     Retour à la connexion
                                 </Button>
