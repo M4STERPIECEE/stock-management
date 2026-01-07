@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-  IsNumber,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
 import { CategoryStatus } from '../entities/category.entity';
 
 export class CreateCategoryDto {
@@ -19,8 +13,4 @@ export class CreateCategoryDto {
   @IsEnum(CategoryStatus)
   @IsOptional()
   status?: CategoryStatus;
-
-  @IsNumber()
-  @IsOptional()
-  productCount?: number;
 }

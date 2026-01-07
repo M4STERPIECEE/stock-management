@@ -9,7 +9,7 @@ export class CategoryRepository {
   constructor(
     @InjectRepository(Category)
     private readonly repository: Repository<Category>,
-  ) {}
+  ) { }
 
   async findAll(
     filter: CategoryFilterDto,
@@ -70,5 +70,13 @@ export class CategoryRepository {
 
   async delete(id: string): Promise<void> {
     await this.repository.delete(id);
+  }
+
+  async incrementProductCount(id: string): Promise<void> {
+    await this.repository.increment({ id }, 'productCount', 1);
+  }
+
+  async decrementProductCount(id: string): Promise<void> {
+    await this.repository.decrement({ id }, 'productCount', 1);
   }
 }

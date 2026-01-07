@@ -97,7 +97,6 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 		name: '',
 		description: '',
 		status: 'ACTIVE',
-		productCount: 0,
 	});
 
 	const mainText = 'textMain';
@@ -116,7 +115,7 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
 		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: name === 'productCount' ? parseInt(value, 10) || 0 : value }));
+		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
 	const handleStatusChange = (value: string) => {
@@ -145,7 +144,6 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 					name: '',
 					description: '',
 					status: 'ACTIVE',
-					productCount: 0,
 				});
 			} else {
 				const errorData = await response.json();
@@ -190,25 +188,18 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 									<Flex gap="4">
 										<VStack align="stretch" gap="1.5" flex="1">
 											<Text fontSize="sm" fontWeight="medium" color={mainText}>
-												{t('products.table.products_count', 'Nombre de produits')}
-											</Text>
-											<Input name="productCount" type="number" value={formData.productCount} onChange={handleChange} bg={inputBg} borderColor={inputBorder} _focus={{ borderColor: 'primary', outline: 'none' }} borderRadius="lg" min={0} />
-										</VStack>
-
-										<VStack align="stretch" gap="1.5" flex="1">
-											<Text fontSize="sm" fontWeight="medium" color={mainText}>
 												{t('products.table.status')}
 											</Text>
-											<PopoverSelect value={formData.status} 
-												onChange={handleStatusChange} 
-												placeholder={t('products.table.status')} 
-												options={statusOptions} 
-												mainText={mainText} 
-												subText={subText} 
-												borderColor={inputBorder} 
-												bg={inputBg} 
-												hoverBg={selectHoverBg} 
-												selectedBg={selectSelectedBg} 
+											<PopoverSelect value={formData.status}
+												onChange={handleStatusChange}
+												placeholder={t('products.table.status')}
+												options={statusOptions}
+												mainText={mainText}
+												subText={subText}
+												borderColor={inputBorder}
+												bg={inputBg}
+												hoverBg={selectHoverBg}
+												selectedBg={selectSelectedBg}
 											/>
 										</VStack>
 									</Flex>

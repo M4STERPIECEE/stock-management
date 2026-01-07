@@ -18,7 +18,7 @@ export class ProductsService {
     private readonly productRepository: ProductRepository,
     private readonly cacheService: ProductCacheService,
     private readonly categoriesService: CategoriesService,
-  ) {}
+  ) { }
 
   async findAll(filter: ProductFilterDto) {
     const cacheKey = `products_list_${JSON.stringify(filter)}`;
@@ -62,6 +62,9 @@ export class ProductsService {
       ...productData,
       category,
     });
+
+    await this.categoriesService.incrementProductCount(categoryId);
+
     this.cacheService.clear();
     return product;
   }
@@ -102,8 +105,12 @@ export class ProductsService {
     const updateData: Partial<Product> & { category?: Category } = {
       ...productData,
     };
-    if (categoryId) {
+    if (categoryId && (!product.category || categoryId !== product.category.id)) {
+      if (product.category) {
+        await this.categoriesService.decrementProductCount(product.category.id);
+      }
       updateData.category = await this.categoriesService.findOne(categoryId);
+      await this.categoriesService.incrementProductCount(categoryId);
     }
 
     const updated = await this.productRepository.update(id, updateData);
@@ -112,8 +119,11 @@ export class ProductsService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.findOne(id);
+    const product = await this.findOne(id);
     await this.productRepository.delete(id);
+    if (product.category) {
+      await this.categoriesService.decrementProductCount(product.category.id);
+    }
     this.cacheService.clear();
   }
 }
