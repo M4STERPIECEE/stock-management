@@ -10,7 +10,7 @@ import { CategoryFilterDto } from './dto/category-filter.dto';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  constructor(private readonly categoryRepository: CategoryRepository) { }
 
   async findAll(filter: CategoryFilterDto) {
     return this.categoryRepository.findAll(filter);
@@ -56,5 +56,13 @@ export class CategoriesService {
   async remove(id: string) {
     await this.findOne(id);
     return this.categoryRepository.delete(id);
+  }
+
+  async incrementProductCount(id: string) {
+    return this.categoryRepository.incrementProductCount(id);
+  }
+
+  async decrementProductCount(id: string) {
+    return this.categoryRepository.decrementProductCount(id);
   }
 }
