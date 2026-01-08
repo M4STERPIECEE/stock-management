@@ -147,7 +147,7 @@ const ForgotPasswordFormContent = () => {
                 </Flex>
                 <Box as="footer" w="full" py="6" textAlign="center" zIndex="10">
                     <Text fontSize="sm" color={subText}>
-                        © 2025 M4STERPIECE. Tous droits réservés.
+                        © {new Date().getFullYear()} M4STERPIECE. Tous droits réservés.
                     </Text>
                 </Box>
             </Flex>

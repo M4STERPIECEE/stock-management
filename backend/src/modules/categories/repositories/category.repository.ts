@@ -9,7 +9,7 @@ export class CategoryRepository {
   constructor(
     @InjectRepository(Category)
     private readonly repository: Repository<Category>,
-  ) { }
+  ) {}
 
   async findAll(
     filter: CategoryFilterDto,

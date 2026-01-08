@@ -8,6 +8,7 @@ import { ProductCacheService } from './services/product-cache.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductFilterDto } from './dto/product-filter.dto';
+import { BulkCreateProductDto } from './dto/bulk-create-product.dto';
 import { Product } from './entities/product.entity';
 import { CategoriesService } from '../categories/categories.service';
 import { Category } from '../categories/entities/category.entity';
@@ -18,7 +19,7 @@ export class ProductsService {
     private readonly productRepository: ProductRepository,
     private readonly cacheService: ProductCacheService,
     private readonly categoriesService: CategoriesService,
-  ) { }
+  ) {}
 
   async findAll(filter: ProductFilterDto) {
     const cacheKey = `products_list_${JSON.stringify(filter)}`;
@@ -69,14 +70,23 @@ export class ProductsService {
     return product;
   }
 
-  async bulkCreate(products: any[]): Promise<{ created: number; errors: string[] }> {
-    const results: { created: number; errors: string[] } = { created: 0, errors: [] };
+  async bulkCreate(
+    products: BulkCreateProductDto[],
+  ): Promise<{ created: number; errors: string[] }> {
+    const results: { created: number; errors: string[] } = {
+      created: 0,
+      errors: [],
+    };
 
     for (const data of products) {
       try {
-        const category = await this.categoriesService.findByName(data.categoryName);
+        const category = await this.categoriesService.findByName(
+          data.categoryName,
+        );
         if (!category) {
-          results.errors.push(`Produit "${data.name}": Catégorie "${data.categoryName}" inexistante`);
+          results.errors.push(
+            `Produit "${data.name}": Catégorie "${data.categoryName}" inexistante`,
+          );
           continue;
         }
 
@@ -90,7 +100,9 @@ export class ProductsService {
         });
         results.created++;
       } catch (error) {
-        results.errors.push(`Produit "${data.name}": ${error.message}`);
+        results.errors.push(
+          `Produit "${data.name}": ${(error as Error).message}`,
+        );
       }
     }
 
@@ -134,7 +146,10 @@ export class ProductsService {
     const updateData: Partial<Product> & { category?: Category } = {
       ...productData,
     };
-    if (categoryId && (!product.category || categoryId !== product.category.id)) {
+    if (
+      categoryId &&
+      (!product.category || categoryId !== product.category.id)
+    ) {
       if (product.category) {
         await this.categoriesService.decrementProductCount(product.category.id);
       }

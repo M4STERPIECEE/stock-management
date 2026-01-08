@@ -10,7 +10,7 @@ import { CategoryFilterDto } from './dto/category-filter.dto';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly categoryRepository: CategoryRepository) { }
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async findAll(filter: CategoryFilterDto) {
     return this.categoryRepository.findAll(filter);
