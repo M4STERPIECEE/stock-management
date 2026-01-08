@@ -13,6 +13,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductFilterDto } from './dto/product-filter.dto';
+import { BulkCreateProductDto } from './dto/bulk-create-product.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -25,6 +26,11 @@ export class ProductsController {
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
+  }
+
+  @Post('bulk')
+  bulkCreate(@Body() products: BulkCreateProductDto[]) {
+    return this.productsService.bulkCreate(products);
   }
 
   @Get()

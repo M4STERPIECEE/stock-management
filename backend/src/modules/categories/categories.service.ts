@@ -10,7 +10,7 @@ import { CategoryFilterDto } from './dto/category-filter.dto';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly categoryRepository: CategoryRepository) { }
+  constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async findAll(filter: CategoryFilterDto) {
     return this.categoryRepository.findAll(filter);
@@ -22,6 +22,10 @@ export class CategoriesService {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
     return category;
+  }
+
+  async findByName(name: string) {
+    return this.categoryRepository.findByName(name);
   }
 
   async create(createCategoryDto: CreateCategoryDto) {

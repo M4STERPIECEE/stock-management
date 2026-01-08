@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Flex,
@@ -40,6 +40,14 @@ const LoginFormContent = () => {
     const [rememberMe, setRememberMe] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (errorMessage) {
+            const timer = setTimeout(() => setErrorMessage(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [errorMessage]);
+
     const mainText = "textMain";
     const subText = "textSub";
     const borderColor = "border";
