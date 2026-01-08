@@ -42,7 +42,7 @@ interface Product {
 
 type StockVariant = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
 
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 5;
 
 const TableCheckbox = ({ checked, onCheckedChange, indeterminate }: { checked?: boolean; onCheckedChange?: (checked: boolean) => void; indeterminate?: boolean }) => (
 	<Box as="label" cursor="pointer">
@@ -127,29 +127,29 @@ const PopoverSelect = ({
 	);
 };
 
-const SortableHeader = ({ 
-	label, 
-	field, 
-	currentSortBy, 
-	currentSortOrder, 
-	onSort, 
-	subText 
-}: { 
-	label: string; 
-	field: string; 
-	currentSortBy: string; 
-	currentSortOrder: 'ASC' | 'DESC'; 
+const SortableHeader = ({
+	label,
+	field,
+	currentSortBy,
+	currentSortOrder,
+	onSort,
+	subText
+}: {
+	label: string;
+	field: string;
+	currentSortBy: string;
+	currentSortOrder: 'ASC' | 'DESC';
 	onSort: (field: string) => void;
 	subText: string;
 }) => {
 	const isSorted = currentSortBy === field;
 	return (
-		<TableColumnHeader 
-			px="4" 
-			py="4" 
-			fontSize="xs" 
-			color={subText} 
-			textTransform="uppercase" 
+		<TableColumnHeader
+			px="4"
+			py="4"
+			fontSize="xs"
+			color={subText}
+			textTransform="uppercase"
 			letterSpacing="wider"
 			cursor="pointer"
 			onClick={() => onSort(field)}
@@ -194,6 +194,10 @@ const ProductsListTabContent = () => {
 	const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
 	const [sortBy, setSortBy] = useState<string>('createdAt');
 	const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC');
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalPages, setTotalPages] = useState(1);
+	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
 	const fetchCategories = useCallback(async () => {
 		try {
@@ -229,7 +233,9 @@ const ProductsListTabContent = () => {
 				};
 				url.searchParams.append('stockStatus', statusMap[stockValue]);
 			}
-			
+			url.searchParams.append('page', currentPage.toString());
+			url.searchParams.append('limit', DEFAULT_PAGE_SIZE.toString());
+
 			const response = await fetch(url.toString(), {
 				headers: {
 					'Authorization': `Bearer ${token}`,
@@ -238,13 +244,15 @@ const ProductsListTabContent = () => {
 			if (response.ok) {
 				const data = await response.json();
 				setProducts(data.items || []);
+				setTotalItems(data.total || 0);
+				setTotalPages(Math.ceil((data.total || 0) / DEFAULT_PAGE_SIZE));
 			}
 		} catch (error) {
 			console.error('Error fetching products:', error);
 		} finally {
 			setLoading(false);
 		}
-	}, [searchTerm, sortBy, sortOrder, categoryValue, stockValue]);
+	}, [debouncedSearchTerm, sortBy, sortOrder, categoryValue, stockValue, currentPage]);
 
 	useEffect(() => {
 		fetchCategories();
@@ -252,9 +260,17 @@ const ProductsListTabContent = () => {
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			fetchProducts();
+			setDebouncedSearchTerm(searchTerm);
 		}, 300);
 		return () => clearTimeout(timer);
+	}, [searchTerm]);
+
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [debouncedSearchTerm, categoryValue, stockValue]);
+
+	useEffect(() => {
+		fetchProducts();
 	}, [fetchProducts]);
 
 	const handleSort = (field: string) => {
@@ -283,9 +299,9 @@ const ProductsListTabContent = () => {
 		[t]
 	);
 
-	const totalResults = filteredProducts.length;
-	const from = totalResults === 0 ? 0 : 1;
-	const to = totalResults;
+	const totalResults = totalItems;
+	const from = totalResults === 0 ? 0 : (currentPage - 1) * DEFAULT_PAGE_SIZE + 1;
+	const to = Math.min(currentPage * DEFAULT_PAGE_SIZE, totalResults);
 
 	const getStockStyle = (quantity: number, threshold: number) => {
 		if (quantity <= 0) {
@@ -338,14 +354,14 @@ const ProductsListTabContent = () => {
 		<Flex direction="column" gap="6">
 			<Flex bg={toolbarBg} p="4" borderRadius="xl" border="1px solid" borderColor={borderColor} boxShadow="sm" justify="space-between" align="center" wrap="wrap" gap="4">
 				<InputGroup maxW="md" minW="280px" startElement={
-						<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-							search
-						</span>
-					} startElementProps={{ color: subText }}>
-					<Input placeholder={t('products.search_placeholder')} 
-						bg={inputBg} 
-						border="1px solid" 
-						borderColor={inputBorder}  _focus={{ borderColor: 'primary', outline: 'none' }} borderRadius="lg" fontSize="sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+					<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+						search
+					</span>
+				} startElementProps={{ color: subText }}>
+					<Input placeholder={t('products.search_placeholder')}
+						bg={inputBg}
+						border="1px solid"
+						borderColor={inputBorder} _focus={{ borderColor: 'primary', outline: 'none' }} borderRadius="lg" fontSize="sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
 				</InputGroup>
 				<HStack gap="3" overflowX="auto" pb={{ base: '1', sm: '0' }}>
 					<PopoverSelect value={categoryValue} onChange={setCategoryValue} placeholder={t('products.all_categories')} options={categoryOptions} mainText={mainText} subText={subText} borderColor={inputBorder} bg={cardBg} hoverBg={selectHoverBg} selectedBg={selectSelectedBg} />
@@ -387,7 +403,7 @@ const ProductsListTabContent = () => {
 							<TableHeader>
 								<TableRow bg={colorMode === 'dark' ? 'whiteAlpha.50' : 'blackAlpha.50'}>
 									<TableColumnHeader px="4" py="4" w="12">
-										<TableCheckbox 
+										<TableCheckbox
 											checked={isAllSelected}
 											indeterminate={isIndeterminate}
 											onCheckedChange={toggleSelectAll}
@@ -409,7 +425,7 @@ const ProductsListTabContent = () => {
 									return (
 										<TableRow key={product.id} _hover={{ bg: hoverRowBg }} transition="background 0.2s">
 											<TableCell px="4" py="4">
-												<TableCheckbox 
+												<TableCheckbox
 													checked={selectedIds.includes(product.id)}
 													onCheckedChange={(checked) => toggleSelectOne(product.id, checked)}
 												/>
@@ -424,7 +440,7 @@ const ProductsListTabContent = () => {
 													{product.name}
 												</Text>
 											</TableCell>
-											
+
 											<TableCell px="4" py="4" fontSize="sm" color={mainText}>
 												{product.category?.name || '-'}
 											</TableCell>
@@ -432,7 +448,7 @@ const ProductsListTabContent = () => {
 												{new Intl.NumberFormat('fr-MG', { style: 'currency', currency: 'MGA', minimumFractionDigits: 0 }).format(product.price)}
 											</TableCell>
 											<TableCell px="4" py="4">
-												<Badge px="2.5" py="1" borderRadius="full" fontSize="xs" fontWeight="medium" bg={stockStyle.bg} color={stockStyle.color} border="1px solid" borderColor={stockStyle.borderColor} display="inline-flex" alignItems="center"	gap="1.5" textTransform="none">
+												<Badge px="2.5" py="1" borderRadius="full" fontSize="xs" fontWeight="medium" bg={stockStyle.bg} color={stockStyle.color} border="1px solid" borderColor={stockStyle.borderColor} display="inline-flex" alignItems="center" gap="1.5" textTransform="none">
 													<Box w="1.5" h="1.5" borderRadius="full" bg={stockStyle.dotBg} />
 													{stockStyle.label}
 												</Badge>
@@ -465,7 +481,7 @@ const ProductsListTabContent = () => {
 								<Box key={product.id} bg={cardBg} borderRadius="2xl" border="1px solid" borderColor={borderColor} overflow="hidden" transition="all 0.3s" _hover={{ transform: 'translateY(-4px)', shadow: 'xl', borderColor: 'primary' }} position="relative" role="group" >
 									<VStack p="5" align="stretch" gap="4">
 										<Flex justify="space-between" align="center">
-											<TableCheckbox checked={selectedIds.includes(product.id)} onCheckedChange={(checked) => toggleSelectOne(product.id, checked)}/>
+											<TableCheckbox checked={selectedIds.includes(product.id)} onCheckedChange={(checked) => toggleSelectOne(product.id, checked)} />
 											<Badge px="2.5" py="1" borderRadius="full" fontSize="xs" fontWeight="bold" bg={stockStyle.bg} color={stockStyle.color} border="1px solid" borderColor={stockStyle.borderColor} >
 												{stockStyle.label}
 											</Badge>
@@ -505,7 +521,7 @@ const ProductsListTabContent = () => {
 					</SimpleGrid>
 				)}
 
-				<Flex justify="space-between" align="center" p="4" borderTop={viewMode === 'list' ? '1px solid' : 'none'} mt={viewMode === 'grid' ? '6' : '0'} borderColor={borderColor} bg={cardBg} borderRadius={viewMode === 'grid' ? 'xl' : 'none'} border={viewMode === 'grid' ? '1px solid' : 'none'} wrap="wrap"	gap="3">
+				<Flex justify="space-between" align="center" p="4" borderTop={viewMode === 'list' ? '1px solid' : 'none'} mt={viewMode === 'grid' ? '6' : '0'} borderColor={borderColor} bg={cardBg} borderRadius={viewMode === 'grid' ? 'xl' : 'none'} border={viewMode === 'grid' ? '1px solid' : 'none'} wrap="wrap" gap="3">
 					<Text fontSize="sm" color={subText}>
 						{t('products.pagination.showing')}{' '}
 						<Text as="span" fontWeight="medium" color={mainText}>
@@ -522,15 +538,33 @@ const ProductsListTabContent = () => {
 						{t('products.pagination.results')}
 					</Text>
 					<HStack gap="2">
-						<IconButton aria-label="Previous" size="sm" variant="outline" borderColor={borderColor} color={subText} disabled>
+						<IconButton
+							aria-label="Previous"
+							size="sm"
+							variant="outline"
+							borderColor={borderColor}
+							color={subText}
+							onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+							disabled={currentPage === 1}
+							_hover={{ bg: hoverRowBg, color: mainText }}
+						>
 							<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
 								chevron_left
 							</span>
 						</IconButton>
-						<Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
-							1
-						</Button>
-						<IconButton aria-label="Next" size="sm" variant="outline" borderColor={borderColor} color={subText} _hover={{ bg: hoverRowBg, color: mainText }}>
+						<Text fontSize="sm" fontWeight="medium" color={mainText} px="2">
+							{t('products.pagination.page')} {currentPage} {t('products.pagination.of_pages')} {totalPages}
+						</Text>
+						<IconButton
+							aria-label="Next"
+							size="sm"
+							variant="outline"
+							borderColor={borderColor}
+							color={subText}
+							onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+							disabled={currentPage === totalPages}
+							_hover={{ bg: hoverRowBg, color: mainText }}
+						>
 							<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
 								chevron_right
 							</span>

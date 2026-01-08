@@ -146,7 +146,9 @@ i18n
                             "to": "to",
                             "of": "of",
                             "results": "results",
-                            "categories": "categories"
+                            "categories": "categories",
+                            "page": "Page",
+                            "of_pages": "of"
                         },
                         "categories": {
                             "new_category": "New category",
@@ -356,7 +358,9 @@ i18n
                             "to": "à",
                             "of": "sur",
                             "results": "résultats",
-                            "categories": "catégories"
+                            "categories": "catégories",
+                            "page": "Page",
+                            "of_pages": "sur"
                         },
                         "categories": {
                             "new_category": "Nouvelle catégorie",
@@ -566,7 +570,9 @@ i18n
                             "to": "hatramin'ny",
                             "of": "amin'ny",
                             "results": "vokatra",
-                            "categories": "sokajy"
+                            "categories": "sokajy",
+                            "page": "Pejy",
+                            "of_pages": "amin'ny"
                         },
                         "categories": {
                             "new_category": "Sokajy vaovao",
