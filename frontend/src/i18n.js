@@ -158,6 +158,52 @@ i18n
                             "desc_placeholder": "Category description"
                         }
                     },
+                    "stock": {
+                        "title": "Stock Management",
+                        "subtitle": "Manage your inventory and monitor stock levels in real time",
+                        "export_csv": "Export CSV",
+                        "add_product": "Add Product",
+                        "search_placeholder": "Search by name, SKU or category...",
+                        "all_products": "All products",
+                        "category": "Category",
+                        "supplier": "Supplier",
+                        "filters": "Filters",
+                        "stats": {
+                            "total_products": "Total Products",
+                            "low_stock_alert": "Low Stock Alert",
+                            "out_of_stock": "Out of Stock",
+                            "requires_attention": "Requires attention",
+                            "critical": "Critical"
+                        },
+                        "table": {
+                            "reference": "Reference",
+                            "product": "Product",
+                            "category": "Category",
+                            "price": "Price",
+                            "status": "Status",
+                            "stock_level": "Stock Level",
+                            "actions": "Actions"
+                        },
+                        "status": {
+                            "in_stock": "In Stock",
+                            "low_stock": "Low Stock",
+                            "critical": "Critical",
+                            "out_of_stock": "Out of Stock"
+                        },
+                        "pagination": {
+                            "showing": "Showing {{from}} to {{to}} of {{total}} results",
+                            "to": "to",
+                            "of": "of",
+                            "results": "results",
+                            "page": "Page",
+                            "of_pages": "of"
+                        },
+                        "no_products": "No products found",
+                        "reasons": {
+                            "manual_restock": "Manual restock",
+                            "manual_exit": "Manual exit"
+                        }
+                    },
                     "login": {
                         "title": "Admin Login",
                         "subtitle": "Please authenticate to access the management dashboard.",
@@ -322,6 +368,52 @@ i18n
                             "desc_placeholder": "Description de la catégorie"
                         }
                     },
+                    "stock": {
+                        "title": "Gestion de Stock",
+                        "subtitle": "Gérez votre inventaire et surveillez les niveaux de stock en temps réel",
+                        "export_csv": "Exporter CSV",
+                        "add_product": "Ajouter Produit",
+                        "search_placeholder": "Rechercher par nom, SKU ou catégorie...",
+                        "all_products": "Tous les produits",
+                        "category": "Catégorie",
+                        "supplier": "Fournisseur",
+                        "filters": "Filtres",
+                        "stats": {
+                            "total_products": "Total Produits",
+                            "low_stock_alert": "Alerte Stock Faible",
+                            "out_of_stock": "Rupture de Stock",
+                            "requires_attention": "Nécessite attention",
+                            "critical": "Critique"
+                        },
+                        "table": {
+                            "reference": "Référence",
+                            "product": "Produit",
+                            "category": "Catégorie",
+                            "price": "Prix",
+                            "status": "État",
+                            "stock_level": "Niveau de Stock",
+                            "actions": "Actions"
+                        },
+                        "status": {
+                            "in_stock": "En Stock",
+                            "low_stock": "Stock Faible",
+                            "critical": "Critique",
+                            "out_of_stock": "Rupture"
+                        },
+                        "pagination": {
+                            "showing": "Affichage de {{from}} à {{to}} sur {{total}} résultats",
+                            "to": "à",
+                            "of": "sur",
+                            "results": "résultats",
+                            "page": "Page",
+                            "of_pages": "sur"
+                        },
+                        "no_products": "Aucun produit trouvé",
+                        "reasons": {
+                            "manual_restock": "Réapprovisionnement manuel",
+                            "manual_exit": "Sortie manuelle"
+                        }
+                    },
                     "login": {
                         "title": "Connexion Admin",
                         "subtitle": "Veuillez vous authentifier pour accéder au tableau de bord de gestion.",
@@ -484,6 +576,52 @@ i18n
                             "add_description": "Manampia sokajy vaovao handaminana ny vokatrao.",
                             "name_placeholder": "Anaran'ny sokajy",
                             "desc_placeholder": "Famaritana ny sokajy"
+                        }
+                    },
+                    "stock": {
+                        "title": "Fitantanana Tahiry",
+                        "subtitle": "Tantano ny tahiry sy araho ny haavon'ny tahiry amin'ny fotoana tena izy",
+                        "export_csv": "Hamoaka CSV",
+                        "add_product": "Hanampy Entana",
+                        "search_placeholder": "Hitady amin'ny anarana, SKU na sokajy...",
+                        "all_products": "Ny entana rehetra",
+                        "category": "Sokajy",
+                        "supplier": "Mpamatsy",
+                        "filters": "Sivana",
+                        "stats": {
+                            "total_products": "Isan'ny Entana",
+                            "low_stock_alert": "Fampitandremana Tahiry Ambany",
+                            "out_of_stock": "Lany Tahiry",
+                            "requires_attention": "Mila fanazavana",
+                            "critical": "Mavesatra"
+                        },
+                        "table": {
+                            "reference": "Mari-tsoratra",
+                            "product": "Entana",
+                            "category": "Sokajy",
+                            "price": "Vidiny",
+                            "status": "Toe-javatra",
+                            "stock_level": "Haavon'ny Tahiry",
+                            "actions": "Hetsika"
+                        },
+                        "status": {
+                            "in_stock": "Misy Tahiry",
+                            "low_stock": "Tahiry Ambany",
+                            "critical": "Mavesatra",
+                            "out_of_stock": "Lany Tahiry"
+                        },
+                        "pagination": {
+                            "showing": "Mampiseho {{from}} hatramin'ny {{to}} amin'ny {{total}} vokatra",
+                            "to": "hatramin'ny",
+                            "of": "amin'ny",
+                            "results": "vokatra",
+                            "page": "Pejy",
+                            "of_pages": "amin'ny"
+                        },
+                        "no_products": "Tsy misy entana hita",
+                        "reasons": {
+                            "manual_restock": "Fanampiana tahiry tanana",
+                            "manual_exit": "Fivoahana tanana"
                         }
                     },
                     "login": {

@@ -38,6 +38,11 @@ export class ProductsController {
     return this.productsService.findAll(filter);
   }
 
+  @Get('stats')
+  getStats() {
+    return this.productsService.getStats();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);

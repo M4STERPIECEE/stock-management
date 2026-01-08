@@ -33,6 +33,20 @@ export class ProductsService {
     return result;
   }
 
+  async getStats() {
+    const cacheKey = 'products_global_stats';
+    const cached = this.cacheService.get<{
+      total: number;
+      lowStock: number;
+      outOfStock: number;
+    }>(cacheKey);
+    if (cached) return cached;
+
+    const stats = await this.productRepository.getStats();
+    this.cacheService.set(cacheKey, stats, 300);
+    return stats;
+  }
+
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findById(id);
     if (!product) {
@@ -62,6 +76,10 @@ export class ProductsService {
     const product = await this.productRepository.create({
       ...productData,
       category,
+      stockStatus: this.calculateStockStatus(
+        productData.stockQuantity || 0,
+        productData.minStockThreshold || 10,
+      ),
     });
 
     await this.categoriesService.incrementProductCount(categoryId);
@@ -157,9 +175,26 @@ export class ProductsService {
       await this.categoriesService.incrementProductCount(categoryId);
     }
 
+    if (
+      productData.stockQuantity !== undefined ||
+      productData.minStockThreshold !== undefined
+    ) {
+      updateData.stockStatus = this.calculateStockStatus(
+        productData.stockQuantity ?? product.stockQuantity,
+        productData.minStockThreshold ?? product.minStockThreshold,
+      );
+    }
+
     const updated = await this.productRepository.update(id, updateData);
     this.cacheService.clear();
     return updated!;
+  }
+
+  private calculateStockStatus(quantity: number, threshold: number): string {
+    if (quantity <= 0) return 'RUPTURE';
+    if (quantity <= threshold / 2) return 'CRITIQUE';
+    if (quantity <= threshold) return 'FAIBLE';
+    return 'EN_STOCK';
   }
 
   async remove(id: string): Promise<void> {

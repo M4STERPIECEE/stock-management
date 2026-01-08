@@ -28,6 +28,14 @@ export class Product {
   @Column({ name: 'stock_quantity', default: 0 })
   stockQuantity: number;
 
+  @Column({
+    name: 'stock_status',
+    type: 'enum',
+    enum: ['CRITIQUE', 'EN_STOCK', 'RUPTURE', 'FAIBLE'],
+    default: 'EN_STOCK',
+  })
+  stockStatus: string;
+
   @Column({ name: 'min_stock_threshold', default: 10 })
   minStockThreshold: number;
 

@@ -84,6 +84,22 @@ export class ProductRepository {
     return lastProduct ? lastProduct.reference : null;
   }
 
+  async getStats(): Promise<{
+    total: number;
+    lowStock: number;
+    outOfStock: number;
+  }> {
+    const [total, lowStock, outOfStock] = await Promise.all([
+      this.repository.count(),
+      this.repository.count({
+        where: [{ stockStatus: 'FAIBLE' }, { stockStatus: 'CRITIQUE' }],
+      }),
+      this.repository.count({ where: { stockStatus: 'RUPTURE' } }),
+    ]);
+
+    return { total, lowStock, outOfStock };
+  }
+
   async create(product: Partial<Product>): Promise<Product> {
     const newProduct = this.repository.create(product);
     return this.repository.save(newProduct);
