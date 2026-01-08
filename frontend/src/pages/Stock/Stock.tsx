@@ -19,12 +19,14 @@ import Sidebar from '../../components/navigation/sidebar';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
 
+
 const Stock = () => {
     const { colorMode } = useColorMode();
     const { t } = useTranslation();
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
@@ -61,7 +63,7 @@ const Stock = () => {
         try {
             const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
             const url = new URL('http://localhost:3000/api/v1/products');
-            if (searchTerm) url.searchParams.append('search', searchTerm);
+            if (debouncedSearchTerm) url.searchParams.append('search', debouncedSearchTerm);
             url.searchParams.append('page', currentPage.toString());
             url.searchParams.append('limit', limit.toString());
 
@@ -81,21 +83,27 @@ const Stock = () => {
         } finally {
             setLoading(false);
         }
-    }, [searchTerm, currentPage]);
+    }, [debouncedSearchTerm, currentPage]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setCurrentPage(1);
-            fetchProducts();
-            fetchStats();
+            setDebouncedSearchTerm(searchTerm);
         }, 300);
         return () => clearTimeout(timer);
-    }, [searchTerm, fetchProducts, fetchStats]);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearchTerm]);
 
     useEffect(() => {
         fetchProducts();
         fetchStats();
-    }, [currentPage, fetchProducts, fetchStats]);
+    }, [fetchProducts, fetchStats]);
+
+
+
+
 
     const handleStockUpdate = async (productId: string, type: 'ENTRY' | 'EXIT', quantity: number) => {
         try {
@@ -123,18 +131,17 @@ const Stock = () => {
         }
     };
 
-    const getStatusInfo = (status: string) => {
-        switch (status) {
-            case 'RUPTURE':
-                return { label: t('stock.status.out_of_stock'), color: 'red', icon: 'close', dotColor: 'red.500' };
-            case 'CRITIQUE':
-                return { label: t('stock.status.critical'), color: 'orange', icon: 'warning', dotColor: 'orange.500' };
-            case 'FAIBLE':
-                return { label: t('stock.status.low_stock'), color: 'yellow', icon: 'warning', dotColor: 'yellow.500' };
-            case 'EN_STOCK':
-            default:
-                return { label: t('stock.status.in_stock'), color: 'green', icon: 'check', dotColor: 'green.500' };
+    const getStatusInfo = (product: any) => {
+        const quantity = product.stockQuantity;
+        const threshold = product.minStockThreshold;
+
+        if (quantity <= 0) {
+            return { label: t('stock.status.out_of_stock'), color: 'red', icon: 'close', dotColor: 'red.500', isLow: true };
         }
+        if (quantity <= threshold) {
+            return { label: t('stock.status.low_stock'), color: 'orange', icon: 'warning', dotColor: 'orange.500', isLow: true };
+        }
+        return { label: t('stock.status.in_stock'), color: 'green', icon: 'check', dotColor: 'green.500', isLow: false };
     };
 
     const statsCards = [
@@ -151,10 +158,10 @@ const Stock = () => {
             title: t('stock.stats.low_stock_alert'),
             value: stats.lowStock.toString(),
             subtitle: t('stock.stats.requires_attention'),
-            subtitleColor: "yellow",
+            subtitleColor: "orange",
             icon: "warning",
-            iconBg: "yellow.100",
-            iconBgDark: "yellow.800",
+            iconBg: "orange.100",
+            iconBgDark: "orange.800",
         },
         {
             title: t('stock.stats.out_of_stock'),
@@ -163,7 +170,7 @@ const Stock = () => {
             subtitleColor: "red",
             icon: "error",
             iconBg: "red.100",
-            iconBgDark: "red.800",    
+            iconBgDark: "red.800",
         },
     ];
 
@@ -179,12 +186,7 @@ const Stock = () => {
                             {t('stock.subtitle')}
                         </Text>
                     </Stack>
-                    <HStack gap="3">
-                        <Button h="10" px="4" bg="primary" color="white" fontSize="sm" fontWeight="bold" _hover={{ bg: "blue.600" }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px', marginRight: '8px' }}>add</span>
-                            {t('stock.add_product')}
-                        </Button>
-                    </HStack>
+
                 </Flex>
                 <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap="4" mb="6">
                     {statsCards.map((card, index) => (
@@ -213,7 +215,7 @@ const Stock = () => {
                 <Flex direction={{ base: "column", lg: "row" }} gap="4" align={{ lg: "center" }} justify="space-between" bg={cardBg} p="4" borderRadius="xl" border="1px" borderColor={borderColor} shadow="sm" mb="6">
                     <Box flex="1" maxW={{ lg: "lg" }} w="full">
                         <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ color: "#94a3b8" }}>search</span>}>
-                            <Input placeholder={t('stock.search_placeholder')} bg={bg} color={mainText} border="0" ring="1px" ringColor={borderColor} _focus={{ ring: "2px", ringColor: "primary" }} py="2.5" borderRadius="lg" fontSize="sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
+                            <Input placeholder={t('stock.search_placeholder')} bg={bg} color={mainText} border="0" ring="1px" ringColor={borderColor} _focus={{ ring: "2px", ringColor: "primary" }} py="2.5" borderRadius="lg" fontSize="sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </InputGroup>
                     </Box>
                     <HStack gap="2" overflowX="auto" pb={{ base: "2", lg: "0" }}>
@@ -242,7 +244,7 @@ const Stock = () => {
                                     <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} display={{ base: "none", md: "table-cell" }}>{t('stock.table.price')}</Table.ColumnHeader>
                                     <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.status')}</Table.ColumnHeader>
                                     <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.stock_level')}</Table.ColumnHeader>
-                                    <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} textAlign="right">{t('stock.table.actions')}</Table.ColumnHeader>
+
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
@@ -256,7 +258,7 @@ const Stock = () => {
                                     </Table.Row>
                                 ) : products.length === 0 ? (
                                     <Table.Row>
-                                        <Table.Cell colSpan={7} p="8">
+                                        <Table.Cell colSpan={6} p="8">
                                             <Center w="full">
                                                 <Text color={subText}>{t('stock.table.noProducts')}</Text>
                                             </Center>
@@ -264,9 +266,9 @@ const Stock = () => {
                                     </Table.Row>
                                 ) : (
                                     products.map((product) => {
-                                        const status = getStatusInfo(product.stockStatus);
+                                        const status = getStatusInfo(product);
                                         const stockPercentage = Math.min((product.stockQuantity / (product.minStockThreshold * 2 || 100)) * 100, 100);
-                                        
+
                                         return (
                                             <Table.Row key={product.id} _hover={{ bg: bg }} transition="colors">
                                                 <Table.Cell p="4">
@@ -291,14 +293,14 @@ const Stock = () => {
                                                 </Table.Cell>
                                                 <Table.Cell p="4">
                                                     <HStack gap="3">
-                                                        <Flex align="center" border="1px" borderColor={product.stockStatus === 'EN_STOCK' ? borderColor : `${status.color}.200`} borderRadius="lg" bg={product.stockStatus === 'EN_STOCK' ? cardBg : `${status.color}.50`} _dark={product.stockStatus === 'EN_STOCK' ? {} : { borderColor: `${status.color}.800/50`, bg: `${status.color}.900/10` }} overflow="hidden">
-                                                            <IconButton aria-label="Decrease" variant="ghost" size="xs" color={product.stockStatus === 'EN_STOCK' ? subText : `${status.color}.700`}  _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'EXIT', 1)} disabled={product.stockQuantity <= 0}>
+                                                        <Flex align="center" border="1px" borderColor={!status.isLow ? borderColor : `${status.color}.200`} borderRadius="lg" bg={!status.isLow ? cardBg : `${status.color}.50`} _dark={!status.isLow ? {} : { borderColor: `${status.color}.800/50`, bg: `${status.color}.900/10` }} overflow="hidden">
+                                                            <IconButton aria-label="Decrease" variant="ghost" size="xs" color={!status.isLow ? subText : `${status.color}.700`} _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'EXIT', 1)} disabled={product.stockQuantity <= 0}>
                                                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>remove</span>
                                                             </IconButton>
-                                                            <Box w="8" textAlign="center" fontSize="sm" fontWeight="semibold" color={product.stockStatus === 'EN_STOCK' ? mainText : `${status.color}.900`} _dark={{ color: `${status.color}.100` }}>
+                                                            <Box w="8" textAlign="center" fontSize="sm" fontWeight="semibold" color={!status.isLow ? mainText : `${status.color}.900`} _dark={{ color: `${status.color}.100` }}>
                                                                 {product.stockQuantity}
                                                             </Box>
-                                                            <IconButton aria-label="Increase" variant="ghost" size="xs" color={product.stockStatus === 'EN_STOCK' ? subText : `${status.color}.700`} _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'ENTRY', 1)}> <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                                            <IconButton aria-label="Increase" variant="ghost" size="xs" color={!status.isLow ? subText : `${status.color}.700`} _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'ENTRY', 1)}> <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
                                                             </IconButton>
                                                         </Flex>
                                                         <Box display={{ base: "none", xl: "block" }} w="16" h="1.5" bg={bg} borderRadius="full" overflow="hidden">
@@ -306,11 +308,7 @@ const Stock = () => {
                                                         </Box>
                                                     </HStack>
                                                 </Table.Cell>
-                                                <Table.Cell p="4" textAlign="right">
-                                                    <IconButton aria-label="Edit" variant="ghost" color={subText} _hover={{ color: "primary", bg: "primary/10" }} borderRadius="full" size="sm">
-                                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit</span>
-                                                    </IconButton>
-                                                </Table.Cell>
+
                                             </Table.Row>
                                         );
                                     })
@@ -339,6 +337,7 @@ const Stock = () => {
                         </HStack>
                     </Flex>
                 </Box>
+
             </Box>
         </Sidebar>
     );
