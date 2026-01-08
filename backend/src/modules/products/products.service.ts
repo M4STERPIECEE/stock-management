@@ -69,6 +69,35 @@ export class ProductsService {
     return product;
   }
 
+  async bulkCreate(products: any[]): Promise<{ created: number; errors: string[] }> {
+    const results: { created: number; errors: string[] } = { created: 0, errors: [] };
+
+    for (const data of products) {
+      try {
+        const category = await this.categoriesService.findByName(data.categoryName);
+        if (!category) {
+          results.errors.push(`Produit "${data.name}": Catégorie "${data.categoryName}" inexistante`);
+          continue;
+        }
+
+        await this.create({
+          name: data.name,
+          categoryId: category.id,
+          price: data.price,
+          stockQuantity: data.stockQuantity,
+          minStockThreshold: data.minStockThreshold,
+          reference: data.reference,
+        });
+        results.created++;
+      } catch (error) {
+        results.errors.push(`Produit "${data.name}": ${error.message}`);
+      }
+    }
+
+    this.cacheService.clear();
+    return results;
+  }
+
   private async generateReference(): Promise<string> {
     const lastRef = await this.productRepository.findLastReference();
     if (!lastRef) {

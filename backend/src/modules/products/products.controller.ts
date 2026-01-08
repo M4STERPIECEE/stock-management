@@ -27,6 +27,11 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
+  @Post('bulk')
+  bulkCreate(@Body() products: any[]) {
+    return this.productsService.bulkCreate(products);
+  }
+
   @Get()
   findAll(@Query() filter: ProductFilterDto) {
     return this.productsService.findAll(filter);

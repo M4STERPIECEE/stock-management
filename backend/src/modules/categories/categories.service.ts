@@ -24,6 +24,10 @@ export class CategoriesService {
     return category;
   }
 
+  async findByName(name: string) {
+    return this.categoryRepository.findByName(name);
+  }
+
   async create(createCategoryDto: CreateCategoryDto) {
     const existing = await this.categoryRepository.findByName(
       createCategoryDto.name,

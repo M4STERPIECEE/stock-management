@@ -7,13 +7,17 @@ import { useColorMode } from '../../components/ui/color-mode';
 import ProductsListTabContent from './ProductsListTabContent';
 import CategoryListTabContent from './CategoryListTabContent';
 import AddProductModal from './modal/AddProductModal';
+import ImportProductsModal from './modal/ImportProductsModal';
+import { SnackbarContent } from '../../components/ui/Snackbar';
 
 const Products = () => {
     const { t } = useTranslation();
     const { colorMode } = useColorMode();
     const [activeTab, setActiveTab] = useState('products');
     const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [importSuccessMessage, setImportSuccessMessage] = useState<string | null>(null);
     const mainText = 'textMain';
     const subText = 'textSub';
     const borderColor = 'border';
@@ -22,6 +26,12 @@ const Products = () => {
     const handleAddProductSuccess = () => {
         setIsAddProductModalOpen(false);
         setRefreshKey(prev => prev + 1);
+    };
+
+    const handleImportSuccess = (count: number) => {
+        setRefreshKey(prev => prev + 1);
+        setImportSuccessMessage(`${count} ${t('products.imported_success', 'produits importés avec succès')}`);
+        setTimeout(() => setImportSuccessMessage(null), 5000);
     };
 
     return (
@@ -33,12 +43,12 @@ const Products = () => {
                     </Text>
                     {activeTab === 'products' && (
                         <HStack gap="3">
-                            <Button h="10" px="4" bg={cardBg} border="1px solid" borderColor={borderColor} color={mainText} _hover={{ bg: colorMode === 'dark' ? 'whiteAlpha.100' : 'gray.50' }} borderRadius="lg" fontSize="sm" fontWeight="bold">
+                            <Button h="10" px="4" bg={cardBg} border="1px solid" borderColor={borderColor} color={mainText} _hover={{ bg: colorMode === 'dark' ? 'whiteAlpha.100' : 'gray.50' }} borderRadius="lg" fontSize="sm" fontWeight="bold" onClick={() => setIsImportModalOpen(true)}>
                                 <Flex align="center" gap="2">
                                     <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                                        file_upload
+                                        upload
                                     </span>
-                                    <span>{t('products.export')}</span>
+                                    <span>{t('products.import', 'Importer')}</span>
                                 </Flex>
                             </Button>
                             <Button  h="10" px="4" bg="primary" color="white"  _hover={{ bg: 'blue.600' }} borderRadius="lg" fontSize="sm" fontWeight="bold" boxShadow="sm" onClick={() => setIsAddProductModalOpen(true)}>
@@ -73,6 +83,8 @@ const Products = () => {
                     </TabsContent>
                 </TabsRoot>
                 <AddProductModal isOpen={isAddProductModalOpen} onClose={() => setIsAddProductModalOpen(false)} onSuccess={handleAddProductSuccess} />
+                <ImportProductsModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} onSuccess={handleImportSuccess} />
+                {importSuccessMessage && <SnackbarContent message={importSuccessMessage} />}
             </Box>
         </Sidebar>
     );
