@@ -13,10 +13,6 @@ jobs:
     services:
       postgres:
         image: postgres:15-alpine
-        env:
-          POSTGRES_USER: ${{ secrets.DB_USER || 'userdb' }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD || 'password' }}
-          POSTGRES_DB: ${{ secrets.DB_NAME || 'db' }}
         ports:
           - 5432:5432
 
@@ -30,7 +26,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'
+        node-version: '22'
         cache: 'pnpm'
         cache-dependency-path: backend/pnpm-lock.yaml
 
@@ -49,9 +45,3 @@ jobs:
     - name: Run Tests
       run: pnpm run test
       working-directory: ./backend
-      env:
-        DB_HOST: ${{ secrets.DB_HOST || 'localhost' }}
-        DB_PORT: ${{ secrets.DB_PORT || '5432' }}
-        DB_USER: ${{ secrets.DB_USER || 'userdb' }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'password' }}
-        DB_NAME: ${{ secrets.DB_NAME || 'db' }}
