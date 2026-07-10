@@ -12,7 +12,6 @@ const PAPER_DARK = '#0F1318';
 const AMBER = '#E8A33D';
 const SAGE = '#4F7C6B';
 const SAGE_DARK = '#3C6053';
-
 const TEXT_MAIN = INK;
 const TEXT_SUB = '#5B6675';
 const INPUT_BORDER = '#D7DBE1';
@@ -125,17 +124,8 @@ const LoginFormContent = () => {
             <Flex minH="100vh" bg={PAPER}>
                 <Flex display={{ base: 'none', lg: 'flex' }} direction="column" justify="center" w="42%" minW="420px" bg={INK} color="whiteAlpha.900" p="10" pos="relative" overflow="hidden">
                     <Box pos="absolute" inset="0" bg={INK} />
-                    <Box
-                        pos="absolute"
-                        inset="0"
-                        opacity="0.35"
-                        backgroundImage={`linear-gradient(135deg, ${AMBER}, ${SAGE_DARK}, ${SAGE}, ${INK}, ${AMBER})`}
-                        backgroundSize="200% 200%"
-                        style={{ animation: 'stockmgr-color-shift 8s ease-in-out infinite' }}
-                    />
-
+                    <Box pos="absolute" inset="0" opacity="0.35" backgroundImage={`linear-gradient(135deg, ${AMBER}, ${SAGE_DARK}, ${SAGE}, ${INK}, ${AMBER})`} backgroundSize="200% 200%" style={{ animation: 'stockmgr-color-shift 8s ease-in-out infinite' }} />
                     <Box pos="absolute" inset="0" bgGradient={`linear(to-b, ${INK} 0%, transparent 25%, transparent 75%, ${INK} 100%)`} />
-
                     {stockTags.map((tag) => (
                         <Box key={tag.code} className="stockmgr-tag" pos="absolute" top={tag.top} left={tag.left} bg={INK_SOFT} border="1px solid" borderColor="whiteAlpha.200" borderRadius="md" px="3" py="2" fontFamily="mono" fontSize="xs" boxShadow="0 8px 24px rgba(0,0,0,0.35)" zIndex="1" style={{ animation: 'stockmgr-drift 6s ease-in-out infinite' }}>
                             <Text color={AMBER} fontWeight="bold" letterSpacing="0.05em">{tag.code}</Text>
@@ -159,7 +149,6 @@ const LoginFormContent = () => {
                         </Text>
                     </Box>
                 </Flex>
-
                 <Flex flex="1" align="center" justify="center" p={{ base: 6, md: 10 }}>
                     <Box w="full" maxW="380px" bg="white" borderRadius="xl" p={{ base: 6, md: 8 }} boxShadow="lg">
                         <Flex display={{ base: 'flex', lg: 'none' }} align="center" gap="3" mb="6">
@@ -168,7 +157,6 @@ const LoginFormContent = () => {
                             </Flex>
                             <Text fontSize="md" fontWeight="bold" letterSpacing="tight" color={TEXT_MAIN}>StockManager</Text>
                         </Flex>
-
                         <Text fontFamily="mono" fontSize="xs" letterSpacing="0.15em" color={AMBER} fontWeight="bold" mb="3">
                             {t('login.kicker', 'CONNEXION')}
                         </Text>
@@ -178,7 +166,6 @@ const LoginFormContent = () => {
                         <Text color={TEXT_SUB} fontSize="sm" mb="8">
                             {t('login.subtitle')}
                         </Text>
-
                         <form onSubmit={handleSubmit}>
                             <Stack gap="5">
                                 <Box>
@@ -186,61 +173,17 @@ const LoginFormContent = () => {
                                         {t('login.email_label')}
                                     </Text>
                                     <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#7A8494' }}>person</span>}>
-                                        <Input
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            name="email"
-                                            type="email"
-                                            autoComplete="email"
-                                            placeholder="adresse.email@example.com"
-                                            size="lg"
-                                            bg="white"
-                                            color={TEXT_MAIN}
-                                            border="1px solid"
-                                            borderColor={INPUT_BORDER}
-                                            borderRadius="md"
-                                            h="11"
-                                            fontSize="sm"
-                                            _placeholder={{ color: '#9AA3AF' }}
-                                            _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }}
-                                        />
+                                        <Input value={email} onChange={(e) => setEmail(e.target.value)} name="email" type="email" autoComplete="email" placeholder="adresse.email@example.com" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                     </InputGroup>
                                 </Box>
-
                                 <Box>
                                     <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.03em" mb="2" color={TEXT_SUB} textTransform="uppercase">
                                         {t('login.password_label')}
                                     </Text>
-                                    <InputGroup
-                                        w="full"
-                                        startElement={<span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#7A8494' }}>lock</span>}
-                                        endElement={
-                                            <IconButton variant="ghost" aria-label="Toggle password" onClick={() => setShowPassword(!showPassword)} size="sm" bg="transparent" color={TEXT_SUB} _hover={{ bg: 'transparent', color: INK }} _active={{ bg: 'transparent' }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{showPassword ? 'visibility_off' : 'visibility'}</span>
-                                            </IconButton>
-                                        }
-                                    >
-                                        <Input
-                                            type={showPassword ? 'text' : 'password'}
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            name="password"
-                                            autoComplete="current-password"
-                                            placeholder="••••••••"
-                                            size="lg"
-                                            bg="white"
-                                            color={TEXT_MAIN}
-                                            border="1px solid"
-                                            borderColor={INPUT_BORDER}
-                                            borderRadius="md"
-                                            h="11"
-                                            fontSize="sm"
-                                            _placeholder={{ color: '#9AA3AF' }}
-                                            _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }}
-                                        />
+                                    <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#7A8494' }}>lock</span>} endElement={<IconButton variant="ghost" aria-label="Toggle password" onClick={() => setShowPassword(!showPassword)} size="sm" bg="transparent" color={TEXT_SUB} _hover={{ bg: 'transparent', color: INK }} _active={{ bg: 'transparent' }}><span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{showPassword ? 'visibility_off' : 'visibility'}</span></IconButton>}>
+                                        <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} name="password" autoComplete="current-password" placeholder="••••••••" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                     </InputGroup>
                                 </Box>
-
                                 <Flex align="center" justify="space-between">
                                     <Checkbox.Root variant="subtle" checked={rememberMe} onCheckedChange={(details) => setRememberMe(Boolean(details.checked))}>
                                         <Checkbox.HiddenInput />
@@ -253,35 +196,15 @@ const LoginFormContent = () => {
                                         {t('login.forgot_password')}
                                     </Link>
                                 </Flex>
-
-                                {/* Bouton : SAGE au lieu du noir, avec un état hover plus foncé */}
-                                <Button
-                                    w="full"
-                                    h="12"
-                                    bg={SAGE}
-                                    color="white"
-                                    fontSize="sm"
-                                    fontWeight="bold"
-                                    letterSpacing="0.02em"
-                                    borderRadius="md"
-                                    pos="relative"
-                                    overflow="hidden"
-                                    _hover={{ bg: SAGE_DARK }}
-                                    _active={{ transform: 'scale(0.98)' }}
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    loading={isSubmitting}
-                                >
+                                <Button w="full" h="12" bg={SAGE} color="white" fontSize="sm" fontWeight="bold" letterSpacing="0.02em" borderRadius="md" pos="relative" overflow="hidden" _hover={{ bg: SAGE_DARK }} _active={{ transform: 'scale(0.98)' }} type="submit" disabled={isSubmitting} loading={isSubmitting}>
                                     {t('login.submit')}
                                     {isSubmitting && (
                                         <Box className="stockmgr-scan-line" pos="absolute" top="0" bottom="0" w="30%" bgGradient={`linear(to-r, transparent, ${AMBER}, transparent)`} style={{ animation: 'stockmgr-scan 1.1s linear infinite' }} />
                                     )}
                                 </Button>
-
                                 {errorMessage && <SnackbarContent message={errorMessage} isError />}
                             </Stack>
                         </form>
-
                         <Text fontSize="xs" color={TEXT_SUB} textAlign="center" mt="8">
                             {t('login.protected_text')}
                         </Text>
