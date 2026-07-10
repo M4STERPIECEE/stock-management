@@ -47,8 +47,8 @@ docker-compose up -d --build
 **Frontend en local**
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 L'application est accessible sur `http://localhost:5173`.

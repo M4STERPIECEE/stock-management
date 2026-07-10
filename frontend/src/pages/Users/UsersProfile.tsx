@@ -91,7 +91,7 @@ const UsersProfile = () => {
         if (!token) return;
 
         try {
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
             const response = await fetch(`${baseUrl}/api/v1/auth/profile`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -137,7 +137,7 @@ const UsersProfile = () => {
         reader.onloadend = async () => {
             const base64String = reader.result as string;
             const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
 
             try {
                 const response = await fetch(`${baseUrl}/api/v1/auth/update-profile`, {
@@ -181,7 +181,7 @@ const UsersProfile = () => {
     const handleSaveProfile = async () => {
         const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
         if (!token) return;
-        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
 
         const fullPhoneNumber = phoneNumber ? `${phoneCode}${phoneNumber}` : null;
 
@@ -228,7 +228,7 @@ const UsersProfile = () => {
         setIsUpdatingPassword(true);
         const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
         if (!token) return;
-        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
 
         try {
             const response = await fetch(`${baseUrl}/api/v1/auth/update-profile`, {

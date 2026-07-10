@@ -44,7 +44,7 @@ const Stock = () => {
     const fetchStats = useCallback(async () => {
         try {
             const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const response = await fetch('http://localhost:3000/api/v1/products/stats', {
+            const response = await fetch('http://localhost:3005/api/v1/products/stats', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
@@ -62,7 +62,7 @@ const Stock = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const url = new URL('http://localhost:3000/api/v1/products');
+            const url = new URL('http://localhost:3005/api/v1/products');
             if (debouncedSearchTerm) url.searchParams.append('search', debouncedSearchTerm);
             url.searchParams.append('page', currentPage.toString());
             url.searchParams.append('limit', limit.toString());
@@ -108,7 +108,7 @@ const Stock = () => {
     const handleStockUpdate = async (productId: string, type: 'ENTRY' | 'EXIT', quantity: number) => {
         try {
             const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const response = await fetch('http://localhost:3000/api/v1/stock/movements', {
+            const response = await fetch('http://localhost:3005/api/v1/stock/movements', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

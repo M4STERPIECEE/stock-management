@@ -202,7 +202,7 @@ const ProductsListTabContent = () => {
 	const fetchCategories = useCallback(async () => {
 		try {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3000/api/v1/categories', {
+			const response = await fetch('http://localhost:3005/api/v1/categories', {
 				headers: {
 					'Authorization': `Bearer ${token}`,
 				}
@@ -220,7 +220,7 @@ const ProductsListTabContent = () => {
 		setLoading(true);
 		try {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const url = new URL('http://localhost:3000/api/v1/products');
+			const url = new URL('http://localhost:3005/api/v1/products');
 			if (searchTerm) url.searchParams.append('search', searchTerm);
 			if (sortBy) url.searchParams.append('sortBy', sortBy);
 			if (sortOrder) url.searchParams.append('sortOrder', sortOrder);

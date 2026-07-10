@@ -128,7 +128,7 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 		setErrorMessage(null);
 		try {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3000/api/v1/categories', {
+			const response = await fetch('http://localhost:3005/api/v1/categories', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

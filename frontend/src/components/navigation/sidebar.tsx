@@ -53,7 +53,7 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
             if (!token) return;
 
             try {
-                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
                 const response = await fetch(`${baseUrl}/api/v1/auth/profile`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -98,7 +98,7 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
         const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
         if (token) {
             try {
-                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
                 await fetch(`${baseUrl}/api/v1/auth/logout`, {
                     method: 'POST',
                     headers: {

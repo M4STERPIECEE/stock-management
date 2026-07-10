@@ -127,7 +127,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }: AddProductModalProps) =
 	const fetchCategories = async () => {
 		try {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3000/api/v1/categories', {
+			const response = await fetch('http://localhost:3005/api/v1/categories', {
 				headers: {
 					'Authorization': `Bearer ${token}`,
 				}
@@ -155,7 +155,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }: AddProductModalProps) =
 		setLoading(true);
 		try {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3000/api/v1/products', {
+			const response = await fetch('http://localhost:3005/api/v1/products', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
