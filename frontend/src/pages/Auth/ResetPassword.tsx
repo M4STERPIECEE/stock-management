@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Flex, Text, Button, Input, Stack, Link, Span, IconButton, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Input, Stack, Link, IconButton, Grid, GridItem } from '@chakra-ui/react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useColorMode } from '../../components/ui/color-mode';
 
 const INK = '#151A21';
 const INK_SOFT = '#1E252F';
@@ -28,7 +27,6 @@ const SnackbarContent = ({ message, isError = false }: { message: string, isErro
 
 const ResetPassword = () => {
     const { t } = useTranslation();
-    const { colorMode } = useColorMode();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
@@ -114,7 +112,7 @@ const ResetPassword = () => {
     };
 
     return (
-        <Span display="contents" className={`chakra-theme ${colorMode}`}>
+        <>
             <style>{`
                 @keyframes stockmgr-fade-in {
                     from { opacity: 0; transform: translate(-50%, 8px); }
@@ -188,41 +186,8 @@ const ResetPassword = () => {
                                         {t('auth.reset.new_password_label')}
                                     </Text>
                                     <Box position="relative">
-                                        <Input
-                                            disabled={isTokenMissing}
-                                            css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }}
-                                            type={showPassword ? "text" : "password"}
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="••••••••"
-                                            size="lg"
-                                            bg="white"
-                                            color={TEXT_MAIN}
-                                            border="1px solid"
-                                            borderColor={INPUT_BORDER}
-                                            borderRadius="md"
-                                            h="11"
-                                            fontSize="sm"
-                                            pr="12"
-                                            _placeholder={{ color: '#9AA3AF' }}
-                                            _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }}
-                                        />
-                                        <IconButton
-                                            disabled={isTokenMissing}
-                                            aria-label="Toggle password visibility"
-                                            variant="ghost"
-                                            position="absolute"
-                                            right="0"
-                                            top="0"
-                                            bottom="0"
-                                            h="full"
-                                            px="3"
-                                            color={TEXT_SUB}
-                                            bg="transparent"
-                                            _hover={{ bg: "transparent", color: INK }}
-                                            _active={{ bg: "transparent" }}
-                                            onClick={() => setShowPassword(!showPassword)}
-                                        >
+                                        <Input disabled={isTokenMissing} css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }} type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" pr="12" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
+                                        <IconButton disabled={isTokenMissing} aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={TEXT_SUB} bg="transparent" _hover={{ bg: "transparent", color: INK }} _active={{ bg: "transparent" }} onClick={() => setShowPassword(!showPassword)}>
                                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                                                 {showPassword ? 'visibility_off' : 'visibility'}
                                             </span>
@@ -249,41 +214,8 @@ const ResetPassword = () => {
                                         {t('auth.reset.confirm_password_label')}
                                     </Text>
                                     <Box position="relative">
-                                        <Input
-                                            disabled={isTokenMissing}
-                                            css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }}
-                                            type={showConfirmPassword ? "text" : "password"}
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            placeholder="••••••••"
-                                            size="lg"
-                                            bg="white"
-                                            color={TEXT_MAIN}
-                                            border="1px solid"
-                                            borderColor={INPUT_BORDER}
-                                            borderRadius="md"
-                                            h="11"
-                                            fontSize="sm"
-                                            pr="12"
-                                            _placeholder={{ color: '#9AA3AF' }}
-                                            _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }}
-                                        />
-                                        <IconButton
-                                            disabled={isTokenMissing}
-                                            aria-label="Toggle password visibility"
-                                            variant="ghost"
-                                            position="absolute"
-                                            right="0"
-                                            top="0"
-                                            bottom="0"
-                                            h="full"
-                                            px="3"
-                                            color={TEXT_SUB}
-                                            bg="transparent"
-                                            _hover={{ bg: "transparent", color: INK }}
-                                            _active={{ bg: "transparent" }}
-                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        >
+                                        <Input disabled={isTokenMissing} css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }} type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" pr="12" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
+                                        <IconButton disabled={isTokenMissing} aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={TEXT_SUB} bg="transparent" _hover={{ bg: "transparent", color: INK }} _active={{ bg: "transparent" }} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                                                 {showConfirmPassword ? 'visibility_off' : 'visibility'}
                                             </span>
@@ -294,35 +226,11 @@ const ResetPassword = () => {
                                 {errorMessage && <SnackbarContent message={errorMessage} isError />}
                                 {successMessage && <SnackbarContent message={successMessage} />}
 
-                                <Button
-                                    w="full"
-                                    h="12"
-                                    bg={SAGE}
-                                    color="white"
-                                    fontSize="sm"
-                                    fontWeight="bold"
-                                    letterSpacing="0.02em"
-                                    borderRadius="md"
-                                    _hover={{ bg: SAGE_DARK }}
-                                    _active={{ transform: 'scale(0.98)' }}
-                                    type="submit"
-                                    disabled={isSubmitting || isTokenMissing}
-                                    loading={isSubmitting}
-                                >
+                                <Button w="full" h="12" bg={SAGE} color="white" fontSize="sm" fontWeight="bold" letterSpacing="0.02em" borderRadius="md" _hover={{ bg: SAGE_DARK }} _active={{ transform: 'scale(0.98)' }} type="submit" disabled={isSubmitting || isTokenMissing} loading={isSubmitting}>
                                     {t('auth.reset.submit')}
                                 </Button>
 
-                                <Link
-                                    fontSize="sm"
-                                    fontWeight="semibold"
-                                    color={SAGE_DARK}
-                                    _hover={{ color: AMBER }}
-                                    onClick={() => navigate('/login')}
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    gap="1"
-                                >
+                                <Link fontSize="sm" fontWeight="semibold" color={SAGE_DARK} _hover={{ color: AMBER }} onClick={() => navigate('/login')} display="flex" alignItems="center" justifyContent="center" gap="1">
                                     <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
                                     {t('auth.reset.back_to_login')}
                                 </Link>
@@ -331,7 +239,7 @@ const ResetPassword = () => {
                     </Box>
                 </Flex>
             </Flex>
-        </Span>
+        </>
     );
 };
 

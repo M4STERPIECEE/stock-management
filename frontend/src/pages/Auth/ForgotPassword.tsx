@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Flex, Text, Button, Input, Stack, Link, InputGroup, Span } from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Input, Stack, Link, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
 
 const INK = '#151A21';
@@ -28,7 +27,6 @@ const SnackbarContent = ({ message, isError = false }: { message: string, isErro
 
 const ForgotPasswordFormContent = () => {
     const { t } = useTranslation();
-    const { colorMode } = useColorMode();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,7 +65,7 @@ const ForgotPasswordFormContent = () => {
     };
 
     return (
-        <Span display="contents" className={`chakra-theme ${colorMode}`}>
+        <>
             <style>{`
                 @keyframes stockmgr-fade-in {
                     from { opacity: 0; transform: translate(-50%, 8px); }
@@ -164,7 +162,7 @@ const ForgotPasswordFormContent = () => {
                     </Box>
                 </Flex>
             </Flex>
-        </Span>
+        </>
     );
 };
 

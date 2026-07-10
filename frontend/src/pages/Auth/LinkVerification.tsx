@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Flex, Text, Button, Link, Span } from '@chakra-ui/react';
-import { useColorMode } from '../../components/ui/color-mode';
+import { Box, Flex, Text, Button, Link } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const INK = '#151A21';
@@ -16,11 +15,10 @@ const TEXT_SUB = '#5B6675';
 
 const LinkVerification = () => {
     const { t } = useTranslation();
-    const { colorMode } = useColorMode();
     const navigate = useNavigate();
 
     return (
-        <Span display="contents" className={`chakra-theme ${colorMode}`}>
+        <>
             <style>{`
                 @keyframes stockmgr-color-shift {
                     0% { transform: scale(1); opacity: 0.35; }
@@ -86,32 +84,11 @@ const LinkVerification = () => {
                         </Box>
 
                         <Flex direction="column" gap="3">
-                            <Button
-                                w="full"
-                                h="12"
-                                bg={SAGE}
-                                color="white"
-                                fontSize="sm"
-                                fontWeight="bold"
-                                letterSpacing="0.02em"
-                                borderRadius="md"
-                                _hover={{ bg: SAGE_DARK }}
-                                _active={{ transform: 'scale(0.98)' }}
-                            >
+                            <Button w="full" h="12" bg={SAGE} color="white" fontSize="sm" fontWeight="bold" letterSpacing="0.02em" borderRadius="md" _hover={{ bg: SAGE_DARK }} _active={{ transform: 'scale(0.98)' }}>
                                 {t('auth.link_verification.resend')}
                             </Button>
 
-                            <Link
-                                fontSize="sm"
-                                fontWeight="semibold"
-                                color={SAGE_DARK}
-                                _hover={{ color: AMBER }}
-                                onClick={() => navigate('/login')}
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                                gap="1"
-                            >
+                            <Link fontSize="sm" fontWeight="semibold" color={SAGE_DARK} _hover={{ color: AMBER }} onClick={() => navigate('/login')} display="flex" alignItems="center" justifyContent="center" gap="1">
                                 <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
                                 {t('auth.link_verification.back_to_login')}
                             </Link>
@@ -123,7 +100,7 @@ const LinkVerification = () => {
                     </Box>
                 </Flex>
             </Flex>
-        </Span>
+        </>
     );
 };
 
