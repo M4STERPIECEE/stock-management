@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 
 const UsersProfile = () => {
     const { t, i18n } = useTranslation();
-    const { colorMode, toggleColorMode } = useColorMode();
+    const { colorMode } = useColorMode();
     const [user, setUser] = useState<{ username: string; email: string; role: string; profilePicture?: string; phoneNumber?: string; firstName?: string; lastName?: string } | null>(null);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -490,15 +490,6 @@ const UsersProfile = () => {
                                             </Popover.Root>
                                         </Flex>
                                         <Separator color={borderColor} opacity={0.6} />
-                                        <Flex align="center" justify="space-between">
-                                            <Box>
-                                                <Text color={mainText} fontWeight="medium" fontSize="sm">{t('profile.dark_mode')}</Text>
-                                                <Text color={subText} fontSize="xs">{t('profile.dark_mode_desc')}</Text>
-                                            </Box>
-                                            <Box w="10" h="5" bg={colorMode === 'dark' ? "primary" : "gray.300"} rounded="full" position="relative" cursor="pointer" transition="all 0.3s ease" onClick={toggleColorMode} _hover={{ opacity: 0.8 }}>
-                                                <Box position="absolute" top="0.5" left={colorMode === 'dark' ? "5" : "0.5"} boxSize="4" bg="white" rounded="full" shadow="sm" transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)" />
-                                            </Box>
-                                        </Flex>
                                     </VStack>
                                 </Box>
                                 <Box id="settings__security" bg={cardBg} borderRadius="xl" border="1px solid" borderColor={borderColor} shadow="sm" p={{ base: 6, md: 8 }} scrollMarginTop="100px">

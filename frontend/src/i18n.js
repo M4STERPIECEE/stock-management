@@ -86,8 +86,6 @@ i18n
                         "preferences": "Preferences",
                         "language": "Interface Language",
                         "language_desc": "Choose the default display language.",
-                        "dark_mode": "Dark Mode",
-                        "dark_mode_desc": "Adjust the application's appearance.",
                         "security": "Security",
                         "2fa": "Two-Factor Authentication (2FA)",
                         "2fa_desc": "Your account is secure. 2FA is currently active.",
@@ -220,7 +218,53 @@ i18n
                         "error_incorrect": "Incorrect email or password.",
                         "error_generic": "Error connecting. Please try again.",
                         "error_invalid_response": "Invalid server response (missing token).",
-                        "error_network": "Unable to contact the server."
+                        "error_network": "Unable to contact the server.",
+                        "hero_title": "Every reference, in its right place.",
+                        "hero_subtitle": "Track your stock, sales and teams from a single place."
+                    },
+                        "auth": {
+                        "forgot": {
+                            "kicker": "RESET",
+                            "hero_subtitle": "Don't worry. Enter the email address associated with your admin account below.",
+                            "card_subtitle": "Enter your email to receive a reset link.",
+                            "email_label": "Email address",
+                            "submit": "Send reset link",
+                            "or": "OR",
+                            "back_to_login": "Back to login",
+                            "success": "If this email exists, a reset link has been sent",
+                            "error_generic": "An error occurred. Please try again."
+                        },
+                        "link_verification": {
+                            "title": "Check your inbox",
+                            "subtitle": "We've sent a verification link to your email address. Follow the instructions to reset your password.",
+                            "card_title": "Check your email",
+                            "card_subtitle": "A reset link has been sent to your email address. Click the link to create a new password.",
+                            "spam_hint": "If you don't see the email in a few minutes, check your spam or junk mail folder.",
+                            "resend": "Resend email",
+                            "back_to_login": "Back to login"
+                        },
+                        "reset": {
+                            "kicker": "SECURITY",
+                            "hero_title": "Reset password",
+                            "hero_subtitle": "Choose a new secure password for your admin account.",
+                            "title": "New password",
+                            "subtitle": "Please choose a strong password for your account.",
+                            "new_password_label": "New password",
+                            "confirm_password_label": "Confirm password",
+                            "criteria_title": "Security criteria",
+                            "criteria_min_length": "At least 8 characters",
+                            "criteria_uppercase": "One uppercase letter",
+                            "criteria_number": "One number",
+                            "criteria_special": "One special character",
+                            "submit": "Save password",
+                            "back_to_login": "Back to login",
+                            "token_missing": "Invalid or expired link. Please try again.",
+                            "error_password_mismatch": "Passwords do not match.",
+                            "error_criteria": "Password does not meet security criteria.",
+                            "error_token_missing": "Reset token missing or invalid.",
+                            "success": "Password reset successfully!",
+                            "error_generic": "Error during reset."
+                        }
                     }
                 }
             },
@@ -298,8 +342,6 @@ i18n
                         "preferences": "Préférences",
                         "language": "Langue de l'interface",
                         "language_desc": "Choisissez la langue d'affichage par défaut.",
-                        "dark_mode": "Mode Sombre",
-                        "dark_mode_desc": "Ajuster l'apparence de l'application.",
                         "security": "Sécurité",
                         "2fa": "Authentification à deux facteurs (2FA)",
                         "2fa_desc": "Votre compte est sécurisé. La 2FA est actuellement activée.",
@@ -432,7 +474,53 @@ i18n
                         "error_incorrect": "Email ou mot de passe incorrect.",
                         "error_generic": "Erreur lors de la connexion. Réessayez.",
                         "error_invalid_response": "Réponse invalide du serveur (token manquant).",
-                        "error_network": "Impossible de contacter le serveur."
+                        "error_network": "Impossible de contacter le serveur.",
+                        "hero_title": "Chaque référence, à sa juste place.",
+                        "hero_subtitle": "Suivez vos stocks, vos ventes et vos équipes depuis un seul endroit."
+                    },
+                    "auth": {
+                        "forgot": {
+                            "kicker": "RÉINITIALISATION",
+                            "hero_subtitle": "Pas de panique. Saisissez l'adresse e-mail associée à votre compte administrateur ci-dessous.",
+                            "card_subtitle": "Saisissez votre email pour recevoir un lien de réinitialisation.",
+                            "email_label": "Adresse e-mail",
+                            "submit": "Envoyer le lien",
+                            "or": "OU",
+                            "back_to_login": "Retour à la connexion",
+                            "success": "Si cet email existe, un lien de réinitialisation a été envoyé",
+                            "error_generic": "Une erreur est survenue. Veuillez réessayer."
+                        },
+                        "link_verification": {
+                            "title": "Vérifiez votre boîte mail",
+                            "subtitle": "Nous avons envoyé un lien de vérification à votre adresse email. Suivez les instructions pour réinitialiser votre mot de passe.",
+                            "card_title": "Vérifiez votre boîte mail",
+                            "card_subtitle": "Un lien de réinitialisation a été envoyé à votre adresse email. Cliquez sur le lien pour créer un nouveau mot de passe.",
+                            "spam_hint": "Si vous ne voyez pas l'email dans quelques minutes, vérifiez votre dossier de spam ou courriers indésirables.",
+                            "resend": "Renvoyer l'email",
+                            "back_to_login": "Retour à la connexion"
+                        },
+                        "reset": {
+                            "kicker": "SÉCURITÉ",
+                            "hero_title": "Réinitialisation du mot de passe",
+                            "hero_subtitle": "Choisissez un nouveau mot de passe sécurisé pour votre compte administrateur.",
+                            "title": "Nouveau mot de passe",
+                            "subtitle": "Veuillez choisir un mot de passe fort pour votre compte.",
+                            "new_password_label": "Nouveau mot de passe",
+                            "confirm_password_label": "Confirmer le mot de passe",
+                            "criteria_title": "Critères de sécurité",
+                            "criteria_min_length": "Au moins 8 caractères",
+                            "criteria_uppercase": "Une majuscule",
+                            "criteria_number": "Un chiffre",
+                            "criteria_special": "Caractère spécial",
+                            "submit": "Enregistrer le mot de passe",
+                            "back_to_login": "Retour à la connexion",
+                            "token_missing": "Lien invalide ou expiré. Veuillez recommencer.",
+                            "error_password_mismatch": "Les mots de passe ne correspondent pas.",
+                            "error_criteria": "Le mot de passe ne respecte pas les critères de sécurité.",
+                            "error_token_missing": "Jeton de réinitialisation manquant ou invalide.",
+                            "success": "Mot de passe réinitialisé avec succès !",
+                            "error_generic": "Erreur lors de la réinitialisation."
+                        }
                     }
                 }
             },
@@ -510,8 +598,6 @@ i18n
                         "preferences": "Safidy",
                         "language": "Fiteny ampiasaina",
                         "language_desc": "Safidio ny fiteny hita amin'ny fampiharana.",
-                        "dark_mode": "Sary Mainty",
-                        "dark_mode_desc": "Ahitsio ny fisehon'ny fampiharana.",
                         "security": "Fiarovana",
                         "2fa": "Fanamarinana indroa (2FA)",
                         "2fa_desc": "Voaaro ny kaontinao. Ampitahaina amin'izao ny 2FA.",
@@ -644,7 +730,53 @@ i18n
                         "error_incorrect": "Diso ny imailaka na ny teny miafina.",
                         "error_generic": "Nisy olana teo amin'ny fidirana. Andramo indray.",
                         "error_invalid_response": "Valiny tsy mitombina avy amin'ny mpizara (tsy hita ny token).",
-                        "error_network": "Tsy afaka mifandray amin'ny mpizara."
+                        "error_network": "Tsy afaka mifandray amin'ny mpizara.",
+                        "hero_title": "Ny entana rehetra, eo amin'ny toerana mety.",
+                        "hero_subtitle": "Araho ny tahiry, ny varotra ary ny ekipanao avy amin'ny toerana iray."
+                    },
+                    "auth": {
+                        "forgot": {
+                            "kicker": "HAMERINA",
+                            "hero_subtitle": "Aza manahy. Ampidiro ny adiresy imailaka mifandray amin'ny kaontinao mpandrindra etsy ambany.",
+                            "card_subtitle": "Ampidiro ny imailakao mba hahazoana rohy famerenana.",
+                            "email_label": "Adiresy imailaka",
+                            "submit": "Mandefa rohy famerenana",
+                            "or": "NA",
+                            "back_to_login": "Hiverina any amin'ny fidirana",
+                            "success": "Raha misy ity imailaka ity, dia nisy rohy famerenana nalefa",
+                            "error_generic": "Nisy hadisoana nitranga. Andramo indray azafady."
+                        },
+                        "link_verification": {
+                            "title": "Jereo ny boaty imailakanao",
+                            "subtitle": "Nandefa rohy fanamarinana izahay tany amin'ny adiresy imailakao. Araho ny toromarika hamerina ny tenimiafinao.",
+                            "card_title": "Jereo ny imailakao",
+                            "card_subtitle": "Nisy rohy famerenana nalefa tany amin'ny adiresy imailakao. Tsindrio ny rohy hamoronana tenimiafina vaovao.",
+                            "spam_hint": "Raha tsy mahita ny imailaka ianao ao anatin'ny minitra vitsy, jereo ny lahatahiry spam na tsirinteny.",
+                            "resend": "Mandefa imailaka indray",
+                            "back_to_login": "Hiverina any amin'ny fidirana"
+                        },
+                        "reset": {
+                            "kicker": "FIAROVANA",
+                            "hero_title": "Famerenana ny tenimiafina",
+                            "hero_subtitle": "Misafidiana tenimiafina vaovao azo antoka ho an'ny kaontinao mpandrindra.",
+                            "title": "Tenimiafina vaovao",
+                            "subtitle": "Fidio ny tenimiafina matanjaka ho an'ny kaontinao.",
+                            "new_password_label": "Tenimiafina vaovao",
+                            "confirm_password_label": "Hamarino ny tenimiafina",
+                            "criteria_title": "Fepetra fiarovana",
+                            "criteria_min_length": "Farafahakeliny 8 tarehintsoratra",
+                            "criteria_uppercase": "Tarehintsoratra lehibe iray",
+                            "criteria_number": "Isa iray",
+                            "criteria_special": "Tarehintsoratra manokana iray",
+                            "submit": "Tehirizo ny tenimiafina",
+                            "back_to_login": "Hiverina any amin'ny fidirana",
+                            "token_missing": "Rohy tsy manan-kery na lany daty. Andramo indray azafady.",
+                            "error_password_mismatch": "Tsy mifanaraka ny tenimiafina.",
+                            "error_criteria": "Ny tenimiafina dia tsy mahafeno ny fepetra fiarovana.",
+                            "error_token_missing": "Tsy hita na tsy manan-kery ny mari-pamantarana famerenana.",
+                            "success": "Voavaha soa aman-tsara ny tenimiafina!",
+                            "error_generic": "Nisy hadisoana nandritra ny famerenana."
+                        }
                     }
                 }
             }

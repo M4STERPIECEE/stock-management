@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Flex, Text, Button, Input, Stack, Checkbox, Link, Container, IconButton, InputGroup, Span } from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Input, Stack, Checkbox, Link, Container, IconButton, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../components/ui/color-mode';
 import PageTransition from '../../components/PageTransition';
 import { useTranslation } from 'react-i18next';
 
@@ -35,7 +34,6 @@ const stockTags = [
 
 const LoginFormContent = () => {
     const { t } = useTranslation();
-    const { colorMode } = useColorMode();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
@@ -95,7 +93,7 @@ const LoginFormContent = () => {
     };
 
     return (
-        <Span display="contents" className={`chakra-theme ${colorMode}`}>
+        <>
             <style>{`
                 @keyframes stockmgr-fade-in {
                     from { opacity: 0; transform: translate(-50%, 8px); }
@@ -211,7 +209,7 @@ const LoginFormContent = () => {
                     </Box>
                 </Flex>
             </Flex>
-        </Span>
+        </>
     );
 };
 

@@ -12,7 +12,13 @@ export const system = createSystem(
     theme: {
       tokens: defineTokens({
         colors: {
-          primary: { value: "#137fec" },
+          primary: { value: "#4F7C6B" },
+          amber: { value: "#E8A33D" },
+          sage: { value: "#4F7C6B" },
+          sageDark: { value: "#3C6053" },
+          ink: { value: "#151A21" },
+          inkSoft: { value: "#1E252F" },
+          paper: { value: "#EFF1EC" },
         },
         fonts: {
           heading: { value: "'Inter', sans-serif" },
@@ -21,13 +27,13 @@ export const system = createSystem(
       }),
       semanticTokens: defineSemanticTokens({
         colors: {
-          background: { value: { _light: "#f6f7f8", _dark: "#101922" } },
-          card: { value: { _light: "#ffffff", _dark: "#1e293b" } },
-          textMain: { value: { _light: "#0d141b", _dark: "#e2e8f0" } },
-          textSub: { value: { _light: "#4c739a", _dark: "#94a3b8" } },
-          border: { value: { _light: "#e7edf3", _dark: "#334155" } },
-          inputBg: { value: { _light: "#f8fafc", _dark: "#1e293b" } },
-          inputBorder: { value: { _light: "#cfdbe7", _dark: "#475569" } },
+          background: { value: { _light: "#EFF1EC", _dark: "#EFF1EC" } },
+          card: { value: { _light: "#ffffff", _dark: "#ffffff" } },
+          textMain: { value: { _light: "#151A21", _dark: "#151A21" } },
+          textSub: { value: { _light: "#5B6675", _dark: "#5B6675" } },
+          border: { value: { _light: "#D7DBE1", _dark: "#D7DBE1" } },
+          inputBg: { value: { _light: "#ffffff", _dark: "#ffffff" } },
+          inputBorder: { value: { _light: "#D7DBE1", _dark: "#D7DBE1" } },
         },
       }),
       recipes: {

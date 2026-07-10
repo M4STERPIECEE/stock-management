@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
-import {
-    Box,
-    Flex,
-    Text,
-    Button,
-    Input,
-    Stack,
-    Link,
-    InputGroup,
-    Span
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Input, Stack, Link, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../components/ui/color-mode';
+import { useTranslation } from 'react-i18next';
 
 const INK = '#151A21';
 const INK_SOFT = '#1E252F';
@@ -36,7 +26,7 @@ const SnackbarContent = ({ message, isError = false }: { message: string, isErro
 };
 
 const ForgotPasswordFormContent = () => {
-    const { colorMode } = useColorMode();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,22 +50,22 @@ const ForgotPasswordFormContent = () => {
             });
 
             if (response.ok) {
-                setSuccessMessage("Si cet email existe, un lien de réinitialisation a été envoyé");
+                setSuccessMessage(t('auth.forgot.success'));
                 setTimeout(() => {
                     navigate('/link-verification');
                 }, 1000);
             } else {
-                setErrorMessage("Une erreur est survenue. Veuillez réessayer.");
+                setErrorMessage(t('auth.forgot.error_generic'));
             }
         } catch {
-            setErrorMessage("Impossible de contacter le serveur.");
+            setErrorMessage(t('login.error_network'));
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <Span display="contents" className={`chakra-theme ${colorMode}`}>
+        <>
             <style>{`
                 @keyframes stockmgr-fade-in {
                     from { opacity: 0; transform: translate(-50%, 8px); }
@@ -96,15 +86,7 @@ const ForgotPasswordFormContent = () => {
             <Flex minH="100vh" bg={PAPER}>
                 <Flex display={{ base: 'none', lg: 'flex' }} direction="column" justify="center" w="42%" minW="420px" bg={INK} color="whiteAlpha.900" p="10" pos="relative" overflow="hidden">
                     <Box pos="absolute" inset="0" bg={INK} />
-                    <Box
-                        className="stockmgr-color-layer"
-                        pos="absolute"
-                        inset="0"
-                        opacity="0.35"
-                        backgroundImage={`linear-gradient(135deg, ${AMBER}, ${SAGE_DARK}, ${SAGE}, ${INK}, ${AMBER})`}
-                        backgroundSize="200% 200%"
-                        style={{ animation: 'stockmgr-color-shift 8s ease-in-out infinite' }}
-                    />
+                    <Box className="stockmgr-color-layer" pos="absolute" inset="0" opacity="0.35" backgroundImage={`linear-gradient(135deg, ${AMBER}, ${SAGE_DARK}, ${SAGE}, ${INK}, ${AMBER})`} backgroundSize="200% 200%" style={{ animation: 'stockmgr-color-shift 8s ease-in-out infinite' }} />
                     <Box pos="absolute" inset="0" bgGradient={`linear(to-b, ${INK} 0%, transparent 25%, transparent 75%, ${INK} 100%)`} />
 
                     <Flex align="center" gap="3" zIndex="1" position="absolute" top="10">
@@ -116,10 +98,10 @@ const ForgotPasswordFormContent = () => {
 
                     <Box zIndex="1" maxW="360px" textAlign="center" margin="0 auto">
                         <Text fontSize="4xl" fontWeight="800" lineHeight="1.1" letterSpacing="-0.02em" mb="4">
-                            Mot de passe oublié ?
+                            {t('login.forgot_password')}
                         </Text>
                         <Text color="whiteAlpha.600" fontSize="sm" lineHeight="1.6">
-                            Pas de panique. Saisissez l'adresse e-mail associée à votre compte administrateur ci-dessous.
+                            {t('auth.forgot.hero_subtitle', "Pas de panique. Saisissez l'adresse e-mail associée à votre compte administrateur ci-dessous.")}
                         </Text>
                     </Box>
                 </Flex>
@@ -134,86 +116,44 @@ const ForgotPasswordFormContent = () => {
                         </Flex>
 
                         <Text fontFamily="mono" fontSize="xs" letterSpacing="0.15em" color={AMBER} fontWeight="bold" mb="3">
-                            RÉINITIALISATION
+                            {t('auth.forgot.kicker')}
                         </Text>
                         <Text fontSize="2xl" fontWeight="800" letterSpacing="-0.02em" color={TEXT_MAIN} mb="2">
-                            Mot de passe oublié ?
+                            {t('login.forgot_password')}
                         </Text>
                         <Text color={TEXT_SUB} fontSize="sm" mb="8">
-                            Saisissez votre email pour recevoir un lien de réinitialisation.
+                            {t('auth.forgot.card_subtitle', 'Saisissez votre email pour recevoir un lien de réinitialisation.')}
                         </Text>
 
                         <form onSubmit={handleSubmit}>
                             <Stack gap="5">
                                 <Box>
                                     <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.03em" mb="2" color={TEXT_SUB} textTransform="uppercase">
-                                        Adresse e-mail
+                                        {t('auth.forgot.email_label')}
                                     </Text>
                                     <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#7A8494' }}>mail</span>}>
-                                        <Input
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            name="email"
-                                            type="email"
-                                            autoComplete="email"
-                                            placeholder="adresse.email@example.com"
-                                            size="lg"
-                                            bg="white"
-                                            color={TEXT_MAIN}
-                                            border="1px solid"
-                                            borderColor={INPUT_BORDER}
-                                            borderRadius="md"
-                                            h="11"
-                                            fontSize="sm"
-                                            _placeholder={{ color: '#9AA3AF' }}
-                                            _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }}
-                                        />
+                                        <Input value={email} onChange={(e) => setEmail(e.target.value)} name="email" type="email" autoComplete="email" placeholder="adresse.email@example.com" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                     </InputGroup>
                                 </Box>
 
                                 {errorMessage && <SnackbarContent message={errorMessage} isError />}
                                 {successMessage && <SnackbarContent message={successMessage} />}
 
-                                <Button
-                                    w="full"
-                                    h="12"
-                                    bg={SAGE}
-                                    color="white"
-                                    fontSize="sm"
-                                    fontWeight="bold"
-                                    letterSpacing="0.02em"
-                                    borderRadius="md"
-                                    _hover={{ bg: SAGE_DARK }}
-                                    _active={{ transform: 'scale(0.98)' }}
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    loading={isSubmitting}
-                                >
-                                    Envoyer le lien
+                                <Button w="full" h="12" bg={SAGE} color="white" fontSize="sm" fontWeight="bold" letterSpacing="0.02em" borderRadius="md" _hover={{ bg: SAGE_DARK }} _active={{ transform: 'scale(0.98)' }} type="submit" disabled={isSubmitting} loading={isSubmitting}>
+                                    {t('auth.forgot.submit')}
                                 </Button>
                             </Stack>
                         </form>
 
                         <Flex align="center" gap="3" mt="6">
                             <Box flex="1" h="1px" bg={INPUT_BORDER} />
-                            <Text fontSize="xs" color={TEXT_SUB}>OU</Text>
+                            <Text fontSize="xs" color={TEXT_SUB}>{t('auth.forgot.or')}</Text>
                             <Box flex="1" h="1px" bg={INPUT_BORDER} />
                         </Flex>
 
-                        <Link
-                            fontSize="sm"
-                            fontWeight="semibold"
-                            color={SAGE_DARK}
-                            _hover={{ color: AMBER }}
-                            onClick={() => navigate('/login')}
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                            gap="1"
-                            mt="4"
-                        >
+                        <Link fontSize="sm" fontWeight="semibold" color={SAGE_DARK} _hover={{ color: AMBER }} onClick={() => navigate('/login')} display="flex" alignItems="center" justifyContent="center" gap="1" mt="4">
                             <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
-                            Retour à la connexion
+                            {t('auth.forgot.back_to_login')}
                         </Link>
 
                         <Text fontSize="xs" color={TEXT_SUB} textAlign="center" mt="8">
@@ -222,7 +162,7 @@ const ForgotPasswordFormContent = () => {
                     </Box>
                 </Flex>
             </Flex>
-        </Span>
+        </>
     );
 };
 
