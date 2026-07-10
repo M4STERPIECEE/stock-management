@@ -68,7 +68,7 @@ const CategoryListTabContent = () => {
 		setLoading(true);
 		try {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const url = new URL('http://localhost:3000/api/v1/categories');
+			const url = new URL('http://localhost:3005/api/v1/categories');
 			if (searchTerm) url.searchParams.append('search', searchTerm);
 			
 			const response = await fetch(url.toString(), {

@@ -90,7 +90,7 @@ const ImportProductsModal = ({ isOpen, onClose, onSuccess }: ImportProductsModal
                 });
 
                 const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-                const response = await fetch('http://localhost:3000/api/v1/products/bulk', {
+                const response = await fetch('http://localhost:3005/api/v1/products/bulk', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

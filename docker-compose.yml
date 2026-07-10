@@ -22,7 +22,7 @@ services:
     container_name: stock_backend
     restart: always
     ports:
-      - "3000:3000"
+      - "3005:3005"
     env_file:
       - .env
     depends_on:
@@ -33,7 +33,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: http://backend:3000
+        VITE_API_URL: http://backend:3005
     container_name: stock_frontend
     restart: always
     ports:

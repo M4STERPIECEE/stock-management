@@ -1,45 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    Box,
-    Flex,
-    Text,
-    Button,
-    Input,
-    Stack,
-    Link,
-    Span,
-    IconButton,
-    Grid,
-    GridItem
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Input, Stack, Link, Span, IconButton, Grid, GridItem } from '@chakra-ui/react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useColorMode } from '../../components/ui/color-mode';
-import HeaderBar from '../../components/navigation/headerbar';
+
+const INK = '#151A21';
+const INK_SOFT = '#1E252F';
+const PAPER = '#EFF1EC';
+const AMBER = '#E8A33D';
+const SAGE = '#4F7C6B';
+const SAGE_DARK = '#3C6053';
+
+const TEXT_MAIN = INK;
+const TEXT_SUB = '#5B6675';
+const INPUT_BORDER = '#D7DBE1';
 
 const SnackbarContent = ({ message, isError = false }: { message: string, isError?: boolean }) => {
     return (
-        <Box
-            position="fixed"
-            bottom={8}
-            left="50%"
-            transform="translateX(-50%)"
-            bg={isError ? "red.600" : "green.600"}
-            color="white"
-            px={6}
-            py={3}
-            borderRadius="lg"
-            boxShadow="xl"
-            display="flex"
-            alignItems="center"
-            gap={3}
-            zIndex={9999}
-            animation="fade-in 0.3s"
-        >
-            <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
+        <Box position="fixed" bottom={8} left="50%" transform="translateX(-50%)" bg={isError ? '#B3431F' : SAGE} color="white" px={6} py={3} borderRadius="md" boxShadow="xl" display="flex" alignItems="center" gap={3} zIndex={9999} animation="stockmgr-fade-in 0.25s ease-out">
+            <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>
                 {isError ? 'error' : 'check_circle'}
             </span>
-            <Text fontSize="md" fontWeight="medium">{message}</Text>
+            <Text fontSize="sm" fontWeight="medium">{message}</Text>
         </Box>
     );
 };
@@ -68,12 +50,6 @@ const ResetPassword = () => {
         }
     }, [errorMessage]);
 
-    const mainText = "textMain";
-    const subText = "textSub";
-    const cardBg = "card";
-    const borderColor = "border";
-    const inputBg = "inputBg";
-    const inputBorder = "inputBorder";
     const hasMinLength = password.length >= 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
@@ -81,7 +57,7 @@ const ResetPassword = () => {
     const isTokenMissing = !token;
 
     const RequirementItem = ({ met, label }: { met: boolean, label: string }) => (
-        <Flex align="center" gap="2" color={met ? "green.500" : "gray.400"}>
+        <Flex align="center" gap="2" color={met ? SAGE : TEXT_SUB}>
             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                 {met ? 'check_circle' : 'radio_button_unchecked'}
             </span>
@@ -112,7 +88,7 @@ const ResetPassword = () => {
         setIsSubmitting(true);
 
         try {
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
             const response = await fetch(`${baseUrl}/api/v1/auth/reset-password`, {
                 method: 'POST',
                 headers: {
@@ -130,7 +106,7 @@ const ResetPassword = () => {
                 const data = await response.json();
                 setErrorMessage(data.message || "Erreur lors de la réinitialisation.");
             }
-        } catch (error) {
+        } catch {
             setErrorMessage("Impossible de contacter le serveur.");
         } finally {
             setIsSubmitting(false);
@@ -139,46 +115,132 @@ const ResetPassword = () => {
 
     return (
         <Span display="contents" className={`chakra-theme ${colorMode}`}>
-            <Flex direction="column" minH="100vh" bg="background" color={mainText}>
-                <HeaderBar />
+            <style>{`
+                @keyframes stockmgr-fade-in {
+                    from { opacity: 0; transform: translate(-50%, 8px); }
+                    to { opacity: 1; transform: translate(-50%, 0); }
+                }
+                @keyframes stockmgr-color-shift {
+                    0% { transform: scale(1); opacity: 0.35; }
+                    50% { transform: scale(1.2); opacity: 0.6; }
+                    100% { transform: scale(1); opacity: 0.35; }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    .stockmgr-color-layer {
+                        animation: none !important;
+                    }
+                }
+            `}</style>
 
-                <Flex flex="1" align="center" justify="center" p={{ base: 4, sm: 8 }}>
-                    <Box w="full" maxW="560px" bg={cardBg} borderRadius="xl" boxShadow="lg" border="1px" borderColor={borderColor} overflow="hidden">
-                        <Box p="8" pb="4">
-                            <Flex align="center" gap="2" mb="2">
-                                <Flex h="10" w="10" rounded="full" bg="rgba(19, 127, 236, 0.1)" align="center" justify="center" color="primary" mb="2">
-                                    <span className="material-symbols-outlined">key</span>
-                                </Flex>
+            <Flex minH="100vh" bg={PAPER}>
+                <Flex display={{ base: 'none', lg: 'flex' }} direction="column" justify="center" w="42%" minW="420px" bg={INK} color="whiteAlpha.900" p="10" pos="relative" overflow="hidden">
+                    <Box pos="absolute" inset="0" bg={INK} />
+                    <Box
+                        className="stockmgr-color-layer"
+                        pos="absolute"
+                        inset="0"
+                        opacity="0.35"
+                        backgroundImage={`linear-gradient(135deg, ${AMBER}, ${SAGE_DARK}, ${SAGE}, ${INK}, ${AMBER})`}
+                        backgroundSize="200% 200%"
+                        style={{ animation: 'stockmgr-color-shift 8s ease-in-out infinite' }}
+                    />
+                    <Box pos="absolute" inset="0" bgGradient={`linear(to-b, ${INK} 0%, transparent 25%, transparent 75%, ${INK} 100%)`} />
+
+                    <Flex align="center" gap="3" zIndex="1" position="absolute" top="10">
+                        <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={AMBER} color={INK}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                        </Flex>
+                        <Text fontSize="md" fontWeight="bold" letterSpacing="tight">StockManager</Text>
+                    </Flex>
+
+                    <Box zIndex="1" maxW="360px" textAlign="center" margin="0 auto">
+                        <Text fontSize="4xl" fontWeight="800" lineHeight="1.1" letterSpacing="-0.02em" mb="4">
+                            Réinitialisation du mot de passe
+                        </Text>
+                        <Text color="whiteAlpha.600" fontSize="sm" lineHeight="1.6">
+                            Choisissez un nouveau mot de passe sécurisé pour votre compte administrateur.
+                        </Text>
+                    </Box>
+                </Flex>
+
+                <Flex flex="1" align="center" justify="center" p={{ base: 6, md: 10 }}>
+                    <Box w="full" maxW="420px" bg="white" borderRadius="xl" p={{ base: 6, md: 8 }} boxShadow="lg">
+                        <Flex display={{ base: 'flex', lg: 'none' }} align="center" gap="3" mb="6">
+                            <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={INK} color={AMBER}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
                             </Flex>
-                            <Text fontSize="2xl" fontWeight="bold" lineHeight="tight" mb="2" color={mainText}>
-                                Réinitialisation du mot de passe
-                            </Text>
-                            <Text fontSize="sm" lineHeight="relaxed" color={subText}>
-                                Veuillez saisir votre nouveau mot de passe pour accéder à votre espace administrateur. Assurez-vous d'utiliser un mot de passe fort.
-                            </Text>
-                            {isTokenMissing && (
-                                <Box mt="4" p="3" bg="red.50" border="1px" borderColor="red.200" borderRadius="lg" color="red.700" display="flex" alignItems="center" gap="2">
-                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>error</span>
-                                    <Text fontSize="sm" fontWeight="medium">Lien invalide ou expiré. Veuillez recommencer.</Text>
-                                </Box>
-                            )}
-                        </Box>
+                            <Text fontSize="md" fontWeight="bold" letterSpacing="tight" color={TEXT_MAIN}>StockManager</Text>
+                        </Flex>
+
+                        <Text fontFamily="mono" fontSize="xs" letterSpacing="0.15em" color={AMBER} fontWeight="bold" mb="3">
+                            SÉCURITÉ
+                        </Text>
+                        <Text fontSize="2xl" fontWeight="800" letterSpacing="-0.02em" color={TEXT_MAIN} mb="2">
+                            Nouveau mot de passe
+                        </Text>
+                        <Text color={TEXT_SUB} fontSize="sm" mb="6">
+                            Veuillez choisir un mot de passe fort pour votre compte.
+                        </Text>
+
+                        {isTokenMissing && (
+                            <Box mb="4" p="3" bg="#B3431F" color="white" borderRadius="md" display="flex" alignItems="center" gap="2" fontSize="sm">
+                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>error</span>
+                                <Text fontWeight="medium">Lien invalide ou expiré. Veuillez recommencer.</Text>
+                            </Box>
+                        )}
+
                         <form onSubmit={handleSubmit}>
-                            <Stack gap="6" p="8" pt="2">
-                                <Stack gap="1.5">
-                                    <Text fontSize="sm" fontWeight="medium" color={mainText}>Nouveau mot de passe</Text>
+                            <Stack gap="5">
+                                <Box>
+                                    <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.03em" mb="2" color={TEXT_SUB} textTransform="uppercase">
+                                        Nouveau mot de passe
+                                    </Text>
                                     <Box position="relative">
-                                        <Input disabled={isTokenMissing} css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }} type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" h="12" bg={inputBg} borderColor={inputBorder} _focus={{ borderColor: "primary", ring: "1px", ringColor: "primary" }} pr="12" borderRadius="lg" />
-                                        <IconButton disabled={isTokenMissing} aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={subText} bg="transparent" _hover={{ bg: "transparent", color: "primary" }} _active={{ bg: "transparent" }} onClick={() => setShowPassword(!showPassword)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+                                        <Input
+                                            disabled={isTokenMissing}
+                                            css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }}
+                                            type={showPassword ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            size="lg"
+                                            bg="white"
+                                            color={TEXT_MAIN}
+                                            border="1px solid"
+                                            borderColor={INPUT_BORDER}
+                                            borderRadius="md"
+                                            h="11"
+                                            fontSize="sm"
+                                            pr="12"
+                                            _placeholder={{ color: '#9AA3AF' }}
+                                            _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }}
+                                        />
+                                        <IconButton
+                                            disabled={isTokenMissing}
+                                            aria-label="Toggle password visibility"
+                                            variant="ghost"
+                                            position="absolute"
+                                            right="0"
+                                            top="0"
+                                            bottom="0"
+                                            h="full"
+                                            px="3"
+                                            color={TEXT_SUB}
+                                            bg="transparent"
+                                            _hover={{ bg: "transparent", color: INK }}
+                                            _active={{ bg: "transparent" }}
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                                                 {showPassword ? 'visibility_off' : 'visibility'}
                                             </span>
                                         </IconButton>
                                     </Box>
-                                </Stack>
+                                </Box>
+
                                 {password.length > 0 && (
-                                    <Box className="criteriaSuccess" bg={colorMode === 'light' ? "gray.50" : "whiteAlpha.100"} rounded="lg" p="4" border="1px" borderColor={borderColor}>
-                                        <Text fontSize="xs" fontWeight="semibold" color={subText} textTransform="uppercase" letterSpacing="wider" mb="3">
+                                    <Box bg={PAPER} borderRadius="md" p="4" border="1px solid" borderColor={INPUT_BORDER}>
+                                        <Text fontSize="xs" fontWeight="semibold" color={TEXT_SUB} textTransform="uppercase" letterSpacing="wider" mb="3">
                                             Critères de sécurité
                                         </Text>
                                         <Grid templateColumns={{ base: "1fr", sm: "1fr 1fr" }} gap="3">
@@ -189,37 +251,93 @@ const ResetPassword = () => {
                                         </Grid>
                                     </Box>
                                 )}
-                                <Stack gap="1.5">
-                                    <Text fontSize="sm" fontWeight="medium" color={mainText}>Confirmer le nouveau mot de passe</Text>
+
+                                <Box>
+                                    <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.03em" mb="2" color={TEXT_SUB} textTransform="uppercase">
+                                        Confirmer le mot de passe
+                                    </Text>
                                     <Box position="relative">
-                                        <Input disabled={isTokenMissing} css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }} type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" h="12" bg={inputBg} borderColor={inputBorder} _focus={{ borderColor: "primary", ring: "1px", ringColor: "primary" }} pr="12" borderRadius="lg" />
-                                        <IconButton disabled={isTokenMissing} aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={subText} bg="transparent" _hover={{ bg: "transparent", color: "primary" }} _active={{ bg: "transparent" }} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+                                        <Input
+                                            disabled={isTokenMissing}
+                                            css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }}
+                                            type={showConfirmPassword ? "text" : "password"}
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            size="lg"
+                                            bg="white"
+                                            color={TEXT_MAIN}
+                                            border="1px solid"
+                                            borderColor={INPUT_BORDER}
+                                            borderRadius="md"
+                                            h="11"
+                                            fontSize="sm"
+                                            pr="12"
+                                            _placeholder={{ color: '#9AA3AF' }}
+                                            _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }}
+                                        />
+                                        <IconButton
+                                            disabled={isTokenMissing}
+                                            aria-label="Toggle password visibility"
+                                            variant="ghost"
+                                            position="absolute"
+                                            right="0"
+                                            top="0"
+                                            bottom="0"
+                                            h="full"
+                                            px="3"
+                                            color={TEXT_SUB}
+                                            bg="transparent"
+                                            _hover={{ bg: "transparent", color: INK }}
+                                            _active={{ bg: "transparent" }}
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                                                 {showConfirmPassword ? 'visibility_off' : 'visibility'}
                                             </span>
                                         </IconButton>
                                     </Box>
-                                </Stack>
+                                </Box>
+
                                 {errorMessage && <SnackbarContent message={errorMessage} isError />}
                                 {successMessage && <SnackbarContent message={successMessage} />}
-                                <Box pt="2">
-                                    <Button type="submit" w="full" h="12" bg="primary" color="white" fontSize="md" fontWeight="semibold" _hover={{ bg: "blue.600" }} borderRadius="lg" display="flex" alignItems="center" gap="2" loading={isSubmitting} disabled={isSubmitting || isTokenMissing}>
-                                        <span>Enregistrer le mot de passe</span>
-                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>arrow_forward</span>
-                                    </Button>
-                                </Box>
-                                <Flex justify="center">
-                                    <Link as="button" onClick={() => navigate('/login')} fontSize="sm" fontWeight="medium" color={subText} _hover={{ color: mainText }}>
-                                        Retour à la connexion
-                                    </Link>
-                                </Flex>
+
+                                <Button
+                                    w="full"
+                                    h="12"
+                                    bg={SAGE}
+                                    color="white"
+                                    fontSize="sm"
+                                    fontWeight="bold"
+                                    letterSpacing="0.02em"
+                                    borderRadius="md"
+                                    _hover={{ bg: SAGE_DARK }}
+                                    _active={{ transform: 'scale(0.98)' }}
+                                    type="submit"
+                                    disabled={isSubmitting || isTokenMissing}
+                                    loading={isSubmitting}
+                                >
+                                    Enregistrer le mot de passe
+                                </Button>
+
+                                <Link
+                                    fontSize="sm"
+                                    fontWeight="semibold"
+                                    color={SAGE_DARK}
+                                    _hover={{ color: AMBER }}
+                                    onClick={() => navigate('/login')}
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    gap="1"
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
+                                    Retour à la connexion
+                                </Link>
                             </Stack>
                         </form>
                     </Box>
                 </Flex>
-                <Box as="footer" w="full" py="6" textAlign="center" zIndex="10">
-                    {t('login.copyright', { year: new Date().getFullYear() })}
-                </Box>
             </Flex>
         </Span>
     );
