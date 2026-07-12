@@ -20,7 +20,6 @@ import Sidebar from '../../components/navigation/sidebar';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
 
-
 const Stock = () => {
     const { colorMode } = useColorMode();
     const { t } = useTranslation();
@@ -102,10 +101,6 @@ const Stock = () => {
         fetchStats();
     }, [fetchProducts, fetchStats]);
 
-
-
-
-
     const handleStockUpdate = async (productId: string, type: 'ENTRY' | 'EXIT', quantity: number) => {
         try {
             const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
@@ -178,171 +173,217 @@ const Stock = () => {
     return (
         <Sidebar>
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: "easeOut" }}>
-            <Box maxW="7xl" mx="auto" w="full">
-                <Flex direction={{ base: "column", md: "row" }} align={{ base: "flex-start", md: "center" }} justify="space-between" gap="4" mb="8">
-                    <Stack gap="1">
-                        <Text color={mainText} fontSize="3xl" fontWeight="900" letterSpacing="tight">
-                            {t('stock.title')}
-                        </Text>
-                        <Text color={subText} fontSize="md">
-                            {t('stock.subtitle')}
-                        </Text>
-                    </Stack>
+                <Flex direction="column" gap="6">
+                    {/* En-tête */}
+                    <Flex direction={{ base: "column", md: "row" }} align={{ base: "flex-start", md: "center" }} justify="space-between" gap="4">
+                        <Stack gap="1">
+                            <Text color={mainText} fontSize="3xl" fontWeight="900" letterSpacing="tight">
+                                {t('stock.title')}
+                            </Text>
+                            <Text color={subText} fontSize="md">
+                                {t('stock.subtitle')}
+                            </Text>
+                        </Stack>
+                    </Flex>
 
-                </Flex>
-                <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap="4" mb="6">
-                    {statsCards.map((card, index) => (
-                        <Box key={index} p="5" bg={cardBg} borderRadius="xl" border="1px" borderColor={borderColor} shadow="sm">
-                            <Flex justify="space-between" align="center" mb="2">
-                                <Text color={subText} fontSize="xs" fontWeight="medium" textTransform="uppercase" letterSpacing="wider">{card.title}</Text>
-                                <Box p="1.5" bg={card.iconBg} _dark={{ bg: card.iconBgDark }} color={card.subtitleColor ? `${card.subtitleColor}.500` : "primary"} borderRadius="lg">
-                                    <span className="material-symbols-outlined">{card.icon}</span>
-                                </Box>
-                            </Flex>
-                            <Flex align="flex-end" gap="2">
-                                <Text color={mainText} fontSize="3xl" fontWeight="bold">{card.value}</Text>
-                                {card.badge && (
-                                    <Badge bg={`${card.badgeColor}.50`} _dark={{ bg: `${card.badgeColor}.900/20`, color: `${card.badgeColor}.400` }} color={`${card.badgeColor}.600`} px="1.5" py="0.5" mb="1" display="flex" alignItems="center">
-                                        <span className="material-symbols-outlined" style={{ fontSize: '16px', marginRight: '2px' }}>trending_up</span>
-                                        {card.badge}
-                                    </Badge>
-                                )}
-                                {card.subtitle && (
-                                    <Text color={`${card.subtitleColor}.600`} _dark={{ color: `${card.subtitleColor}.400` }} fontSize="sm" fontWeight="medium" mb="1">{card.subtitle}</Text>
-                                )}
-                            </Flex>
+                    {/* Cartes de statistiques */}
+                    <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} gap="4">
+                        {statsCards.map((card, index) => (
+                            <Box key={index} p="5" bg={cardBg} borderRadius="xl" border="1px" borderColor={borderColor} shadow="sm">
+                                <Flex justify="space-between" align="center" mb="2">
+                                    <Text color={subText} fontSize="xs" fontWeight="medium" textTransform="uppercase" letterSpacing="wider">{card.title}</Text>
+                                    <Box p="1.5" bg={card.iconBg} _dark={{ bg: card.iconBgDark }} color={card.subtitleColor ? `${card.subtitleColor}.500` : "primary"} borderRadius="lg">
+                                        <span className="material-symbols-outlined">{card.icon}</span>
+                                    </Box>
+                                </Flex>
+                                <Flex align="flex-end" gap="2">
+                                    <Text color={mainText} fontSize="3xl" fontWeight="bold">{card.value}</Text>
+                                    {card.badge && (
+                                        <Badge bg={`${card.badgeColor}.50`} _dark={{ bg: `${card.badgeColor}.900/20`, color: `${card.badgeColor}.400` }} color={`${card.badgeColor}.600`} px="1.5" py="0.5" mb="1" display="flex" alignItems="center">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '16px', marginRight: '2px' }}>trending_up</span>
+                                            {card.badge}
+                                        </Badge>
+                                    )}
+                                    {card.subtitle && (
+                                        <Text color={`${card.subtitleColor}.600`} _dark={{ color: `${card.subtitleColor}.400` }} fontSize="sm" fontWeight="medium" mb="1">{card.subtitle}</Text>
+                                    )}
+                                </Flex>
+                            </Box>
+                        ))}
+                    </SimpleGrid>
+
+                    {/* Barre de filtres */}
+                    <Flex direction={{ base: "column", lg: "row" }} gap="4" align={{ lg: "center" }} justify="space-between" bg={cardBg} p="4" borderRadius="xl" border="1px" borderColor={borderColor} shadow="sm">
+                        <Box flex="1" maxW={{ lg: "lg" }} w="full">
+                            <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ color: "#94a3b8" }}>search</span>}>
+                                <Input 
+                                    placeholder={t('stock.search_placeholder')} 
+                                    bg={bg} 
+                                    color={mainText} 
+                                    border="0" 
+                                    ring="1px" 
+                                    ringColor={borderColor} 
+                                    _focus={{ ring: "2px", ringColor: "primary" }} 
+                                    py="2.5" 
+                                    borderRadius="lg" 
+                                    fontSize="sm" 
+                                    value={searchTerm} 
+                                    onChange={(e) => setSearchTerm(e.target.value)} 
+                                />
+                            </InputGroup>
                         </Box>
-                    ))}
-                </SimpleGrid>
-                <Flex direction={{ base: "column", lg: "row" }} gap="4" align={{ lg: "center" }} justify="space-between" bg={cardBg} p="4" borderRadius="xl" border="1px" borderColor={borderColor} shadow="sm" mb="6">
-                    <Box flex="1" maxW={{ lg: "lg" }} w="full">
-                        <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ color: "#94a3b8" }}>search</span>}>
-                            <Input placeholder={t('stock.search_placeholder')} bg={bg} color={mainText} border="0" ring="1px" ringColor={borderColor} _focus={{ ring: "2px", ringColor: "primary" }} py="2.5" borderRadius="lg" fontSize="sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                        </InputGroup>
-                    </Box>
-                    <HStack gap="2" overflowX="auto" pb={{ base: "2", lg: "0" }}>
-                        <Button variant="ghost" bg={bg} color={mainText} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                            {t('stock.all_products')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
-                        </Button>
-                        <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                            {t('stock.category')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
-                        </Button>
-                        <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                            {t('stock.supplier')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
-                        </Button>
-                        <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '4px' }}>filter_list</span> {t('stock.filters')}
-                        </Button>
-                    </HStack>
-                </Flex>
-                <Box bg={cardBg} border="1px" borderColor={borderColor} borderRadius="xl" overflow="hidden" shadow="sm">
-                    <Box overflowX="auto">
-                        <Table.Root w="full" variant="outline">
-                            <Table.Header bg={bg} _dark={{ bg: "slate.800/50" }}>
-                                <Table.Row borderBottom="1px" borderColor={borderColor}>
-                                    <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.reference')}</Table.ColumnHeader>
-                                    <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.product')}</Table.ColumnHeader>
-                                    <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} display={{ base: "none", sm: "table-cell" }}>{t('stock.table.category')}</Table.ColumnHeader>
-                                    <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} display={{ base: "none", md: "table-cell" }}>{t('stock.table.price')}</Table.ColumnHeader>
-                                    <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.status')}</Table.ColumnHeader>
-                                    <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.stock_level')}</Table.ColumnHeader>
-
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {loading ? (
-                                    <Table.Row>
-                                        <Table.Cell colSpan={6} p="8">
-                                            <Center w="full">
-                                                <Spinner color="primary" />
-                                            </Center>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ) : products.length === 0 ? (
-                                    <Table.Row>
-                                        <Table.Cell colSpan={6} p="8">
-                                            <Center w="full">
-                                                <Text color={subText}>{t('stock.table.noProducts')}</Text>
-                                            </Center>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ) : (
-                                    products.map((product) => {
-                                        const status = getStatusInfo(product);
-                                        const stockPercentage = Math.min((product.stockQuantity / (product.minStockThreshold * 2 || 100)) * 100, 100);
-
-                                        return (
-                                            <Table.Row key={product.id} _hover={{ bg: bg }} transition="colors">
-                                                <Table.Cell p="4">
-                                                    <Text fontSize="xs" fontWeight="medium" color={subText}>{product.reference}</Text>
-                                                </Table.Cell>
-                                                <Table.Cell p="4">
-                                                    <Text fontSize="sm" fontWeight="semibold" color={mainText}>{product.name}</Text>
-                                                </Table.Cell>
-                                                <Table.Cell p="4" fontSize="sm" color={subText} display={{ base: "none", sm: "table-cell" }}>
-                                                    {product.category?.name || 'Général'}
-                                                </Table.Cell>
-                                                <Table.Cell p="4" fontSize="sm" fontWeight="medium" color={mainText} display={{ base: "none", md: "table-cell" }}>
-                                                    {new Intl.NumberFormat('fr-MG', { style: 'currency', currency: 'MGA' }).format(product.unitPrice || product.price || 0)}
-                                                </Table.Cell>
-                                                <Table.Cell p="4">
-                                                    <Badge bg={`${status.color}.100`} color={`${status.color}.800`} _dark={{ bg: `${status.color}.900/30`, color: `${status.color}.400` }} borderRadius="full" px="2.5" py="1" fontSize="xs" fontWeight="medium" textTransform="none">
-                                                        <HStack gap="1.5">
-                                                            <Box w="1.5" h="1.5" borderRadius="full" bg={status.dotColor} />
-                                                            {status.label}
-                                                        </HStack>
-                                                    </Badge>
-                                                </Table.Cell>
-                                                <Table.Cell p="4">
-                                                    <HStack gap="3">
-                                                        <Flex align="center" border="1px" borderColor={!status.isLow ? borderColor : `${status.color}.200`} borderRadius="lg" bg={!status.isLow ? cardBg : `${status.color}.50`} _dark={!status.isLow ? {} : { borderColor: `${status.color}.800/50`, bg: `${status.color}.900/10` }} overflow="hidden">
-                                                            <IconButton aria-label="Decrease" variant="ghost" size="xs" color={!status.isLow ? subText : `${status.color}.700`} _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'EXIT', 1)} disabled={product.stockQuantity <= 0}>
-                                                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>remove</span>
-                                                            </IconButton>
-                                                            <Box w="8" textAlign="center" fontSize="sm" fontWeight="semibold" color={!status.isLow ? mainText : `${status.color}.900`} _dark={{ color: `${status.color}.100` }}>
-                                                                {product.stockQuantity}
-                                                            </Box>
-                                                            <IconButton aria-label="Increase" variant="ghost" size="xs" color={!status.isLow ? subText : `${status.color}.700`} _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'ENTRY', 1)}> <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
-                                                            </IconButton>
-                                                        </Flex>
-                                                        <Box display={{ base: "none", xl: "block" }} w="16" h="1.5" bg={bg} borderRadius="full" overflow="hidden">
-                                                            <Box h="full" bg={status.dotColor} w={`${stockPercentage}%`} borderRadius="full" />
-                                                        </Box>
-                                                    </HStack>
-                                                </Table.Cell>
-
-                                            </Table.Row>
-                                        );
-                                    })
-                                )}
-                            </Table.Body>
-                        </Table.Root>
-                    </Box>
-                    <Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor} bg={bg}>
-                        <Text fontSize="sm" color={subText}>
-                            {t('stock.pagination.showing', {
-                                from: (currentPage - 1) * limit + 1,
-                                to: Math.min(currentPage * limit, totalItems),
-                                total: totalItems
-                            })}
-                        </Text>
-                        <HStack gap="2">
-                            <IconButton aria-label="Previous page" size="sm" variant="outline" borderColor={borderColor} color={subText}
-                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
-                            </IconButton>
-                            <Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
-                                {currentPage}
+                        <HStack gap="2" overflowX="auto" pb={{ base: "2", lg: "0" }}>
+                            <Button variant="ghost" bg={bg} color={mainText} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
+                                {t('stock.all_products')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
                             </Button>
-                            <IconButton aria-label="Next page" size="sm" variant="outline" borderColor={borderColor} color={subText}
-                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
-                            </IconButton>
+                            <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
+                                {t('stock.category')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
+                            </Button>
+                            <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
+                                {t('stock.supplier')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
+                            </Button>
+                            <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '4px' }}>filter_list</span> {t('stock.filters')}
+                            </Button>
                         </HStack>
                     </Flex>
-                </Box>
 
-            </Box>
+                    {/* Tableau */}
+                    <Box bg={cardBg} border="1px" borderColor={borderColor} borderRadius="xl" overflow="hidden" shadow="sm">
+                        <Box overflowX="auto">
+                            <Table.Root w="full" variant="outline">
+                                <Table.Header bg={bg} _dark={{ bg: "slate.800/50" }}>
+                                    <Table.Row borderBottom="1px" borderColor={borderColor}>
+                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.reference')}</Table.ColumnHeader>
+                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.product')}</Table.ColumnHeader>
+                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} display={{ base: "none", sm: "table-cell" }}>{t('stock.table.category')}</Table.ColumnHeader>
+                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} display={{ base: "none", md: "table-cell" }}>{t('stock.table.price')}</Table.ColumnHeader>
+                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.status')}</Table.ColumnHeader>
+                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.stock_level')}</Table.ColumnHeader>
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {loading ? (
+                                        <Table.Row>
+                                            <Table.Cell colSpan={6} p="8">
+                                                <Center w="full">
+                                                    <Spinner color="primary" />
+                                                </Center>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ) : products.length === 0 ? (
+                                        <Table.Row>
+                                            <Table.Cell colSpan={6} p="8">
+                                                <Center w="full">
+                                                    <Text color={subText}>{t('stock.table.noProducts')}</Text>
+                                                </Center>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ) : (
+                                        products.map((product) => {
+                                            const status = getStatusInfo(product);
+                                            const stockPercentage = Math.min((product.stockQuantity / (product.minStockThreshold * 2 || 100)) * 100, 100);
+
+                                            return (
+                                                <Table.Row key={product.id} _hover={{ bg: bg }} transition="colors">
+                                                    <Table.Cell p="4">
+                                                        <Text fontSize="xs" fontWeight="medium" color={subText}>{product.reference}</Text>
+                                                    </Table.Cell>
+                                                    <Table.Cell p="4">
+                                                        <Text fontSize="sm" fontWeight="semibold" color={mainText}>{product.name}</Text>
+                                                    </Table.Cell>
+                                                    <Table.Cell p="4" fontSize="sm" color={subText} display={{ base: "none", sm: "table-cell" }}>
+                                                        {product.category?.name || 'Général'}
+                                                    </Table.Cell>
+                                                    <Table.Cell p="4" fontSize="sm" fontWeight="medium" color={mainText} display={{ base: "none", md: "table-cell" }}>
+                                                        {new Intl.NumberFormat('fr-MG', { style: 'currency', currency: 'MGA' }).format(product.unitPrice || product.price || 0)}
+                                                    </Table.Cell>
+                                                    <Table.Cell p="4">
+                                                        <Badge bg={`${status.color}.100`} color={`${status.color}.800`} _dark={{ bg: `${status.color}.900/30`, color: `${status.color}.400` }} borderRadius="full" px="2.5" py="1" fontSize="xs" fontWeight="medium" textTransform="none">
+                                                            <HStack gap="1.5">
+                                                                <Box w="1.5" h="1.5" borderRadius="full" bg={status.dotColor} />
+                                                                {status.label}
+                                                            </HStack>
+                                                        </Badge>
+                                                    </Table.Cell>
+                                                    <Table.Cell p="4">
+                                                        <HStack gap="3">
+                                                            <Flex align="center" border="1px" borderColor={!status.isLow ? borderColor : `${status.color}.200`} borderRadius="lg" bg={!status.isLow ? cardBg : `${status.color}.50`} _dark={!status.isLow ? {} : { borderColor: `${status.color}.800/50`, bg: `${status.color}.900/10` }} overflow="hidden">
+                                                                <IconButton 
+                                                                    aria-label="Decrease" 
+                                                                    variant="ghost" 
+                                                                    size="xs" 
+                                                                    color={!status.isLow ? subText : `${status.color}.700`} 
+                                                                    _dark={{ color: status.dotColor }} 
+                                                                    onClick={() => handleStockUpdate(product.id, 'EXIT', 1)} 
+                                                                    disabled={product.stockQuantity <= 0}
+                                                                >
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>remove</span>
+                                                                </IconButton>
+                                                                <Box w="8" textAlign="center" fontSize="sm" fontWeight="semibold" color={!status.isLow ? mainText : `${status.color}.900`} _dark={{ color: `${status.color}.100` }}>
+                                                                    {product.stockQuantity}
+                                                                </Box>
+                                                                <IconButton 
+                                                                    aria-label="Increase" 
+                                                                    variant="ghost" 
+                                                                    size="xs" 
+                                                                    color={!status.isLow ? subText : `${status.color}.700`} 
+                                                                    _dark={{ color: status.dotColor }} 
+                                                                    onClick={() => handleStockUpdate(product.id, 'ENTRY', 1)}
+                                                                >
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                                                </IconButton>
+                                                            </Flex>
+                                                            <Box display={{ base: "none", xl: "block" }} w="16" h="1.5" bg={bg} borderRadius="full" overflow="hidden">
+                                                                <Box h="full" bg={status.dotColor} w={`${stockPercentage}%`} borderRadius="full" />
+                                                            </Box>
+                                                        </HStack>
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            );
+                                        })
+                                    )}
+                                </Table.Body>
+                            </Table.Root>
+                        </Box>
+                        <Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor} bg={bg}>
+                            <Text fontSize="sm" color={subText}>
+                                {t('stock.pagination.showing', {
+                                    from: (currentPage - 1) * limit + 1,
+                                    to: Math.min(currentPage * limit, totalItems),
+                                    total: totalItems
+                                })}
+                            </Text>
+                            <HStack gap="2">
+                                <IconButton 
+                                    aria-label="Previous page" 
+                                    size="sm" 
+                                    variant="outline" 
+                                    borderColor={borderColor} 
+                                    color={subText}
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                                    disabled={currentPage === 1}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
+                                </IconButton>
+                                <Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
+                                    {currentPage}
+                                </Button>
+                                <IconButton 
+                                    aria-label="Next page" 
+                                    size="sm" 
+                                    variant="outline" 
+                                    borderColor={borderColor} 
+                                    color={subText}
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                                    disabled={currentPage === totalPages}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
+                                </IconButton>
+                            </HStack>
+                        </Flex>
+                    </Box>
+                </Flex>
             </motion.div>
         </Sidebar>
     );

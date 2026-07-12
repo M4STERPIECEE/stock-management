@@ -16,7 +16,6 @@
 const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
 
 interface FetchWithRefreshOptions extends RequestInit {
-  /** If true, skips the Authorization header (for login, refresh, etc.) */
   noAuth?: boolean;
 }
 
@@ -26,7 +25,6 @@ export async function fetchWithRefresh(
 ): Promise<Response> {
   const { noAuth, ...fetchOptions } = options;
 
-  // Build the full URL if it's a relative path
   const fullUrl = url.startsWith('http') ? url : `${API_BASE}/api/v1${url.startsWith('/') ? url : `/${url}`}`;
 
   const getAccessToken = () =>
@@ -52,7 +50,6 @@ export async function fetchWithRefresh(
     sessionStorage.removeItem('refresh_token');
   };
 
-  // Make the initial request
   const headers = new Headers(fetchOptions.headers || {});
   if (!noAuth) {
     const token = getAccessToken();
@@ -66,7 +63,6 @@ export async function fetchWithRefresh(
 
   let response = await fetch(fullUrl, { ...fetchOptions, headers });
 
-  // If 401 and we have a refresh token, try to refresh
   if (response.status === 401 && !noAuth) {
     const refreshToken = getRefreshToken();
     if (refreshToken) {
@@ -81,7 +77,6 @@ export async function fetchWithRefresh(
           const data = await refreshResponse.json();
           setTokens(data.access_token, data.refresh_token);
 
-          // Retry the original request with the new token
           const retryHeaders = new Headers(fetchOptions.headers || {});
           retryHeaders.set('Authorization', `Bearer ${data.access_token}`);
           if (!(fetchOptions.headers as Record<string, string>)?.['Content-Type']) {
@@ -90,7 +85,6 @@ export async function fetchWithRefresh(
 
           response = await fetch(fullUrl, { ...fetchOptions, headers: retryHeaders });
         } else {
-          // Refresh failed — redirect to login
           clearTokens();
           window.location.href = '/login';
           throw new Error('Session expired. Please log in again.');
@@ -101,7 +95,6 @@ export async function fetchWithRefresh(
         throw new Error('Session expired. Please log in again.');
       }
     } else {
-      // No refresh token — redirect to login
       clearTokens();
       window.location.href = '/login';
       throw new Error('Session expired. Please log in again.');
