@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
     Box,
@@ -176,6 +177,7 @@ const Stock = () => {
 
     return (
         <Sidebar>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: "easeOut" }}>
             <Box maxW="7xl" mx="auto" w="full">
                 <Flex direction={{ base: "column", md: "row" }} align={{ base: "flex-start", md: "center" }} justify="space-between" gap="4" mb="8">
                     <Stack gap="1">
@@ -316,7 +318,7 @@ const Stock = () => {
                             </Table.Body>
                         </Table.Root>
                     </Box>
-                    <Flex align="center" justify="space-between" p="4" bg={bg} _dark={{ bg: "slate.800/50" }} borderTop="1px" borderColor={borderColor}>
+                    <Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor} bg={bg}>
                         <Text fontSize="sm" color={subText}>
                             {t('stock.pagination.showing', {
                                 from: (currentPage - 1) * limit + 1,
@@ -325,20 +327,23 @@ const Stock = () => {
                             })}
                         </Text>
                         <HStack gap="2">
-                            <IconButton aria-label="Previous page" variant="ghost" size="sm" color={subText} _hover={{ bg: "slate.200", _dark: { bg: "slate.700" } }} onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-                                <span className="material-symbols-outlined">chevron_left</span>
+                            <IconButton aria-label="Previous page" size="sm" variant="outline" borderColor={borderColor} color={subText}
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
                             </IconButton>
-                            <Text fontSize="sm" fontWeight="medium" color={mainText}>
-                                {t('stock.pagination.page')} {currentPage} {t('stock.pagination.of_pages')} {totalPages}
-                            </Text>
-                            <IconButton aria-label="Next page" variant="ghost" size="sm" color={subText} _hover={{ bg: "slate.200", _dark: { bg: "slate.700" } }} onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-                                <span className="material-symbols-outlined">chevron_right</span>
+                            <Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
+                                {currentPage}
+                            </Button>
+                            <IconButton aria-label="Next page" size="sm" variant="outline" borderColor={borderColor} color={subText}
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
                             </IconButton>
                         </HStack>
                     </Flex>
                 </Box>
 
             </Box>
+            </motion.div>
         </Sidebar>
     );
 };
