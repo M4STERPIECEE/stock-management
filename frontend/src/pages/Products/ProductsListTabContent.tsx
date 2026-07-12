@@ -3,6 +3,7 @@ import { Badge, Box, Button, Flex, HStack, IconButton, Input, InputGroup, Popove
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
 import Icon from '../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 
 interface Category {
     id: string;
@@ -166,11 +167,8 @@ const ProductsListTabContent = () => {
 
     const fetchCategories = useCallback(async () => {
         try {
-            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const response = await fetch('http://localhost:3005/api/v1/categories', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+            const response = await fetch(`${API_BASE_URL}/categories`, {
+                headers: authHeaders(),
             });
             if (response.ok) {
                 const data = await response.json();
@@ -184,8 +182,7 @@ const ProductsListTabContent = () => {
     const fetchProducts = useCallback(async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const url = new URL('http://localhost:3005/api/v1/products');
+            const url = new URL(`${API_BASE_URL}/products`);
             if (debouncedSearchTerm) url.searchParams.append('search', debouncedSearchTerm);
             if (sortBy) url.searchParams.append('sortBy', sortBy);
             if (sortOrder) url.searchParams.append('sortOrder', sortOrder);
@@ -202,9 +199,7 @@ const ProductsListTabContent = () => {
             url.searchParams.append('limit', DEFAULT_PAGE_SIZE.toString());
 
             const response = await fetch(url.toString(), {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+                headers: authHeaders(),
             });
             if (response.ok) {
                 const data = await response.json();

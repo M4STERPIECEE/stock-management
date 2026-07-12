@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../../components/ui/color-mode';
 import { useAppToast } from '../../../hooks/useAppToast';
 import Icon from '../../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../../config/api';
 
 interface AddCategoryModalProps {
 	isOpen: boolean;
@@ -127,13 +128,9 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 		e.preventDefault();
 		setLoading(true);
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3005/api/v1/categories', {
+			const response = await fetch(`${API_BASE_URL}/categories`, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
+				headers: authHeaders(),
 				body: JSON.stringify(formData),
 			});
 

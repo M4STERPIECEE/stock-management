@@ -29,6 +29,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useAppToast } from '../../hooks/useAppToast';
 import Icon from '../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 
 type OrderStatus = 'EN_ATTENTE' | 'EXPEDIEE' | 'LIVREE' | 'ANNULEE';
 
@@ -105,14 +106,13 @@ const Orders = () => {
 	const fetchOrders = useCallback(async () => {
 		setLoading(true);
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const url = new URL('http://localhost:3005/api/v1/orders');
+			const url = new URL(`${API_BASE_URL}/orders`);
 			if (statusFilter) url.searchParams.append('status', statusFilter);
 			url.searchParams.append('page', currentPage.toString());
 			url.searchParams.append('limit', DEFAULT_PAGE_SIZE.toString());
 
 			const response = await fetch(url.toString(), {
-				headers: { 'Authorization': `Bearer ${token}` }
+				headers: authHeaders()
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -137,9 +137,8 @@ const Orders = () => {
 
 	const fetchCustomers = async () => {
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3005/api/v1/customers?limit=100', {
-				headers: { 'Authorization': `Bearer ${token}` }
+			const response = await fetch(`${API_BASE_URL}/customers?limit=100`, {
+				headers: authHeaders()
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -152,9 +151,8 @@ const Orders = () => {
 
 	const fetchProducts = async () => {
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3005/api/v1/products?limit=200', {
-				headers: { 'Authorization': `Bearer ${token}` }
+			const response = await fetch(`${API_BASE_URL}/products?limit=200`, {
+				headers: authHeaders()
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -201,13 +199,9 @@ const Orders = () => {
 
 		setCreateLoading(true);
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3005/api/v1/orders', {
+			const response = await fetch(`${API_BASE_URL}/orders`, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
+				headers: authHeaders(),
 				body: JSON.stringify({
 					customerId: selectedCustomerId,
 					items: validLines,
@@ -231,9 +225,8 @@ const Orders = () => {
 
 	const handleViewDetail = async (id: string) => {
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch(`http://localhost:3005/api/v1/orders/${id}`, {
-				headers: { 'Authorization': `Bearer ${token}` }
+			const response = await fetch(`${API_BASE_URL}/orders/${id}`, {
+				headers: authHeaders()
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -247,13 +240,9 @@ const Orders = () => {
 
 	const handleStatusUpdate = async (id: string, status: OrderStatus) => {
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch(`http://localhost:3005/api/v1/orders/${id}/status`, {
+			const response = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
 				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
+				headers: authHeaders(),
 				body: JSON.stringify({ status }),
 			});
 

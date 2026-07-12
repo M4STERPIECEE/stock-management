@@ -5,6 +5,7 @@ import Sidebar from '../../components/navigation/sidebar';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
 import Icon from '../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 
 const Stock = () => {
     const { colorMode } = useColorMode();
@@ -28,11 +29,8 @@ const Stock = () => {
 
     const fetchStats = useCallback(async () => {
         try {
-            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const response = await fetch('http://localhost:3005/api/v1/products/stats', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+            const response = await fetch(`${API_BASE_URL}/products/stats`, {
+                headers: authHeaders(),
             });
             if (response.ok) {
                 const data = await response.json();
@@ -46,16 +44,13 @@ const Stock = () => {
     const fetchProducts = useCallback(async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const url = new URL('http://localhost:3005/api/v1/products');
+            const url = new URL(`${API_BASE_URL}/products`);
             if (debouncedSearchTerm) url.searchParams.append('search', debouncedSearchTerm);
             url.searchParams.append('page', currentPage.toString());
             url.searchParams.append('limit', limit.toString());
 
             const response = await fetch(url.toString(), {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+                headers: authHeaders(),
             });
             if (response.ok) {
                 const data = await response.json();
@@ -88,13 +83,9 @@ const Stock = () => {
 
     const handleStockUpdate = async (productId: string, type: 'ENTRY' | 'EXIT', quantity: number) => {
         try {
-            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const response = await fetch('http://localhost:3005/api/v1/stock/movements', {
+            const response = await fetch(`${API_BASE_URL}/stock/movements`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
+                headers: authHeaders(),
                 body: JSON.stringify({
                     productId,
                     type,

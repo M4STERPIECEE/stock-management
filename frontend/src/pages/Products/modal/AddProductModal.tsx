@@ -16,6 +16,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../../components/ui/color-mode';
 import Icon from '../../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../../config/api';
 
 interface AddProductModalProps {
 	isOpen: boolean;
@@ -127,11 +128,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }: AddProductModalProps) =
 
 	const fetchCategories = async () => {
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3005/api/v1/categories', {
-				headers: {
-					'Authorization': `Bearer ${token}`,
-				}
+			const response = await fetch(`${API_BASE_URL}/categories`, {
+				headers: authHeaders(),
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -155,13 +153,9 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }: AddProductModalProps) =
 		e.preventDefault();
 		setLoading(true);
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch('http://localhost:3005/api/v1/products', {
+			const response = await fetch(`${API_BASE_URL}/products`, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
+				headers: authHeaders(),
 				body: JSON.stringify({
 					...formData,
 					price: parseFloat(formData.price),

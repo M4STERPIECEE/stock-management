@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Flex, Text, Button, Input, Stack, Checkbox, Link, Container, IconButton, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../config/api';
 import PageTransition from '../../components/PageTransition';
 import { useTranslation } from 'react-i18next';
 import { useAppToast } from '../../hooks/useAppToast';
@@ -36,8 +37,7 @@ const LoginFormContent = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
-            const response = await fetch(`${baseUrl}/api/v1/auth/login`, {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

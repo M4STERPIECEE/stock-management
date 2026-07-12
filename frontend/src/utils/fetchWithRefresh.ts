@@ -1,19 +1,4 @@
-/**
- * fetchWithRefresh — HTTP fetch wrapper that automatically retries on 401
- * by refreshing the JWT access token using the stored refresh token.
- *
- * Usage:
- *   const data = await fetchWithRefresh('http://localhost:3005/api/v1/products');
- *
- * The function:
- * 1. Reads access_token from localStorage or sessionStorage (respects "Remember Me")
- * 2. Makes the fetch request with the Authorization header
- * 3. If the response is 401, attempts to refresh the token via POST /auth/refresh
- * 4. On success, retries the original request with the new access token
- * 5. On refresh failure, clears tokens and redirects to /login
- */
-
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
+import { API_BASE_URL } from '../config/api';
 
 interface FetchWithRefreshOptions extends RequestInit {
   noAuth?: boolean;
@@ -25,7 +10,7 @@ export async function fetchWithRefresh(
 ): Promise<Response> {
   const { noAuth, ...fetchOptions } = options;
 
-  const fullUrl = url.startsWith('http') ? url : `${API_BASE}/api/v1${url.startsWith('/') ? url : `/${url}`}`;
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
 
   const getAccessToken = () =>
     localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
@@ -67,7 +52,7 @@ export async function fetchWithRefresh(
     const refreshToken = getRefreshToken();
     if (refreshToken) {
       try {
-        const refreshResponse = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
+        const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refresh_token: refreshToken }),
