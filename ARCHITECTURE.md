@@ -235,7 +235,7 @@ frontend/
 │   ├── utils/
 │   │   └── fetchWithRefresh.ts        # HTTP client avec refresh token automatique
 │   ├── hooks/
-│   │   └── useAppToast.js             # Hook toast natif Chakra UI (createToaster)
+│   │   └── useAppToast.js             # Hook toast Chakra UI v3 (createToaster)
 │   ├── providers/
 │   │   └── QueryProvider.jsx          # Provider TanStack Query (React Query)
 │   ├── components/
@@ -2980,11 +2980,10 @@ import { ProductRepository } from './repositories/product.repository';
 import { ProductCacheService } from './services/product-cache.service';
 import { CategoriesService } from '../categories/categories.service';
 import { ConflictException } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
 
 describe('ProductsService', () => {
   let service: ProductsService;
-  let productRepository: jest.Mocked<ProductRepository>;
-  let categoriesService: jest.Mocked<CategoriesService>;
 
   const mockProductRepository = {
     findAll: jest.fn(),
@@ -3023,8 +3022,6 @@ describe('ProductsService', () => {
     }).compile();
 
     service = module.get<ProductsService>(ProductsService);
-    productRepository = module.get(ProductRepository);
-    categoriesService = module.get(CategoriesService);
   });
 
   it('should be defined', () => {
@@ -3033,7 +3030,7 @@ describe('ProductsService', () => {
 
   describe('create', () => {
     it('should create a product successfully', async () => {
-      const dto = {
+      const dto: CreateProductDto = {
         name: 'Test Product',
         categoryId: 'cat-uuid',
         price: 99.99,
@@ -3043,36 +3040,30 @@ describe('ProductsService', () => {
       const mockCategory = { id: 'cat-uuid', name: 'Test Category' };
       const mockProduct = { id: 'prod-uuid', ...dto, reference: 'REF-00001' };
 
-      mockCategoriesService.findOne.mockResolvedValue(mockCategory as any);
+      mockCategoriesService.findOne.mockResolvedValue(mockCategory);
       mockProductRepository.findByReference.mockResolvedValue(null);
       mockProductRepository.findLastReference.mockResolvedValue(null);
-      mockProductRepository.create.mockResolvedValue(mockProduct as any);
+      mockProductRepository.create.mockResolvedValue(mockProduct);
 
-      const result = await service.create(dto as any);
+      const result = await service.create(dto);
 
       expect(result).toEqual(mockProduct);
-      expect(categoriesService.incrementProductCount).toHaveBeenCalledWith(
-        'cat-uuid',
-      );
+      expect(mockCategoriesService.incrementProductCount).toHaveBeenCalledWith('cat-uuid');
       expect(mockCacheService.clear).toHaveBeenCalled();
     });
 
     it('should throw ConflictException if reference exists', async () => {
-      const dto = {
+      const dto: CreateProductDto = {
         name: 'Test Product',
         categoryId: 'cat-uuid',
         price: 99.99,
         reference: 'REF-00001',
       };
 
-      mockCategoriesService.findOne.mockResolvedValue({ id: 'cat-uuid' } as any);
-      mockProductRepository.findByReference.mockResolvedValue({
-        id: 'existing',
-      } as any);
+      mockCategoriesService.findOne.mockResolvedValue({ id: 'cat-uuid' });
+      mockProductRepository.findByReference.mockResolvedValue({ id: 'existing' });
 
-      await expect(service.create(dto as any)).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(service.create(dto)).rejects.toThrow(ConflictException);
     });
   });
 });
@@ -3084,9 +3075,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { StockService } from './stock.service';
-import { StockMovement } from './entities/stock-movement.entity';
+import { StockMovement, StockMovementType } from './entities/stock-movement.entity';
 import { Product } from '../products/entities/product.entity';
 import { BadRequestException } from '@nestjs/common';
+import { CreateStockMovementDto } from './dto/create-stock-movement.dto';
 
 describe('StockService', () => {
   let service: StockService;
@@ -3143,9 +3135,9 @@ describe('StockService', () => {
 
   describe('createMovement', () => {
     it('should throw error for insufficient stock on EXIT', async () => {
-      const dto = {
+      const dto: CreateStockMovementDto = {
         productId: 'prod-uuid',
-        type: 'EXIT' as any,
+        type: StockMovementType.EXIT,
         quantity: 100,
         reason: 'Test exit',
       };
@@ -3162,9 +3154,9 @@ describe('StockService', () => {
     });
 
     it('should successfully create an ENTRY movement', async () => {
-      const dto = {
+      const dto: CreateStockMovementDto = {
         productId: 'prod-uuid',
-        type: 'ENTRY' as any,
+        type: StockMovementType.ENTRY,
         quantity: 50,
         reason: 'Restock',
       };
@@ -3182,7 +3174,7 @@ describe('StockService', () => {
         stockQuantity: 60,
       });
 
-      const result = await service.createMovement(dto);
+      await service.createMovement(dto);
 
       expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
@@ -4278,13 +4270,19 @@ Please refer to `frontend/src/pages/Users/UsersProfile.tsx` for the full impleme
 
 #### 6.5.27 — frontend/src/hooks/useAppToast.js
 
-Hook global pour afficher des toasts Chakra UI sans dépendre du contexte React. Utilise `createStandaloneToast` pour créer un `ToastContainer` rendu une seule fois dans `App.jsx`.
+Hook global pour afficher des toasts Chakra UI v3 sans dépendre du contexte React. Utilise `createToaster` (API v3) pour créer un `ToastContainer` rendu une seule fois dans `App.jsx`. Évite le JSX avec `createElement` pour rester en `.js`.
 
 ```js
-import { createStandaloneToast } from '@chakra-ui/react';
-import { system } from '../theme/system';
+import { createToaster, Toaster as ChakraToaster } from '@chakra-ui/react';
+import { createElement } from 'react';
 
-const { ToastContainer, toast } = createStandaloneToast({ defaultTheme: system });
+const toaster = createToaster({
+  placement: 'bottom',
+  overlap: true,
+  gap: 16,
+});
+
+export const ToastContainer = () => createElement(ChakraToaster, { toaster });
 
 export const useAppToast = () => {
   const showToast = ({
@@ -4292,20 +4290,16 @@ export const useAppToast = () => {
     description = '',
     status = 'success',
     duration = 3000,
-    isClosable = true,
   }) => {
-    return toast({
+    toaster.create({
       title,
       description,
-      status,
+      type: status,
       duration,
-      isClosable,
-      position: 'bottom',
-      variant: 'subtle',
     });
   };
 
-  return { showToast, ToastContainer };
+  return { showToast };
 };
 ```
 
@@ -4367,6 +4361,11 @@ jobs:
         image: postgres:15-alpine
         ports:
           - 5432:5432
+        env:
+          POSTGRES_PASSWORD: \${{ secrets.POSTGRES_PASSWORD }}
+
+    env:
+      DB_PASSWORD: \${{ secrets.POSTGRES_PASSWORD }}
 
     steps:
     - uses: actions/checkout@v3

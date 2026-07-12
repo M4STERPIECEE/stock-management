@@ -15,6 +15,11 @@ jobs:
         image: postgres:15-alpine
         ports:
           - 5432:5432
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
+    env:
+      DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
     steps:
     - name: Checkout code
