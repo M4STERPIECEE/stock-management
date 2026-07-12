@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Box, Flex, Text, Button, Input, Stack, Link, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAppToast } from '../../hooks/useAppToast';
 
 const INK = '#151A21';
-const INK_SOFT = '#1E252F';
 const PAPER = '#EFF1EC';
 const AMBER = '#E8A33D';
 const SAGE = '#4F7C6B';
@@ -14,29 +14,15 @@ const TEXT_MAIN = INK;
 const TEXT_SUB = '#5B6675';
 const INPUT_BORDER = '#D7DBE1';
 
-const SnackbarContent = ({ message, isError = false }: { message: string, isError?: boolean }) => {
-    return (
-        <Box position="fixed" bottom={8} left="50%" transform="translateX(-50%)" bg={isError ? '#B3431F' : SAGE} color="white" px={6} py={3} borderRadius="md" boxShadow="xl" display="flex" alignItems="center" gap={3} zIndex={9999} animation="stockmgr-fade-in 0.25s ease-out">
-            <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>
-                {isError ? 'error' : 'check_circle'}
-            </span>
-            <Text fontSize="sm" fontWeight="medium">{message}</Text>
-        </Box>
-    );
-};
-
 const ForgotPasswordFormContent = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { showToast } = useAppToast();
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage(null);
-        setSuccessMessage(null);
         setIsSubmitting(true);
 
         try {
@@ -50,15 +36,15 @@ const ForgotPasswordFormContent = () => {
             });
 
             if (response.ok) {
-                setSuccessMessage(t('auth.forgot.success'));
+                showToast({ title: t('auth.forgot.success') });
                 setTimeout(() => {
                     navigate('/link-verification');
                 }, 1000);
             } else {
-                setErrorMessage(t('auth.forgot.error_generic'));
+                showToast({ title: t('auth.forgot.error_generic'), status: 'error' });
             }
         } catch {
-            setErrorMessage(t('login.error_network'));
+            showToast({ title: t('login.error_network'), status: 'error' });
         } finally {
             setIsSubmitting(false);
         }
@@ -67,10 +53,6 @@ const ForgotPasswordFormContent = () => {
     return (
         <>
             <style>{`
-                @keyframes stockmgr-fade-in {
-                    from { opacity: 0; transform: translate(-50%, 8px); }
-                    to { opacity: 1; transform: translate(-50%, 0); }
-                }
                 @keyframes stockmgr-color-shift {
                     0% { transform: scale(1); opacity: 0.35; }
                     50% { transform: scale(1.2); opacity: 0.6; }
@@ -135,9 +117,6 @@ const ForgotPasswordFormContent = () => {
                                         <Input value={email} onChange={(e) => setEmail(e.target.value)} name="email" type="email" autoComplete="email" placeholder="adresse.email@example.com" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                     </InputGroup>
                                 </Box>
-
-                                {errorMessage && <SnackbarContent message={errorMessage} isError />}
-                                {successMessage && <SnackbarContent message={successMessage} />}
 
                                 <Button w="full" h="12" bg={SAGE} color="white" fontSize="sm" fontWeight="bold" letterSpacing="0.02em" borderRadius="md" _hover={{ bg: SAGE_DARK }} _active={{ transform: 'scale(0.98)' }} type="submit" disabled={isSubmitting} loading={isSubmitting}>
                                     {t('auth.forgot.submit')}

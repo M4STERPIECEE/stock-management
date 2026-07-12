@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../../components/ui/color-mode';
-import { SnackbarContent } from '../../../components/ui/Snackbar';
+import { useAppToast } from '../../../hooks/useAppToast';
 
 interface AddCategoryModalProps {
 	isOpen: boolean;
@@ -91,7 +91,7 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 	const { t } = useTranslation();
 	const { colorMode } = useColorMode();
 	const [loading, setLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const { showToast } = useAppToast();
 
 	const [formData, setFormData] = useState({
 		name: '',
@@ -125,7 +125,6 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setLoading(true);
-		setErrorMessage(null);
 		try {
 			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 			const response = await fetch('http://localhost:3005/api/v1/categories', {
@@ -147,11 +146,11 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 				});
 			} else {
 				const errorData = await response.json();
-				setErrorMessage(errorData.message || 'Error creating category');
+				showToast({ title: errorData.message || 'Error creating category', status: 'error' });
 			}
 		} catch (error) {
 			console.error('Error creating category:', error);
-			setErrorMessage('An error occurred');
+			showToast({ title: 'An error occurred', status: 'error' });
 		} finally {
 			setLoading(false);
 		}
@@ -214,7 +213,6 @@ const AddCategoryModal = ({ isOpen, onClose, onSuccess }: AddCategoryModalProps)
 								{t('products.categories.new_category')}
 							</Button>
 						</Dialog.Footer>
-						{errorMessage && <SnackbarContent message={errorMessage} isError />}
 					</Dialog.Content>
 				</Dialog.Positioner>
 			</Portal>

@@ -26,7 +26,7 @@ import {
 import Sidebar from '../../components/navigation/sidebar';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
-import { SnackbarContent } from '../../components/ui/Snackbar';
+import { useAppToast } from '../../hooks/useAppToast';
 
 type OrderStatus = 'EN_ATTENTE' | 'EXPEDIEE' | 'LIVREE' | 'ANNULEE';
 
@@ -74,6 +74,7 @@ const statusConfig: Record<OrderStatus, { bg: string; color: string; dotBg: stri
 const Orders = () => {
 	const { t } = useTranslation();
 	const { colorMode } = useColorMode();
+	const { showToast } = useAppToast();
 	const mainText = 'textMain';
 	const subText = 'textSub';
 	const borderColor = 'border';
@@ -92,21 +93,12 @@ const Orders = () => {
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-	const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-	const [snackbarError, setSnackbarError] = useState(false);
-
 	// Create order form
 	const [customers, setCustomers] = useState<Customer[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedCustomerId, setSelectedCustomerId] = useState('');
 	const [orderLines, setOrderLines] = useState<Array<{ productId: string; quantity: number }>>([]);
 	const [createLoading, setCreateLoading] = useState(false);
-
-	const showSnackbar = (msg: string, isError = false) => {
-		setSnackbarMessage(msg);
-		setSnackbarError(isError);
-		setTimeout(() => setSnackbarMessage(null), 3000);
-	};
 
 	const fetchOrders = useCallback(async () => {
 		setLoading(true);
@@ -196,12 +188,12 @@ const Orders = () => {
 	const handleCreateOrder = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!selectedCustomerId) {
-			showSnackbar(t('orders.select_customer_error', 'Please select a customer'), true);
+			showToast({ title: t('orders.select_customer_error', 'Please select a customer'), status: 'error' });
 			return;
 		}
 		const validLines = orderLines.filter(line => line.productId && line.quantity > 0);
 		if (validLines.length === 0) {
-			showSnackbar(t('orders.select_product_error', 'Please add at least one product'), true);
+			showToast({ title: t('orders.select_product_error', 'Please add at least one product'), status: 'error' });
 			return;
 		}
 
@@ -221,15 +213,15 @@ const Orders = () => {
 			});
 
 			if (response.ok) {
-				showSnackbar(t('orders.create_success', 'Order created successfully'));
+				showToast({ title: t('orders.create_success', 'Order created successfully'), status: 'success' });
 				setIsCreateModalOpen(false);
 				fetchOrders();
 			} else {
 				const err = await response.json();
-				showSnackbar(err.message || t('common.error', 'Error'), true);
+				showToast({ title: err.message || t('common.error', 'Error'), status: 'error' });
 			}
 		} catch (error) {
-			showSnackbar(t('common.error', 'Error'), true);
+			showToast({ title: t('common.error', 'Error'), status: 'error' });
 		} finally {
 			setCreateLoading(false);
 		}
@@ -264,15 +256,15 @@ const Orders = () => {
 			});
 
 			if (response.ok) {
-				showSnackbar(t('orders.status_updated', 'Status updated'));
+				showToast({ title: t('orders.status_updated', 'Status updated'), status: 'success' });
 				fetchOrders();
 				setIsDetailModalOpen(false);
 			} else {
 				const err = await response.json();
-				showSnackbar(err.message || t('common.error', 'Error'), true);
+				showToast({ title: err.message || t('common.error', 'Error'), status: 'error' });
 			}
 		} catch (error) {
-			showSnackbar(t('common.error', 'Error'), true);
+			showToast({ title: t('common.error', 'Error'), status: 'error' });
 		}
 	};
 
@@ -618,7 +610,6 @@ const Orders = () => {
 				</Portal>
 			</Dialog.Root>
 
-			{snackbarMessage && <SnackbarContent message={snackbarMessage} isError={snackbarError} />}
 		</Sidebar>
 	);
 };

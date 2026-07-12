@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
 import AddCategoryModal from './modal/AddCategoryModal';
 import { useEffect } from 'react';
-import { SnackbarContent } from '../../components/ui/Snackbar';
+import { useAppToast } from '../../hooks/useAppToast';
 
 type CategoryRow = {
 	id: string;
@@ -50,7 +50,7 @@ const CategoryListTabContent = () => {
 	const [categories, setCategories] = useState<CategoryRow[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
+	const { showToast } = useAppToast();
 
 	const mainText = 'textMain';
 	const subText = 'textSub';
@@ -90,8 +90,7 @@ const CategoryListTabContent = () => {
 	const handleAddSuccess = () => {
 		fetchCategories();
 		setIsAddModalOpen(false);
-		setShowSuccessSnackbar(true);
-		setTimeout(() => setShowSuccessSnackbar(false), 3000);
+		showToast({ title: t('products.categories.add_success', 'Catégorie ajoutée avec succès') });
 	};
 
 	const getStatusStyle = (status: 'ACTIVE' | 'INACTIVE') => {
@@ -243,7 +242,6 @@ const CategoryListTabContent = () => {
 				</Flex>
 			</Box>
 			<AddCategoryModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSuccess={handleAddSuccess} />
-			{showSuccessSnackbar && <SnackbarContent message={t('products.categories.add_success', 'Catégorie ajoutée avec succès')} />}
 		</Flex>
 	);
 };

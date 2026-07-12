@@ -231,13 +231,20 @@ frontend/
 │   ├── i18n.js                        # Configuration i18n (EN/FR/MG)
 │   ├── theme/system.js                # Thème Chakra UI personnalisé
 │   ├── index.css                      # Styles globaux
+│   ├── vite-env.d.ts                  # Types Vite
+│   ├── utils/
+│   │   └── fetchWithRefresh.ts        # HTTP client avec refresh token automatique
+│   ├── hooks/
+│   │   └── useAppToast.js             # Hook toast natif Chakra UI (createToaster)
+│   ├── providers/
+│   │   └── QueryProvider.jsx          # Provider TanStack Query (React Query)
 │   ├── components/
 │   │   ├── navigation/
 │   │   │   ├── sidebar.tsx            # Barre latérale (layout protégé)
 │   │   │   └── headerbar.tsx          # Barre d'en-tête (pages publiques)
 │   │   ├── ui/
 │   │   │   ├── color-mode.jsx         # Mock du mode clair/sombre
-│   │   │   └── Snackbar.tsx            # Notification toast
+│   │   │   └── Snackbar.tsx            # Ancien composant toast (remplacé par useAppToast)
 │   │   ├── ProtectedRoute.jsx         # Garde d'authentification
 │   │   └── PageTransition.jsx         # Animation de transition
 │   └── pages/
@@ -315,7 +322,9 @@ stock-management/
 │   │   ├── core/
 │   │   │   ├── core.module.ts
 │   │   │   ├── config/configuration.ts
-│   │   │   └── database/database.module.ts
+│   │   │   ├── config/throttler.config.ts
+│   │   │   ├── database/database.module.ts
+│   │   │   └── filters/all-exceptions.filter.ts
 │   │   └── modules/
 │   │       ├── auth/
 │   │       │   ├── auth.module.ts
@@ -375,6 +384,7 @@ stock-management/
 │   │       │   ├── products.module.ts
 │   │       │   ├── products.controller.ts
 │   │       │   ├── products.service.ts
+│   │       │   ├── products.service.spec.ts   # Tests unitaires
 │   │       │   ├── dto/create-product.dto.ts
 │   │       │   ├── dto/update-product.dto.ts
 │   │       │   ├── dto/product-filter.dto.ts
@@ -386,6 +396,7 @@ stock-management/
 │   │           ├── stock.module.ts
 │   │           ├── stock.controller.ts
 │   │           ├── stock.service.ts
+│   │           ├── stock.service.spec.ts      # Tests unitaires
 │   │           ├── dto/create-stock-movement.dto.ts
 │   │           ├── dto/reverse-stock-movement.dto.ts
 │   │           └── entities/stock-movement.entity.ts
@@ -408,6 +419,10 @@ stock-management/
 │   │   ├── index.js
 │   │   ├── index.css
 │   │   ├── i18n.js
+│   │   ├── hooks/
+│   │   │   └── useAppToast.js
+│   │   ├── providers/
+│   │   │   └── QueryProvider.jsx
 │   │   ├── components/
 │   │   │   ├── navigation/
 │   │   │   │   ├── headerbar.tsx
@@ -1033,6 +1048,7 @@ export class DatabaseModule {}
 **auth.module.ts**
 ```typescript
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
@@ -1041,6 +1057,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -1048,14 +1066,24 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
+      // eslint-disable-next-line @typescript-eslint/require-await
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('jwt.secret'),
-        signOptions: { expiresIn: '1d' },
+        signOptions: { expiresIn: '1h' },
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshTokenStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })
@@ -1065,20 +1093,35 @@ export class AuthModule {}
 **auth.controller.ts**
 ```typescript
 import {
-  Controller, Request, Post, UseGuards, Get, Body,
-  HttpCode, HttpStatus, UseInterceptors, UploadedFile,
+  Controller,
+  Request,
+  Post,
+  UseGuards,
+  Get,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { LoginDto } from './dto/login.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import {
-  ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @ApiTags('Authentication')
@@ -1086,6 +1129,7 @@ import {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Throttle({ default: { limit: 5, ttl: 300000 } })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -1134,6 +1178,7 @@ export class AuthController {
     return this.authService.updateProfile(req.user.userId, body);
   }
 
+  @Throttle({ default: { limit: 3, ttl: 300000 } })
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset' })
@@ -1172,6 +1217,15 @@ export class AuthController {
           return cb(null, `${randomName}${extname(file.originalname)}`);
         },
       }),
+      fileFilter: (_req, file, cb) => {
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(new BadRequestException('Only JPEG, PNG and WebP images are allowed'), false);
+        }
+      },
+      limits: { fileSize: 2 * 1024 * 1024 },
     }),
   )
   @ApiBearerAuth()
@@ -1181,9 +1235,30 @@ export class AuthController {
     @Request() req: ExpressRequest & { user: { userId: string } },
     @UploadedFile() file: any,
   ) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded or file is too large');
+    }
     const baseUrl =
       req.protocol + '://' + req.get('host') + '/uploads/' + file.filename;
     return this.authService.updateProfilePicture(req.user.userId, baseUrl);
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { refresh_token: { type: 'string' } },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Return new JWT tokens' })
+  async refresh(
+    @Request()
+    req: ExpressRequest & { user: { userId: string; email: string } },
+  ) {
+    return this.authService.refreshToken(req.user);
   }
 }
 ```
@@ -1207,24 +1282,46 @@ export class AuthService {
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
     if (user && (await user.validatePassword(pass))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { passwordHash, ...result } = user;
       return result;
     }
     return null;
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async login(user: any) {
     const payload = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       email: user.email,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       sub: user.id,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       role: user.role,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       username: user.username,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       firstName: user.firstName,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       lastName: user.lastName,
     };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+    const refreshPayload = { sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
+      refresh_token: this.jwtService.sign(refreshPayload, {
+        secret: 'refreshSecretKey',
+        expiresIn: '7d',
+      }),
     };
+  }
+
+  async refreshToken(user: { userId: string; email: string }) {
+    const userData = await this.usersService.findOneById(user.userId);
+    if (!userData) {
+      throw new Error('User not found');
+    }
+    return this.login(userData);
   }
 
   async forgotPassword(email: string) {
@@ -1254,15 +1351,21 @@ export class AuthService {
 
   async resetPassword(token: string, newPassword: string) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const payload = this.jwtService.verify(token);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (payload.purpose !== 'reset-password') {
         throw new Error('Invalid token purpose');
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       const userId = payload.sub;
       const hashedPassword = await bcrypt.hash(newPassword, 10);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       await this.usersService.updatePassword(userId, hashedPassword);
       return { message: 'Password successfully reset' };
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-unsafe-assignment
+      const _ = error;
       throw new Error('Invalid or expired token');
     }
   }
@@ -1274,10 +1377,14 @@ export class AuthService {
   }
 
   async updateProfile(userId: string, updateData: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (updateData.password) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       updateData.passwordHash = await bcrypt.hash(updateData.password, 10);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       delete updateData.password;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     await this.usersService.updateUser(userId, updateData);
     const user = await this.usersService.findOneById(userId);
     return this.login(user);
@@ -1286,6 +1393,7 @@ export class AuthService {
   async getProfile(userId: string) {
     const user = await this.usersService.findOneById(userId);
     if (!user) return null;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...result } = user;
     return result;
   }
@@ -1398,6 +1506,84 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
     return user;
+  }
+}
+```
+
+**decorators/roles.decorator.ts**
+```typescript
+import { SetMetadata } from '@nestjs/common';
+
+export enum Role {
+  ADMIN = 'ADMIN',
+  VENDEUR = 'VENDEUR',
+}
+
+export const ROLES_KEY = 'roles';
+export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
+```
+
+**guards/roles.guard.ts**
+```typescript
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ROLES_KEY, Role } from '../decorators/roles.decorator';
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
+
+    const { user } = context.switchToHttp().getRequest<{
+      user: { role: Role };
+    }>();
+
+    return requiredRoles.some((role) => user.role === role);
+  }
+}
+```
+
+**guards/jwt-refresh.guard.ts**
+```typescript
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class JwtRefreshGuard extends AuthGuard('jwt-refresh') {}
+```
+
+**strategies/refresh-token.strategy.ts**
+```typescript
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PassportStrategy } from '@nestjs/passport';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+@Injectable()
+export class RefreshTokenStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
+  constructor(configService: ConfigService) {
+    super({
+      jwtFromRequest: ExtractJwt.fromBodyField('refresh_token'),
+      secretOrKey:
+        configService.get<string>('jwt.refreshSecret') || 'refreshSecretKey',
+      passReqToCallback: false,
+    });
+  }
+
+  validate(payload: { sub: string; email: string }) {
+    return { userId: payload.sub, email: payload.email };
   }
 }
 ```
@@ -2786,6 +2972,226 @@ describe('AppController (e2e)', () => {
 }
 ```
 
+**src/modules/products/products.service.spec.ts**
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { ProductsService } from './products.service';
+import { ProductRepository } from './repositories/product.repository';
+import { ProductCacheService } from './services/product-cache.service';
+import { CategoriesService } from '../categories/categories.service';
+import { ConflictException } from '@nestjs/common';
+
+describe('ProductsService', () => {
+  let service: ProductsService;
+  let productRepository: jest.Mocked<ProductRepository>;
+  let categoriesService: jest.Mocked<CategoriesService>;
+
+  const mockProductRepository = {
+    findAll: jest.fn(),
+    findById: jest.fn(),
+    findByReference: jest.fn(),
+    findLastReference: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    getStats: jest.fn(),
+  };
+
+  const mockCategoriesService = {
+    findOne: jest.fn(),
+    incrementProductCount: jest.fn(),
+    decrementProductCount: jest.fn(),
+    findByName: jest.fn(),
+    create: jest.fn(),
+  };
+
+  const mockCacheService = {
+    get: jest.fn(),
+    set: jest.fn(),
+    clear: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ProductsService,
+        { provide: ProductRepository, useValue: mockProductRepository },
+        { provide: CategoriesService, useValue: mockCategoriesService },
+        { provide: ProductCacheService, useValue: mockCacheService },
+      ],
+    }).compile();
+
+    service = module.get<ProductsService>(ProductsService);
+    productRepository = module.get(ProductRepository);
+    categoriesService = module.get(CategoriesService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should create a product successfully', async () => {
+      const dto = {
+        name: 'Test Product',
+        categoryId: 'cat-uuid',
+        price: 99.99,
+        stockQuantity: 50,
+      };
+
+      const mockCategory = { id: 'cat-uuid', name: 'Test Category' };
+      const mockProduct = { id: 'prod-uuid', ...dto, reference: 'REF-00001' };
+
+      mockCategoriesService.findOne.mockResolvedValue(mockCategory as any);
+      mockProductRepository.findByReference.mockResolvedValue(null);
+      mockProductRepository.findLastReference.mockResolvedValue(null);
+      mockProductRepository.create.mockResolvedValue(mockProduct as any);
+
+      const result = await service.create(dto as any);
+
+      expect(result).toEqual(mockProduct);
+      expect(categoriesService.incrementProductCount).toHaveBeenCalledWith(
+        'cat-uuid',
+      );
+      expect(mockCacheService.clear).toHaveBeenCalled();
+    });
+
+    it('should throw ConflictException if reference exists', async () => {
+      const dto = {
+        name: 'Test Product',
+        categoryId: 'cat-uuid',
+        price: 99.99,
+        reference: 'REF-00001',
+      };
+
+      mockCategoriesService.findOne.mockResolvedValue({ id: 'cat-uuid' } as any);
+      mockProductRepository.findByReference.mockResolvedValue({
+        id: 'existing',
+      } as any);
+
+      await expect(service.create(dto as any)).rejects.toThrow(
+        ConflictException,
+      );
+    });
+  });
+});
+```
+
+**src/modules/stock/stock.service.spec.ts**
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { StockService } from './stock.service';
+import { StockMovement } from './entities/stock-movement.entity';
+import { Product } from '../products/entities/product.entity';
+import { BadRequestException } from '@nestjs/common';
+
+describe('StockService', () => {
+  let service: StockService;
+
+  const mockQueryRunner = {
+    connect: jest.fn(),
+    startTransaction: jest.fn(),
+    commitTransaction: jest.fn(),
+    rollbackTransaction: jest.fn(),
+    release: jest.fn(),
+    manager: {
+      findOne: jest.fn(),
+      save: jest.fn(),
+      create: jest.fn(),
+    },
+  };
+
+  const mockDataSource = {
+    createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
+  };
+
+  const mockStockMovementRepository = {
+    createQueryBuilder: jest.fn().mockReturnValue({
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([]),
+    }),
+    create: jest.fn(),
+  };
+
+  const mockProductRepository = {
+    findOne: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        StockService,
+        { provide: DataSource, useValue: mockDataSource },
+        {
+          provide: getRepositoryToken(StockMovement),
+          useValue: mockStockMovementRepository,
+        },
+        {
+          provide: getRepositoryToken(Product),
+          useValue: mockProductRepository,
+        },
+      ],
+    }).compile();
+
+    service = module.get<StockService>(StockService);
+  });
+
+  describe('createMovement', () => {
+    it('should throw error for insufficient stock on EXIT', async () => {
+      const dto = {
+        productId: 'prod-uuid',
+        type: 'EXIT' as any,
+        quantity: 100,
+        reason: 'Test exit',
+      };
+
+      mockProductRepository.findOne.mockResolvedValue({
+        id: 'prod-uuid',
+        stockQuantity: 10,
+        minStockThreshold: 5,
+      });
+
+      await expect(service.createMovement(dto)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should successfully create an ENTRY movement', async () => {
+      const dto = {
+        productId: 'prod-uuid',
+        type: 'ENTRY' as any,
+        quantity: 50,
+        reason: 'Restock',
+      };
+
+      const mockProduct = {
+        id: 'prod-uuid',
+        stockQuantity: 10,
+        minStockThreshold: 5,
+        stockStatus: 'FAIBLE',
+      };
+
+      mockProductRepository.findOne.mockResolvedValue(mockProduct);
+      mockQueryRunner.manager.save.mockResolvedValue({
+        ...mockProduct,
+        stockQuantity: 60,
+      });
+
+      const result = await service.createMovement(dto);
+
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
+      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+      expect(mockQueryRunner.release).toHaveBeenCalled();
+    });
+  });
+});
+```
+
 ---
 
 ### 6.5 — Frontend
@@ -2972,17 +3378,20 @@ import { createRoot } from 'react-dom/client'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ColorModeProvider } from './components/ui/color-mode.jsx'
 import { system } from './theme/system.js'
+import { QueryProvider } from './providers/QueryProvider.jsx'
 import './index.css'
 import './i18n'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ChakraProvider value={system}>
-      <ColorModeProvider>
-        <App />
-      </ColorModeProvider>
-    </ChakraProvider>
+    <QueryProvider>
+      <ChakraProvider value={system}>
+        <ColorModeProvider>
+          <App />
+        </ColorModeProvider>
+      </ChakraProvider>
+    </QueryProvider>
   </StrictMode>,
 )
 ```
@@ -3043,11 +3452,13 @@ import LinkVerification from './pages/Auth/LinkVerification';
 import ResetPassword from './pages/Auth/ResetPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 import UsersProfile from './pages/Users/UsersProfile';
+import { ToastContainer } from './hooks/useAppToast';
 import './App.css';
 
 function App() {
   return (
     <Router>
+      <ToastContainer />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginForm />} />
@@ -3175,7 +3586,9 @@ export function useColorModeValue(light) {
 
 ---
 
-#### 6.5.15 — frontend/src/components/ui/Snackbar.tsx
+#### 6.5.15 — frontend/src/components/ui/Snackbar.tsx (déprécié)
+
+> **Note :** Ce composant a été remplacé par le hook `useAppToast` (voir §6.5.27). Le fichier est conservé pour compatibilité mais n'est plus utilisé.
 
 ```tsx
 import React from 'react';
@@ -3201,9 +3614,7 @@ export const SnackbarContent = ({ message, isError = false }: SnackbarProps) => 
 };
 ```
 
----
-
-#### 6.5.16 — frontend/src/components/ProtectedRoute.jsx
+---#### 6.5.16 — frontend/src/components/ProtectedRoute.jsx
 
 ```jsx
 import { Navigate, Outlet } from 'react-router-dom';
@@ -3862,6 +4273,73 @@ Please refer to `frontend/src/pages/Users/UsersProfile.tsx` for the full impleme
 - Language preference selector (FR, EN, MG)
 - Password change with validation criteria
 - 2FA management display
+
+---
+
+#### 6.5.27 — frontend/src/hooks/useAppToast.js
+
+Hook global pour afficher des toasts Chakra UI sans dépendre du contexte React. Utilise `createStandaloneToast` pour créer un `ToastContainer` rendu une seule fois dans `App.jsx`.
+
+```js
+import { createStandaloneToast } from '@chakra-ui/react';
+import { system } from '../theme/system';
+
+const { ToastContainer, toast } = createStandaloneToast({ defaultTheme: system });
+
+export const useAppToast = () => {
+  const showToast = ({
+    title,
+    description = '',
+    status = 'success',
+    duration = 3000,
+    isClosable = true,
+  }) => {
+    return toast({
+      title,
+      description,
+      status,
+      duration,
+      isClosable,
+      position: 'bottom',
+      variant: 'subtle',
+    });
+  };
+
+  return { showToast, ToastContainer };
+};
+```
+
+---
+
+#### 6.5.28 — frontend/src/providers/QueryProvider.jsx
+
+Provider TanStack Query (React Query v5) qui wrappe l'application dans `main.jsx`. Configure les options par défaut : `staleTime` de 5 min, 1 seule tentative de rafraîchissement, pas de refetch au focus.
+
+```jsx
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
+
+export const QueryProvider = ({ children }) => {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 5 * 60 * 1000,
+            retry: 1,
+            refetchOnWindowFocus: false,
+          },
+        },
+      }),
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+};
+```
 
 ---
 
