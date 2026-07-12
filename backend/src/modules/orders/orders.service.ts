@@ -15,7 +15,10 @@ import { StockService } from '../stock/stock.service';
 import { CustomersService } from '../customers/customers.service';
 import { ProductsService } from '../products/products.service';
 import { Product } from '../products/entities/product.entity';
-import { StockMovement, StockMovementType } from '../stock/entities/stock-movement.entity';
+import {
+  StockMovement,
+  StockMovementType,
+} from '../stock/entities/stock-movement.entity';
 
 @Injectable()
 export class OrdersService {
@@ -49,7 +52,7 @@ export class OrdersService {
     const { customerId, items } = createOrderDto;
 
     // Verify customer exists
-    const customer = await this.customersService.findOne(customerId);
+    await this.customersService.findOne(customerId);
 
     // Use transaction for atomicity
     const queryRunner = this.dataSource.createQueryRunner();
@@ -156,7 +159,7 @@ export class OrdersService {
     const oldStatus = order.status;
 
     // Validate transitions
-    this.validateStatusTransition(oldStatus, newStatus);
+    this.validateStatusTransition(oldStatus);
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -207,14 +210,9 @@ export class OrdersService {
     }
   }
 
-  private validateStatusTransition(
-    current: OrderStatus,
-    next: OrderStatus,
-  ): void {
+  private validateStatusTransition(current: OrderStatus): void {
     if (current === OrderStatus.LIVREE || current === OrderStatus.ANNULEE) {
-      throw new BadRequestException(
-        `Cannot change status from ${current}`,
-      );
+      throw new BadRequestException(`Cannot change status from ${current}`);
     }
     // All other transitions are allowed
   }

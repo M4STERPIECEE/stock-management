@@ -26,10 +26,7 @@ export class DashboardService {
     );
 
     // Current period revenue
-    const currentRevenue = await this.getRevenue(
-      currentPeriodStart,
-      now,
-    );
+    const currentRevenue = await this.getRevenue(currentPeriodStart, now);
     // Previous period revenue
     const previousRevenue = await this.getRevenue(
       previousPeriodStart,
@@ -100,7 +97,7 @@ export class DashboardService {
       })
       .andWhere('order.createdAt >= :startDate', { startDate })
       .andWhere('order.createdAt < :endDate', { endDate })
-      .getRawOne();
+      .getRawOne<{ total: string }>();
 
     return parseFloat(result?.total || '0');
   }
@@ -122,7 +119,7 @@ export class DashboardService {
         'COALESCE(SUM(product.price * product.stockQuantity), 0)',
         'totalValue',
       )
-      .getRawOne();
+      .getRawOne<{ totalValue: string }>();
 
     return parseFloat(result?.totalValue || '0');
   }

@@ -173,7 +173,10 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 200, description: 'Return new JWT tokens' })
-  async refresh(@Request() req: ExpressRequest & { user: any }) {
+  async refresh(
+    @Request()
+    req: ExpressRequest & { user: { userId: string; email: string } },
+  ) {
     return this.authService.refreshToken(req.user);
   }
 }

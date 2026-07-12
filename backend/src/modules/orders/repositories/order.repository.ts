@@ -30,13 +30,7 @@ export class OrderRepository {
   async findAll(
     filter: OrderFilterDto,
   ): Promise<{ items: Order[]; total: number }> {
-    const {
-      status,
-      customerId,
-      search,
-      page = 1,
-      limit = 10,
-    } = filter;
+    const { status, customerId, search, page = 1, limit = 10 } = filter;
     const query = this.repository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.customer', 'customer')
@@ -95,7 +89,7 @@ export class OrderRepository {
       query.andWhere('order.createdAt <= :endDate', { endDate });
     }
 
-    const result = await query.getRawOne();
+    const result = await query.getRawOne<{ total: string }>();
     return parseFloat(result?.total || '0');
   }
 

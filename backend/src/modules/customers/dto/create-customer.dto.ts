@@ -17,7 +17,7 @@ export class EmailOrPhoneConstraint implements ValidatorConstraintInterface {
     return !!(dto.email || dto.phone);
   }
 
-  defaultMessage(_args: ValidationArguments) {
+  defaultMessage() {
     return 'Either email or phone must be provided';
   }
 }

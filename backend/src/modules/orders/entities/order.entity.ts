@@ -32,7 +32,11 @@ export class Order {
   @Column({ name: 'customer_id' })
   customerId: string;
 
-  @Column({ name: 'order_date', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'order_date',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   orderDate: Date;
 
   @Column({
@@ -42,7 +46,13 @@ export class Order {
   })
   status: OrderStatus;
 
-  @Column({ name: 'total_amount', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    name: 'total_amount',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   totalAmount: number;
 
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })

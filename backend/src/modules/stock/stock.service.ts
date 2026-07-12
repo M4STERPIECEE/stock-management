@@ -119,7 +119,8 @@ export class StockService {
           : StockMovementType.ADJUSTMENT;
 
     const reverseReason =
-      reason || `Contre-mouvement du ${originalMovement.type} #${movementId.slice(0, 8)}`;
+      reason ||
+      `Contre-mouvement du ${originalMovement.type} #${movementId.slice(0, 8)}`;
 
     // Use the same createMovement method to ensure atomicity
     return this.createMovement({
