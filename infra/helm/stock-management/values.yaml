@@ -1,0 +1,48 @@
+backend:
+  image:
+    repository: ghcr.io/m4sterpiece77k/stock-management-backend
+    tag: latest
+  replicas: 2
+  port: 3005
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 512Mi }
+
+frontend:
+  image:
+    repository: ghcr.io/m4sterpiece77k/stock-management-frontend
+    tag: latest
+  replicas: 2
+  port: 80
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits: { cpu: 200m, memory: 256Mi }
+
+postgres:
+  image: postgres:15-alpine
+  storage: 5Gi
+
+config:
+  dbName: stock_management
+  throttleTtl: "60000"
+  throttleLimit: "60"
+
+# Ne pas mettre de vraies valeurs ici. Utiliser --set, un values-secret.yaml
+# (gitignored), ou un secret manager (Vault, SOPS, External Secrets...).
+secrets:
+  dbUser: postgres
+  dbPassword: CHANGE_ME
+  jwtSecret: CHANGE_ME
+  refreshTokenSecret: CHANGE_ME
+  adminEmail: admin@example.com
+  adminPassword: CHANGE_ME
+  mailHost: ""
+  mailUser: ""
+  mailPassword: ""
+  mailFrom: ""
+
+ingress:
+  enabled: true
+  host: stock.example.com
+  tlsSecretName: stock-tls
+  clusterIssuer: letsencrypt-prod

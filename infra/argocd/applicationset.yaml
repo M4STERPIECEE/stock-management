@@ -1,0 +1,35 @@
+# Déploiement multi-environnements (dev/staging/prod) à partir de branches Git.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: stock-management-envs
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            branch: develop
+            namespace: stock-management-dev
+          - env: prod
+            branch: main
+            namespace: stock-management
+
+  template:
+    metadata:
+      name: "stock-management-{{env}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/M4STERPIECE77K/stock-management.git
+        targetRevision: "{{branch}}"
+        path: infra/helm/stock-management
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
