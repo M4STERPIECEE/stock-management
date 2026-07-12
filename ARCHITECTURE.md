@@ -235,7 +235,7 @@ frontend/
 │   ├── utils/
 │   │   └── fetchWithRefresh.ts        # HTTP client avec refresh token automatique
 │   ├── hooks/
-│   │   └── useAppToast.js             # Hook toast Chakra UI v3 (createToaster)
+│   │   └── useAppToast.jsx            # Hook toast Chakra UI v3 (createToaster)
 │   ├── providers/
 │   │   └── QueryProvider.jsx          # Provider TanStack Query (React Query)
 │   ├── components/
@@ -421,7 +421,7 @@ stock-management/
 │   │   ├── index.css
 │   │   ├── i18n.js
 │   │   ├── hooks/
-│   │   │   └── useAppToast.js
+│   │   │   └── useAppToast.jsx
 │   │   ├── providers/
 │   │   │   └── QueryProvider.jsx
 │   │   ├── components/
@@ -4265,11 +4265,17 @@ Please refer to `frontend/src/pages/Users/UsersProfile.tsx` for the full impleme
 
 #### 6.5.27 — frontend/src/hooks/useAppToast.js
 
-Hook global pour afficher des toasts Chakra UI v3 sans dépendre du contexte React. Utilise `createToaster` (API v3) pour créer un `ToastContainer` rendu une seule fois dans `App.jsx`. Évite le JSX avec `createElement` pour rester en `.js`.
+Hook global pour afficher des toasts Chakra UI v3. Utilise `createToaster` pour créer la file d'attente et `createElement` avec render prop pour afficher chaque toast. Pas de JSX, reste en `.js`.
 
 ```js
-import { createToaster, Toaster as ChakraToaster } from '@chakra-ui/react';
-import { createElement } from 'react';
+import {
+  createToaster,
+  Toaster as ChakraToaster,
+  ToastRoot,
+  ToastTitle,
+  ToastDescription,
+  ToastCloseTrigger,
+} from '@chakra-ui/react';
 
 const toaster = createToaster({
   placement: 'bottom',
@@ -4277,7 +4283,17 @@ const toaster = createToaster({
   gap: 16,
 });
 
-export const ToastContainer = () => createElement(ChakraToaster, { toaster });
+export const ToastContainer = () => (
+  <ChakraToaster toaster={toaster}>
+    {(toast) => (
+      <ToastRoot>
+        <ToastTitle>{toast.title}</ToastTitle>
+        <ToastDescription>{toast.description}</ToastDescription>
+        <ToastCloseTrigger />
+      </ToastRoot>
+    )}
+  </ChakraToaster>
+);
 
 export const useAppToast = () => {
   const showToast = ({

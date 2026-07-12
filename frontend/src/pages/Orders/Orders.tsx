@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
 	Box,
@@ -322,6 +323,7 @@ const Orders = () => {
 
 	return (
 		<Sidebar>
+			<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: "easeOut" }}>
 			<Flex direction="column" gap="6">
 				{/* Toolbar */}
 				<Flex bg={cardBg} p="4" borderRadius="xl" border="1px solid" borderColor={borderColor} boxShadow="sm" justify="space-between" align="center" wrap="wrap" gap="4">
@@ -408,25 +410,20 @@ const Orders = () => {
 						</TableRoot>
 					</Box>
 					{/* Pagination */}
-					<Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor}>
+					<Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor} bg={cardBg}>
 						<Text fontSize="sm" color={subText}>
-							{t('products.pagination.showing')} <Text as="span" fontWeight="medium" color={mainText}>{from}</Text>{' '}
-							{t('products.pagination.to')} <Text as="span" fontWeight="medium" color={mainText}>{to}</Text>{' '}
-							{t('products.pagination.of')} <Text as="span" fontWeight="medium" color={mainText}>{totalItems}</Text>{' '}
-							{t('products.pagination.results')}
+							{t('products.pagination.showing')} <Text as="span" fontWeight="medium" color={mainText}>{from}</Text> {t('products.pagination.to')} <Text as="span" fontWeight="medium" color={mainText}>{to}</Text> {t('products.pagination.of')} <Text as="span" fontWeight="medium" color={mainText}>{totalItems}</Text> {t('products.pagination.results')}
 						</Text>
 						<HStack gap="2">
 							<IconButton aria-label="Previous" size="sm" variant="outline" borderColor={borderColor} color={subText}
-								onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}
-								_hover={{ bg: hoverRowBg, color: mainText }}>
+								onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
 								<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
 							</IconButton>
-							<Text fontSize="sm" fontWeight="medium" color={mainText} px="2">
-								{t('products.pagination.page')} {currentPage} {t('products.pagination.of_pages')} {totalPages}
-							</Text>
+							<Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
+								{currentPage}
+							</Button>
 							<IconButton aria-label="Next" size="sm" variant="outline" borderColor={borderColor} color={subText}
-								onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}
-								_hover={{ bg: hoverRowBg, color: mainText }}>
+								onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
 								<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
 							</IconButton>
 						</HStack>
@@ -610,6 +607,7 @@ const Orders = () => {
 				</Portal>
 			</Dialog.Root>
 
+			</motion.div>
 		</Sidebar>
 	);
 };
