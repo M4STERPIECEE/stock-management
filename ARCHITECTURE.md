@@ -301,8 +301,9 @@ Trois langues supportées via i18next :
 stock-management/
 ├── .github/
 │   └── workflows/
-│       ├── ci-develop.yml      # CI push develop/main (lint + build + test)
-│       └── ci-feature.yml      # CI push feature/bugfix (lint + build)
+│       ├── ci-develop.yml        # CI push develop/main (lint + build + test)
+│       ├── ci-feature.yml        # CI push feature/bugfix/infra (lint + build)
+│       └── docker-publish.yml    # Build & push images GHCR sur main/tag v*
 ├── backend/
 │   ├── migrations/
 │   │   ├── v1_schema.sql       # UUID & enums initiaux
@@ -459,8 +460,42 @@ stock-management/
 │   ├── package.json
 │   ├── eslint.config.js
 │   └── pnpm-workspace.yaml
-├── docker-compose.yml
+├── infra/
+│   ├── docker-compose.yml      # Orquestration locale (db + backend + frontend)
+│   ├── README.md               # Documentation infra
+│   ├── k8s/
+│   │   ├── .gitignore          # Exclut 02-secret.yaml
+│   │   ├── 00-namespace.yaml
+│   │   ├── 01-configmap.yaml
+│   │   ├── 02-secret.example.yaml
+│   │   ├── 03-postgres.yaml
+│   │   ├── 04-backend.yaml
+│   │   ├── 05-frontend.yaml
+│   │   ├── 06-ingress.yaml
+│   │   └── kustomization.yaml
+│   ├── helm/stock-management/
+│   │   ├── Chart.yaml
+│   │   ├── values.yaml
+│   │   └── templates/
+│   │       ├── _helpers.tpl
+│   │       ├── configmap.yaml
+│   │       ├── secret.yaml
+│   │       ├── backend.yaml
+│   │       ├── frontend.yaml
+│   │       ├── postgres.yaml
+│   │       └── ingress.yaml
+│   ├── terraform/
+│   │   ├── main.tf
+│   │   ├── providers.tf
+│   │   ├── variables.tf
+│   │   ├── outputs.tf
+│   │   ├── terraform.tfvars.example
+│   │   └── cloud-init.yaml
+│   └── argocd/
+│       ├── application.yaml
+│       └── applicationset.yaml
 ├── .gitignore
+├── ARCHITECTURE.md
 └── README.md
 ```
 
@@ -470,55 +505,15 @@ stock-management/
 
 ---
 
-### 6.1 — docker-compose.yml (Racine)
+### 6.1 — docker-compose.yml → infra/docker-compose.yml
 
-```yaml
-services:
-  db:
-    image: postgres:15-alpine
-    container_name: stock_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-stock_management}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-stock_management}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+Le fichier `docker-compose.yml` a été déplacé vers `infra/docker-compose.yml` (voir §6.6). Le chemin d'accès a changé ainsi que les contextes de build :
 
-  backend:
-    build: ./backend
-    container_name: stock_backend
-    restart: always
-    ports:
-      - "3005:3005"
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
-
-  frontend:
-    build:
-      context: ./frontend
-      args:
-        VITE_API_URL: http://backend:3005
-    container_name: stock_frontend
-    restart: always
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
-
-volumes:
-  postgres_data:
-```
+| Ancien (racine) | Nouveau (infra/) |
+|---|---|
+| `build: ./backend` | `build: ../backend` |
+| `build: ./frontend` | `build: ../frontend` |
+| `env_file: .env` | `env_file: ../.env` |
 
 ---
 
@@ -4337,7 +4332,123 @@ export const QueryProvider = ({ children }) => {
 
 ---
 
-### 6.6 — GitHub Workflows
+### 6.6 — infra/docker-compose.yml
+
+Orchestration locale des 3 services (PostgreSQL, backend NestJS, frontend Nginx). Le backend charge les variables depuis le `.env` racine. Le frontend reçoit `VITE_API_URL` en build arg.
+
+```yaml
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: stock_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: \${DB_USER:-postgres}
+      POSTGRES_PASSWORD: \${DB_PASSWORD:-postgres}
+      POSTGRES_DB: \${DB_NAME:-stock_management}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \${DB_USER:-postgres} -d \${DB_NAME:-stock_management}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ../backend
+    container_name: stock_backend
+    restart: always
+    ports:
+      - "3005:3005"
+    env_file:
+      - ../.env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        VITE_API_URL: http://backend:3005
+    container_name: stock_frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+```
+
+---
+
+### 6.7 — .github/workflows/docker-publish.yml
+
+Workflow CI/CD qui build et push les images Docker vers GitHub Container Registry (GHCR) sur push vers `main` ou tag `v*.*.*`. Utilise une matrice pour builder backend et frontend en parallèle. Les tags publiés sont `latest` (branche main) + SHA court du commit.
+
+```yaml
+name: Docker Publish
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - name: backend
+            dockerfile: backend/Dockerfile
+            context: backend
+          - name: frontend
+            dockerfile: frontend/Dockerfile
+            context: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/\${{ github.repository_owner }}/\${{ github.event.repository.name }}-\${{ matrix.service.name }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=,suffix=,format=short
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: \${{ github.repository_owner }}
+          password: \${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: \${{ matrix.service.context }}
+          file: \${{ matrix.service.dockerfile }}
+          push: true
+          tags: \${{ steps.meta.outputs.tags }}
+          labels: \${{ steps.meta.outputs.labels }}
+          build-args: \${{ matrix.service.name == 'frontend' && format('VITE_API_URL={0}', vars.VITE_API_URL || 'https://api.stock.example.com') || '' }}
+```
+
+---
+
+### 6.8 — GitHub Workflows
 
 ---
 
@@ -4427,7 +4538,7 @@ jobs:
 
 ---
 
-### 6.7 — frontend/i18n.js
+### 6.9 — frontend/i18n.js
 
 Due to the large size, please refer to the source file `frontend/src/i18n.js` for the complete internationalization data.
 
