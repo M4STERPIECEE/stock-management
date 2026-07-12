@@ -1,21 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-    Box,
-    Flex,
-    Text,
-    Button,
-    Input,
-    Stack,
-    Table,
-    Badge,
-    InputGroup,
-    SimpleGrid,
-    HStack,
-    IconButton,
-    Spinner,
-    Center,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Input, Stack, TableBody, TableCell, TableColumnHeader, TableHeader, TableRoot, TableRow, Badge, InputGroup, SimpleGrid, HStack, IconButton, Spinner, Center } from '@chakra-ui/react';
 import Sidebar from '../../components/navigation/sidebar';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
@@ -39,8 +24,7 @@ const Stock = () => {
     const borderColor = "border";
     const cardBg = "card";
     const bg = "background";
-    const inputBg = "inputBg";
-    const inputBorder = "inputBorder";
+    const hoverRowBg = colorMode === 'dark' ? 'whiteAlpha.50' : 'gray.50';
 
     const fetchStats = useCallback(async () => {
         try {
@@ -217,20 +201,7 @@ const Stock = () => {
                     <Flex direction={{ base: "column", lg: "row" }} gap="4" align={{ lg: "center" }} justify="space-between" bg={cardBg} p="4" borderRadius="xl" border="1px" borderColor={borderColor} shadow="sm">
                         <Box flex="1" maxW={{ lg: "lg" }} w="full">
                             <InputGroup w="full" startElement={<Icon name="search" size={20} color="#94a3b8" />}>
-                                <Input 
-                                    placeholder={t('stock.search_placeholder')} 
-                                    bg={bg} 
-                                    color={mainText} 
-                                    border="0" 
-                                    ring="1px" 
-                                    ringColor={borderColor} 
-                                    _focus={{ ring: "2px", ringColor: "primary" }} 
-                                    py="2.5" 
-                                    borderRadius="lg" 
-                                    fontSize="sm" 
-                                    value={searchTerm} 
-                                    onChange={(e) => setSearchTerm(e.target.value)} 
-                                />
+                                <Input placeholder={t('stock.search_placeholder')} bg={bg} color={mainText} border="0" ring="1px" ringColor={borderColor} _focus={{ ring: "2px", ringColor: "primary" }} py="2.5" borderRadius="lg" fontSize="sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                             </InputGroup>
                         </Box>
                         <HStack gap="2" overflowX="auto" pb={{ base: "2", lg: "0" }}>
@@ -252,86 +223,67 @@ const Stock = () => {
                     {/* Tableau */}
                     <Box bg={cardBg} border="1px" borderColor={borderColor} borderRadius="xl" overflow="hidden" shadow="sm">
                         <Box overflowX="auto">
-                            <Table.Root w="full" variant="outline">
-                                <Table.Header bg={bg} _dark={{ bg: "slate.800/50" }}>
-                                    <Table.Row borderBottom="1px" borderColor={borderColor}>
-                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.reference')}</Table.ColumnHeader>
-                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.product')}</Table.ColumnHeader>
-                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} display={{ base: "none", sm: "table-cell" }}>{t('stock.table.category')}</Table.ColumnHeader>
-                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText} display={{ base: "none", md: "table-cell" }}>{t('stock.table.price')}</Table.ColumnHeader>
-                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.status')}</Table.ColumnHeader>
-                                        <Table.ColumnHeader p="4" textStyle="xs" fontWeight="semibold" textTransform="uppercase" letterSpacing="wide" color={subText}>{t('stock.table.stock_level')}</Table.ColumnHeader>
-                                    </Table.Row>
-                                </Table.Header>
-                                <Table.Body>
+                            <TableRoot>
+                                <TableHeader>
+                                    <TableRow bg={colorMode === 'dark' ? 'whiteAlpha.50' : 'blackAlpha.50'}>
+                                        <TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider">{t('stock.table.reference')}</TableColumnHeader>
+                                        <TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider">{t('stock.table.product')}</TableColumnHeader>
+                                        <TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider" display={{ base: "none", sm: "table-cell" }}>{t('stock.table.category')}</TableColumnHeader>
+                                        <TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider" display={{ base: "none", md: "table-cell" }}>{t('stock.table.price')}</TableColumnHeader>
+                                        <TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider">{t('stock.table.status')}</TableColumnHeader>
+                                        <TableColumnHeader px="4" py="4" fontSize="xs" color={subText} textTransform="uppercase" letterSpacing="wider">{t('stock.table.stock_level')}</TableColumnHeader>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
                                     {loading ? (
-                                        <Table.Row>
-                                            <Table.Cell colSpan={6} p="8">
-                                                <Center w="full">
-                                                    <Spinner color="primary" />
-                                                </Center>
-                                            </Table.Cell>
-                                        </Table.Row>
+                                        <TableRow>
+                                            <TableCell colSpan={6} textAlign="center" py="10">
+                                                <Center><Spinner color="primary" /></Center>
+                                            </TableCell>
+                                        </TableRow>
                                     ) : products.length === 0 ? (
-                                        <Table.Row>
-                                            <Table.Cell colSpan={6} p="8">
-                                                <Center w="full">
-                                                    <Text color={subText}>{t('stock.table.noProducts')}</Text>
-                                                </Center>
-                                            </Table.Cell>
-                                        </Table.Row>
+                                        <TableRow>
+                                            <TableCell colSpan={6} textAlign="center" py="10">
+                                                <Text color={subText}>{t('stock.table.noProducts')}</Text>
+                                            </TableCell>
+                                        </TableRow>
                                     ) : (
                                         products.map((product) => {
                                             const status = getStatusInfo(product);
                                             const stockPercentage = Math.min((product.stockQuantity / (product.minStockThreshold * 2 || 100)) * 100, 100);
 
                                             return (
-                                                <Table.Row key={product.id} _hover={{ bg: bg }} transition="colors">
-                                                    <Table.Cell p="4">
+                                                <TableRow key={product.id} _hover={{ bg: hoverRowBg }} transition="background 0.2s">
+                                                    <TableCell px="4" py="4">
                                                         <Text fontSize="xs" fontWeight="medium" color={subText}>{product.reference}</Text>
-                                                    </Table.Cell>
-                                                    <Table.Cell p="4">
+                                                    </TableCell>
+                                                    <TableCell px="4" py="4">
                                                         <Text fontSize="sm" fontWeight="semibold" color={mainText}>{product.name}</Text>
-                                                    </Table.Cell>
-                                                    <Table.Cell p="4" fontSize="sm" color={subText} display={{ base: "none", sm: "table-cell" }}>
+                                                    </TableCell>
+                                                    <TableCell px="4" py="4" fontSize="sm" color={subText} display={{ base: "none", sm: "table-cell" }}>
                                                         {product.category?.name || 'Général'}
-                                                    </Table.Cell>
-                                                    <Table.Cell p="4" fontSize="sm" fontWeight="medium" color={mainText} display={{ base: "none", md: "table-cell" }}>
+                                                    </TableCell>
+                                                    <TableCell px="4" py="4" fontSize="sm" fontWeight="medium" color={mainText} display={{ base: "none", md: "table-cell" }}>
                                                         {new Intl.NumberFormat('fr-MG', { style: 'currency', currency: 'MGA' }).format(product.unitPrice || product.price || 0)}
-                                                    </Table.Cell>
-                                                    <Table.Cell p="4">
+                                                    </TableCell>
+                                                    <TableCell px="4" py="4">
                                                         <Badge bg={`${status.color}.100`} color={`${status.color}.800`} _dark={{ bg: `${status.color}.900/30`, color: `${status.color}.400` }} borderRadius="full" px="2.5" py="1" fontSize="xs" fontWeight="medium" textTransform="none">
                                                             <HStack gap="1.5">
                                                                 <Box w="1.5" h="1.5" borderRadius="full" bg={status.dotColor} />
                                                                 {status.label}
                                                             </HStack>
                                                         </Badge>
-                                                    </Table.Cell>
-                                                    <Table.Cell p="4">
+                                                    </TableCell>
+                                                    <TableCell px="4" py="4">
                                                         <HStack gap="3">
                                                             <Flex align="center" border="1px" borderColor={!status.isLow ? borderColor : `${status.color}.200`} borderRadius="lg" bg={!status.isLow ? cardBg : `${status.color}.50`} _dark={!status.isLow ? {} : { borderColor: `${status.color}.800/50`, bg: `${status.color}.900/10` }} overflow="hidden">
-                                                                <IconButton 
-                                                                    aria-label="Decrease" 
-                                                                    variant="ghost" 
-                                                                    size="xs" 
-                                                                    color={!status.isLow ? subText : `${status.color}.700`} 
-                                                                    _dark={{ color: status.dotColor }} 
-                                                                    onClick={() => handleStockUpdate(product.id, 'EXIT', 1)} 
-                                                                    disabled={product.stockQuantity <= 0}
-                                                                >
+                                                                <IconButton aria-label="Decrease" variant="ghost" size="xs" color={!status.isLow ? subText : `${status.color}.700`} _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'EXIT', 1)} disabled={product.stockQuantity <= 0}>
                                                                     <Icon name="remove" size={18} />
                                                                 </IconButton>
                                                                 <Box w="8" textAlign="center" fontSize="sm" fontWeight="semibold" color={!status.isLow ? mainText : `${status.color}.900`} _dark={{ color: `${status.color}.100` }}>
                                                                     {product.stockQuantity}
                                                                 </Box>
-                                                                <IconButton 
-                                                                    aria-label="Increase" 
-                                                                    variant="ghost" 
-                                                                    size="xs" 
-                                                                    color={!status.isLow ? subText : `${status.color}.700`} 
-                                                                    _dark={{ color: status.dotColor }} 
-                                                                    onClick={() => handleStockUpdate(product.id, 'ENTRY', 1)}
-                                                                >
+                                                                <IconButton aria-label="Increase" variant="ghost" size="xs" color={!status.isLow ? subText : `${status.color}.700`} _dark={{ color: status.dotColor }} onClick={() => handleStockUpdate(product.id, 'ENTRY', 1)}>
                                                                     <Icon name="add" size={18} />
                                                                 </IconButton>
                                                             </Flex>
@@ -339,15 +291,15 @@ const Stock = () => {
                                                                 <Box h="full" bg={status.dotColor} w={`${stockPercentage}%`} borderRadius="full" />
                                                             </Box>
                                                         </HStack>
-                                                    </Table.Cell>
-                                                </Table.Row>
+                                                    </TableCell>
+                                                </TableRow>
                                             );
                                         })
                                     )}
-                                </Table.Body>
-                            </Table.Root>
+                                </TableBody>
+                            </TableRoot>
                         </Box>
-                        <Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor} bg={bg}>
+                        <Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor} bg={cardBg}>
                             <Text fontSize="sm" color={subText}>
                                 {t('stock.pagination.showing', {
                                     from: (currentPage - 1) * limit + 1,
@@ -356,29 +308,13 @@ const Stock = () => {
                                 })}
                             </Text>
                             <HStack gap="2">
-                                <IconButton 
-                                    aria-label="Previous page" 
-                                    size="sm" 
-                                    variant="outline" 
-                                    borderColor={borderColor} 
-                                    color={subText}
-                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
-                                    disabled={currentPage === 1}
-                                >
+                                <IconButton aria-label="Previous page" size="sm" variant="outline" borderColor={borderColor} color={subText} onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
                                     <Icon name="chevron_left" size={20} />
                                 </IconButton>
                                 <Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
                                     {currentPage}
                                 </Button>
-                                <IconButton 
-                                    aria-label="Next page" 
-                                    size="sm" 
-                                    variant="outline" 
-                                    borderColor={borderColor} 
-                                    color={subText}
-                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
-                                    disabled={currentPage === totalPages}
-                                >
+                                <IconButton aria-label="Next page" size="sm" variant="outline" borderColor={borderColor} color={subText} onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
                                     <Icon name="chevron_right" size={20} />
                                 </IconButton>
                             </HStack>
