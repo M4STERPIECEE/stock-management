@@ -4,11 +4,10 @@ import { ProductRepository } from './repositories/product.repository';
 import { ProductCacheService } from './services/product-cache.service';
 import { CategoriesService } from '../categories/categories.service';
 import { ConflictException } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
 
 describe('ProductsService', () => {
   let service: ProductsService;
-  let productRepository: jest.Mocked<ProductRepository>;
-  let categoriesService: jest.Mocked<CategoriesService>;
 
   const mockProductRepository = {
     findAll: jest.fn(),
@@ -47,8 +46,6 @@ describe('ProductsService', () => {
     }).compile();
 
     service = module.get<ProductsService>(ProductsService);
-    productRepository = module.get(ProductRepository);
-    categoriesService = module.get(CategoriesService);
   });
 
   it('should be defined', () => {
@@ -57,7 +54,7 @@ describe('ProductsService', () => {
 
   describe('create', () => {
     it('should create a product successfully', async () => {
-      const dto = {
+      const dto: CreateProductDto = {
         name: 'Test Product',
         categoryId: 'cat-uuid',
         price: 99.99,
@@ -67,36 +64,36 @@ describe('ProductsService', () => {
       const mockCategory = { id: 'cat-uuid', name: 'Test Category' };
       const mockProduct = { id: 'prod-uuid', ...dto, reference: 'REF-00001' };
 
-      mockCategoriesService.findOne.mockResolvedValue(mockCategory as any);
+      mockCategoriesService.findOne.mockResolvedValue(mockCategory);
       mockProductRepository.findByReference.mockResolvedValue(null);
       mockProductRepository.findLastReference.mockResolvedValue(null);
-      mockProductRepository.create.mockResolvedValue(mockProduct as any);
+      mockProductRepository.create.mockResolvedValue(mockProduct);
 
-      const result = await service.create(dto as any);
+      const result = await service.create(dto);
 
       expect(result).toEqual(mockProduct);
-      expect(categoriesService.incrementProductCount).toHaveBeenCalledWith(
+      expect(mockCategoriesService.incrementProductCount).toHaveBeenCalledWith(
         'cat-uuid',
       );
       expect(mockCacheService.clear).toHaveBeenCalled();
     });
 
     it('should throw ConflictException if reference exists', async () => {
-      const dto = {
+      const dto: CreateProductDto = {
         name: 'Test Product',
         categoryId: 'cat-uuid',
         price: 99.99,
         reference: 'REF-00001',
       };
 
-      mockCategoriesService.findOne.mockResolvedValue({ id: 'cat-uuid' } as any);
+      mockCategoriesService.findOne.mockResolvedValue({
+        id: 'cat-uuid',
+      });
       mockProductRepository.findByReference.mockResolvedValue({
         id: 'existing',
-      } as any);
+      });
 
-      await expect(service.create(dto as any)).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(service.create(dto)).rejects.toThrow(ConflictException);
     });
   });
 });

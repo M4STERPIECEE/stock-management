@@ -2,9 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { StockService } from './stock.service';
-import { StockMovement } from './entities/stock-movement.entity';
+import {
+  StockMovement,
+  StockMovementType,
+} from './entities/stock-movement.entity';
 import { Product } from '../products/entities/product.entity';
 import { BadRequestException } from '@nestjs/common';
+import { CreateStockMovementDto } from './dto/create-stock-movement.dto';
 
 describe('StockService', () => {
   let service: StockService;
@@ -61,9 +65,9 @@ describe('StockService', () => {
 
   describe('createMovement', () => {
     it('should throw error for insufficient stock on EXIT', async () => {
-      const dto = {
+      const dto: CreateStockMovementDto = {
         productId: 'prod-uuid',
-        type: 'EXIT' as any,
+        type: StockMovementType.EXIT,
         quantity: 100,
         reason: 'Test exit',
       };
@@ -80,9 +84,9 @@ describe('StockService', () => {
     });
 
     it('should successfully create an ENTRY movement', async () => {
-      const dto = {
+      const dto: CreateStockMovementDto = {
         productId: 'prod-uuid',
-        type: 'ENTRY' as any,
+        type: StockMovementType.ENTRY,
         quantity: 50,
         reason: 'Restock',
       };
@@ -100,7 +104,7 @@ describe('StockService', () => {
         stockQuantity: 60,
       });
 
-      const result = await service.createMovement(dto);
+      await service.createMovement(dto);
 
       expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
