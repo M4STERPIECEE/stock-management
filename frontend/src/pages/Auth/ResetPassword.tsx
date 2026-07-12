@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text, Button, Input, Stack, Link, IconButton, Grid, GridItem } from '@chakra-ui/react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAppToast } from '../../hooks/useAppToast';
 
 const INK = '#151A21';
-const INK_SOFT = '#1E252F';
 const PAPER = '#EFF1EC';
 const AMBER = '#E8A33D';
 const SAGE = '#4F7C6B';
@@ -14,20 +14,10 @@ const TEXT_MAIN = INK;
 const TEXT_SUB = '#5B6675';
 const INPUT_BORDER = '#D7DBE1';
 
-const SnackbarContent = ({ message, isError = false }: { message: string, isError?: boolean }) => {
-    return (
-        <Box position="fixed" bottom={8} left="50%" transform="translateX(-50%)" bg={isError ? '#B3431F' : SAGE} color="white" px={6} py={3} borderRadius="md" boxShadow="xl" display="flex" alignItems="center" gap={3} zIndex={9999} animation="stockmgr-fade-in 0.25s ease-out">
-            <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>
-                {isError ? 'error' : 'check_circle'}
-            </span>
-            <Text fontSize="sm" fontWeight="medium">{message}</Text>
-        </Box>
-    );
-};
-
 const ResetPassword = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { showToast } = useAppToast();
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
 
@@ -36,17 +26,6 @@ const ResetPassword = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (errorMessage) {
-            const timer = setTimeout(() => {
-                setErrorMessage(null);
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [errorMessage]);
 
     const hasMinLength = password.length >= 8;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -65,21 +44,19 @@ const ResetPassword = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage(null);
-        setSuccessMessage(null);
 
         if (password !== confirmPassword) {
-            setErrorMessage(t('auth.reset.error_password_mismatch'));
+            showToast({ title: t('auth.reset.error_password_mismatch'), status: 'error' });
             return;
         }
 
         if (!hasMinLength || !hasUpperCase || !hasNumber || !hasSpecialChar) {
-            setErrorMessage(t('auth.reset.error_criteria'));
+            showToast({ title: t('auth.reset.error_criteria'), status: 'error' });
             return;
         }
 
         if (!token) {
-            setErrorMessage(t('auth.reset.error_token_missing'));
+            showToast({ title: t('auth.reset.error_token_missing'), status: 'error' });
             return;
         }
 
@@ -96,16 +73,16 @@ const ResetPassword = () => {
             });
 
             if (response.ok) {
-                setSuccessMessage(t('auth.reset.success'));
+                showToast({ title: t('auth.reset.success'), status: 'success' });
                 setTimeout(() => {
                     navigate('/login');
                 }, 2000);
             } else {
                 const data = await response.json();
-                setErrorMessage(data.message || t('auth.reset.error_generic'));
+                showToast({ title: data.message || t('auth.reset.error_generic'), status: 'error' });
             }
         } catch {
-            setErrorMessage(t('login.error_network'));
+            showToast({ title: t('login.error_network'), status: 'error' });
         } finally {
             setIsSubmitting(false);
         }
@@ -114,10 +91,6 @@ const ResetPassword = () => {
     return (
         <>
             <style>{`
-                @keyframes stockmgr-fade-in {
-                    from { opacity: 0; transform: translate(-50%, 8px); }
-                    to { opacity: 1; transform: translate(-50%, 0); }
-                }
                 @keyframes stockmgr-color-shift {
                     0% { transform: scale(1); opacity: 0.35; }
                     50% { transform: scale(1.2); opacity: 0.6; }
@@ -222,9 +195,6 @@ const ResetPassword = () => {
                                         </IconButton>
                                     </Box>
                                 </Box>
-
-                                {errorMessage && <SnackbarContent message={errorMessage} isError />}
-                                {successMessage && <SnackbarContent message={successMessage} />}
 
                                 <Button w="full" h="12" bg={SAGE} color="white" fontSize="sm" fontWeight="bold" letterSpacing="0.02em" borderRadius="md" _hover={{ bg: SAGE_DARK }} _active={{ transform: 'scale(0.98)' }} type="submit" disabled={isSubmitting || isTokenMissing} loading={isSubmitting}>
                                     {t('auth.reset.submit')}

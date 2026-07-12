@@ -11,10 +11,12 @@ import ResetPassword from './pages/Auth/ResetPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 import UsersProfile from './pages/Users/UsersProfile';
 import './App.css';
+import { ToastContainer } from './hooks/useAppToast';
 
 function App() {
   return (
     <Router>
+      <ToastContainer />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginForm />} />

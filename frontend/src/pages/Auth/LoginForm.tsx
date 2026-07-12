@@ -1,30 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Flex, Text, Button, Input, Stack, Checkbox, Link, Container, IconButton, InputGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import PageTransition from '../../components/PageTransition';
 import { useTranslation } from 'react-i18next';
+import { useAppToast } from '../../hooks/useAppToast';
 
 const INK = '#151A21';
 const INK_SOFT = '#1E252F';
 const PAPER = '#EFF1EC';
-const PAPER_DARK = '#0F1318';
 const AMBER = '#E8A33D';
 const SAGE = '#4F7C6B';
 const SAGE_DARK = '#3C6053';
 const TEXT_MAIN = INK;
 const TEXT_SUB = '#5B6675';
 const INPUT_BORDER = '#D7DBE1';
-
-const SnackbarContent = ({ message, isError = false }: { message: string, isError?: boolean }) => {
-    return (
-        <Box position="fixed" bottom={8} left="50%" transform="translateX(-50%)" bg={isError ? '#B3431F' : SAGE} color="white" px={6} py={3} borderRadius="md" boxShadow="xl" display="flex" alignItems="center" gap={3} zIndex={9999} animation="stockmgr-fade-in 0.25s ease-out">
-            <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>
-                {isError ? 'error' : 'check_circle'}
-            </span>
-            <Text fontSize="sm" fontWeight="medium">{message}</Text>
-        </Box>
-    );
-};
 
 const stockTags = [
     { code: 'SKU-2291', label: '84 en stock', top: '18%', left: '8%' },
@@ -35,23 +24,15 @@ const stockTags = [
 const LoginFormContent = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { showToast } = useAppToast();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (errorMessage) {
-            const timer = setTimeout(() => setErrorMessage(null), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [errorMessage]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage(null);
         setIsSubmitting(true);
         try {
             const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
@@ -65,9 +46,9 @@ const LoginFormContent = () => {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    setErrorMessage(t('login.error_incorrect'));
+                    showToast({ title: t('login.error_incorrect'), status: 'error' });
                 } else {
-                    setErrorMessage(t('login.error_generic'));
+                    showToast({ title: t('login.error_generic'), status: 'error' });
                 }
                 setIsSubmitting(false);
                 return;
@@ -75,19 +56,18 @@ const LoginFormContent = () => {
 
             const data: { access_token?: string } = await response.json();
             if (!data?.access_token) {
-                setErrorMessage(t('login.error_invalid_response'));
+                showToast({ title: t('login.error_invalid_response'), status: 'error' });
                 setIsSubmitting(false);
                 return;
             }
 
             const storage = rememberMe ? window.localStorage : window.sessionStorage;
             storage.setItem('access_token', data.access_token);
-            setErrorMessage(null);
             setTimeout(() => {
                 navigate('/dashboard', { replace: true });
             }, 500);
         } catch {
-            setErrorMessage(t('login.error_network'));
+            showToast({ title: t('login.error_network'), status: 'error' });
             setIsSubmitting(false);
         }
     };
@@ -95,10 +75,6 @@ const LoginFormContent = () => {
     return (
         <>
             <style>{`
-                @keyframes stockmgr-fade-in {
-                    from { opacity: 0; transform: translate(-50%, 8px); }
-                    to { opacity: 1; transform: translate(-50%, 0); }
-                }
                 @keyframes stockmgr-scan {
                     0% { left: -20%; }
                     100% { left: 100%; }
@@ -200,7 +176,6 @@ const LoginFormContent = () => {
                                         <Box className="stockmgr-scan-line" pos="absolute" top="0" bottom="0" w="30%" bgGradient={`linear(to-r, transparent, ${AMBER}, transparent)`} style={{ animation: 'stockmgr-scan 1.1s linear infinite' }} />
                                     )}
                                 </Button>
-                                {errorMessage && <SnackbarContent message={errorMessage} isError />}
                             </Stack>
                         </form>
                         <Text fontSize="xs" color={TEXT_SUB} textAlign="center" mt="8">

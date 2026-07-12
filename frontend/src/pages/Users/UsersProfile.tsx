@@ -23,6 +23,7 @@ import {
 import { useColorMode } from '../../components/ui/color-mode';
 import Sidebar from '../../components/navigation/sidebar';
 import { useTranslation } from 'react-i18next';
+import { useAppToast } from '../../hooks/useAppToast';
 
 const UsersProfile = () => {
     const { t, i18n } = useTranslation();
@@ -79,6 +80,7 @@ const UsersProfile = () => {
 
     const currentLang = languages.find(l => l.code === i18n.language.split('-')[0]) || languages[1];
     const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+    const { showToast } = useAppToast();
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const mainText = "textMain";
     const subText = "textSub";
@@ -157,7 +159,7 @@ const UsersProfile = () => {
                         const storage = window.localStorage.getItem('access_token') ? window.localStorage : window.sessionStorage;
                         storage.setItem('access_token', data.access_token);
                     }
-                    setShowSuccessSnackbar(true);
+                    showToast({ title: t('profile.save_success') });
                     fetchProfile();
                 }
             } catch (error) {
@@ -166,17 +168,6 @@ const UsersProfile = () => {
         };
         reader.readAsDataURL(file);
     };
-
-    const [showSuccessSnackbar, setShowSuccessSnackbar] = useState(false);
-
-    useEffect(() => {
-        if (showSuccessSnackbar) {
-            const timer = setTimeout(() => {
-                setShowSuccessSnackbar(false);
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [showSuccessSnackbar]);
 
     const handleSaveProfile = async () => {
         const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
@@ -206,7 +197,7 @@ const UsersProfile = () => {
                     storage.setItem('access_token', data.access_token);
                 }
                 setIsEditing(false);
-                setShowSuccessSnackbar(true);
+                showToast({ title: t('profile.save_success') });
                 fetchProfile();
             }
         } catch (error) {
@@ -251,7 +242,7 @@ const UsersProfile = () => {
                 setNewPassword('');
                 setConfirmPassword('');
                 setCurrentPassword('');
-                setShowSuccessSnackbar(true);
+                showToast({ title: t('profile.save_success') });
             } else {
                 setPasswordError("Erreur lors de la mise à jour du mot de passe.");
             }
@@ -262,16 +253,7 @@ const UsersProfile = () => {
         }
     };
 
-    const SnackbarContent = ({ message }: { message: string }) => {
-        return (
-            <Portal>
-                <Box position="fixed" bottom={8} left="50%" transform="translateX(-50%)" bg="green.600" color="white" px={6} py={3} borderRadius="lg" boxShadow="xl" display="flex" alignItems="center" gap={3} zIndex={9999} animation="fade-in 0.3s">
-                    <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>check_circle</span>
-                    <Text fontSize="md" fontWeight="medium">{message}</Text>
-                </Box>
-            </Portal>
-        );
-    };
+
 
     const scrollToSection = (sectionId: string) => {
         const element = document.getElementById(sectionId);
@@ -298,7 +280,7 @@ const UsersProfile = () => {
 
     return (
         <Sidebar>
-            {showSuccessSnackbar && <SnackbarContent message={t('profile.save_success')} />}
+
             <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleFileUpload} />
             <Box w="full" minH="full" transition="all 0.3s">
                 <Container maxW="container.xl" py={8}>

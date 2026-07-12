@@ -26,7 +26,7 @@ import {
 import Sidebar from '../../components/navigation/sidebar';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
-import { SnackbarContent } from '../../components/ui/Snackbar';
+import { useAppToast } from '../../hooks/useAppToast';
 
 interface Customer {
 	id: string;
@@ -44,6 +44,7 @@ const DEFAULT_PAGE_SIZE = 10;
 const Customers = () => {
 	const { t } = useTranslation();
 	const { colorMode } = useColorMode();
+	const { showToast } = useAppToast();
 	const mainText = 'textMain';
 	const subText = 'textSub';
 	const borderColor = 'border';
@@ -62,9 +63,6 @@ const Customers = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
-	const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-	const [snackbarError, setSnackbarError] = useState(false);
-
 	// Form state
 	const [formData, setFormData] = useState({
 		name: '',
@@ -73,12 +71,6 @@ const Customers = () => {
 		address: '',
 	});
 	const [formLoading, setFormLoading] = useState(false);
-
-	const showSnackbar = (msg: string, isError = false) => {
-		setSnackbarMessage(msg);
-		setSnackbarError(isError);
-		setTimeout(() => setSnackbarMessage(null), 3000);
-	};
 
 	const fetchCustomers = useCallback(async () => {
 		setLoading(true);
@@ -144,14 +136,14 @@ const Customers = () => {
 				headers: { 'Authorization': `Bearer ${token}` }
 			});
 			if (response.ok) {
-				showSnackbar(t('customers.delete_success', 'Customer deleted successfully'));
+				showToast({ title: t('customers.delete_success', 'Customer deleted successfully'), status: 'success' });
 				fetchCustomers();
 			} else {
 				const err = await response.json();
-				showSnackbar(err.message || t('common.error', 'Error'), true);
+				showToast({ title: err.message || t('common.error', 'Error'), status: 'error' });
 			}
 		} catch (error) {
-			showSnackbar(t('common.error', 'Error'), true);
+			showToast({ title: t('common.error', 'Error'), status: 'error' });
 		}
 	};
 
@@ -175,19 +167,20 @@ const Customers = () => {
 			});
 
 			if (response.ok) {
-				showSnackbar(
-					editingCustomer
+				showToast({
+					title: editingCustomer
 						? t('customers.edit_success', 'Customer updated successfully')
-						: t('customers.add_success', 'Customer added successfully')
-				);
+						: t('customers.add_success', 'Customer added successfully'),
+					status: 'success',
+				});
 				setIsModalOpen(false);
 				fetchCustomers();
 			} else {
 				const err = await response.json();
-				showSnackbar(err.message || t('common.error', 'Error'), true);
+				showToast({ title: err.message || t('common.error', 'Error'), status: 'error' });
 			}
 		} catch (error) {
-			showSnackbar(t('common.error', 'Error'), true);
+			showToast({ title: t('common.error', 'Error'), status: 'error' });
 		} finally {
 			setFormLoading(false);
 		}
@@ -394,7 +387,6 @@ const Customers = () => {
 				</Portal>
 			</Dialog.Root>
 
-			{snackbarMessage && <SnackbarContent message={snackbarMessage} isError={snackbarError} />}
 		</Sidebar>
 	);
 };

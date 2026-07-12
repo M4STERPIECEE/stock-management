@@ -8,7 +8,7 @@ import ProductsListTabContent from './ProductsListTabContent';
 import CategoryListTabContent from './CategoryListTabContent';
 import AddProductModal from './modal/AddProductModal';
 import ImportProductsModal from './modal/ImportProductsModal';
-import { SnackbarContent } from '../../components/ui/Snackbar';
+import { useAppToast } from '../../hooks/useAppToast';
 
 const Products = () => {
     const { t } = useTranslation();
@@ -17,7 +17,7 @@ const Products = () => {
     const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
-    const [importSuccessMessage, setImportSuccessMessage] = useState<string | null>(null);
+    const { showToast } = useAppToast();
     const mainText = 'textMain';
     const subText = 'textSub';
     const borderColor = 'border';
@@ -30,8 +30,7 @@ const Products = () => {
 
     const handleImportSuccess = (count: number) => {
         setRefreshKey(prev => prev + 1);
-        setImportSuccessMessage(`${count} ${t('products.imported_success', 'produits importés avec succès')}`);
-        setTimeout(() => setImportSuccessMessage(null), 5000);
+        showToast({ title: `${count} ${t('products.imported_success', 'produits importés avec succès')}` });
     };
 
     return (
@@ -84,7 +83,6 @@ const Products = () => {
                 </TabsRoot>
                 <AddProductModal isOpen={isAddProductModalOpen} onClose={() => setIsAddProductModalOpen(false)} onSuccess={handleAddProductSuccess} />
                 <ImportProductsModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} onSuccess={handleImportSuccess} />
-                {importSuccessMessage && <SnackbarContent message={importSuccessMessage} />}
             </Box>
         </Sidebar>
     );
