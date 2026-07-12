@@ -20,7 +20,9 @@ i18n
                         "cancel": "Cancel",
                         "save": "Save",
                         "delete": "Delete",
-                        "edit": "Edit"
+                        "edit": "Edit",
+                        "close": "Close",
+                        "error": "An error occurred"
                     },
                     "dashboard": {
                         "overview": "Overview",
@@ -28,6 +30,7 @@ i18n
                         "orders": "Orders",
                         "stock_value": "Stock Value",
                         "low_stock": "Low Stock",
+                        "low_stock_count": "Low Stock Items",
                         "items": "Items",
                         "action_required": "Action required",
                         "vs_last_month": "vs last month",
@@ -158,6 +161,62 @@ i18n
                             "desc_placeholder": "Category description"
                         }
                     },
+                    "customers": {
+                        "add_customer": "Add Customer",
+                        "edit_customer": "Edit Customer",
+                        "search_placeholder": "Search by name, email or phone...",
+                        "active": "Active",
+                        "inactive": "Inactive",
+                        "add_success": "Customer added successfully",
+                        "edit_success": "Customer updated successfully",
+                        "delete_success": "Customer deleted successfully",
+                        "delete_confirm": "Are you sure you want to delete this customer?",
+                        "table": {
+                            "name": "Name",
+                            "email": "Email",
+                            "phone": "Phone",
+                            "orders": "Orders",
+                            "status": "Status",
+                            "address": "Address"
+                        }
+                    },
+                    "orders": {
+                        "new_order": "New Order",
+                        "create": "Create Order",
+                        "create_success": "Order created successfully",
+                        "items": "Order Items",
+                        "add_item": "Add Item",
+                        "select_customer": "Select a customer...",
+                        "select_product": "Select product...",
+                        "select_customer_error": "Please select a customer",
+                        "select_product_error": "Please add at least one product",
+                        "status_updated": "Status updated successfully",
+                        "update_status": "Update Status",
+                        "mark_shipped": "Mark as Shipped",
+                        "mark_delivered": "Mark as Delivered",
+                        "cancel_order": "Cancel Order",
+                        "detail_title": "Order",
+                        "all_statuses": "All statuses",
+                        "table": {
+                            "id": "Order ID",
+                            "customer": "Customer",
+                            "date": "Date",
+                            "status": "Status",
+                            "total": "Total",
+                            "product": "Product",
+                            "quantity": "Qty"
+                        },
+                        "status": {
+                            "en_attente": "Pending",
+                            "expediee": "Shipped",
+                            "livree": "Delivered",
+                            "annulee": "Cancelled",
+                            "pending": "Pending",
+                            "shipped": "Shipped",
+                            "delivered": "Delivered",
+                            "cancelled": "Cancelled"
+                        }
+                    },
                     "stock": {
                         "title": "Stock Management",
                         "subtitle": "Manage your inventory and monitor stock levels in real time",
@@ -276,7 +335,9 @@ i18n
                         "cancel": "Annuler",
                         "save": "Enregistrer",
                         "delete": "Supprimer",
-                        "edit": "Modifier"
+                        "edit": "Modifier",
+                        "close": "Fermer",
+                        "error": "Une erreur est survenue"
                     },
                     "dashboard": {
                         "overview": "Vue d'ensemble",
@@ -284,6 +345,7 @@ i18n
                         "orders": "Commandes",
                         "stock_value": "Valeur du Stock",
                         "low_stock": "Stock Faible",
+                        "low_stock_count": "Articles en Stock Faible",
                         "items": "Articles",
                         "action_required": "Action requise",
                         "vs_last_month": "vs mois dernier",
@@ -414,6 +476,62 @@ i18n
                             "desc_placeholder": "Description de la catégorie"
                         }
                     },
+                    "customers": {
+                        "add_customer": "Ajouter un Client",
+                        "edit_customer": "Modifier le Client",
+                        "search_placeholder": "Rechercher par nom, email ou téléphone...",
+                        "active": "Actif",
+                        "inactive": "Inactif",
+                        "add_success": "Client ajouté avec succès",
+                        "edit_success": "Client modifié avec succès",
+                        "delete_success": "Client supprimé avec succès",
+                        "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce client ?",
+                        "table": {
+                            "name": "Nom",
+                            "email": "Email",
+                            "phone": "Téléphone",
+                            "orders": "Commandes",
+                            "status": "Statut",
+                            "address": "Adresse"
+                        }
+                    },
+                    "orders": {
+                        "new_order": "Nouvelle Commande",
+                        "create": "Créer la Commande",
+                        "create_success": "Commande créée avec succès",
+                        "items": "Articles",
+                        "add_item": "Ajouter un article",
+                        "select_customer": "Sélectionner un client...",
+                        "select_product": "Sélectionner un produit...",
+                        "select_customer_error": "Veuillez sélectionner un client",
+                        "select_product_error": "Veuillez ajouter au moins un produit",
+                        "status_updated": "Statut mis à jour avec succès",
+                        "update_status": "Mettre à jour le statut",
+                        "mark_shipped": "Marquer comme expédié",
+                        "mark_delivered": "Marquer comme livré",
+                        "cancel_order": "Annuler la commande",
+                        "detail_title": "Commande",
+                        "all_statuses": "Tous les statuts",
+                        "table": {
+                            "id": "N° Commande",
+                            "customer": "Client",
+                            "date": "Date",
+                            "status": "Statut",
+                            "total": "Total",
+                            "product": "Produit",
+                            "quantity": "Qté"
+                        },
+                        "status": {
+                            "en_attente": "En attente",
+                            "expediee": "Expédiée",
+                            "livree": "Livrée",
+                            "annulee": "Annulée",
+                            "pending": "En attente",
+                            "shipped": "Expédiée",
+                            "delivered": "Livrée",
+                            "cancelled": "Annulée"
+                        }
+                    },
                     "stock": {
                         "title": "Gestion de Stock",
                         "subtitle": "Gérez votre inventaire et surveillez les niveaux de stock en temps réel",
@@ -532,7 +650,9 @@ i18n
                         "cancel": "Hanafoana",
                         "save": "Hitehirizana",
                         "delete": "Hamafa",
-                        "edit": "Hanova"
+                        "edit": "Hanova",
+                        "close": "Hidiana",
+                        "error": "Nisy hadisoana nitranga"
                     },
                     "dashboard": {
                         "overview": "Fijery ankapobeny",
@@ -540,6 +660,7 @@ i18n
                         "orders": "Kaomandy",
                         "stock_value": "Sandan'ny tahiry",
                         "low_stock": "Tahiry ambany",
+                        "low_stock_count": "Entana ambany tahiry",
                         "items": "Entana",
                         "action_required": "Mila hetsika",
                         "vs_last_month": "vs volana lasa",
@@ -668,6 +789,62 @@ i18n
                             "add_description": "Manampia sokajy vaovao handaminana ny vokatrao.",
                             "name_placeholder": "Anaran'ny sokajy",
                             "desc_placeholder": "Famaritana ny sokajy"
+                        }
+                    },
+                    "customers": {
+                        "add_customer": "Hanampy Mpanjifa",
+                        "edit_customer": "Hanova Mpanjifa",
+                        "search_placeholder": "Hitady amin'ny anarana, imailaka na finday...",
+                        "active": "Mandeha",
+                        "inactive": "Tsy mandeha",
+                        "add_success": "Mpanjifa voasoratra soa aman-tsara",
+                        "edit_success": "Mpanjifa voava soa aman-tsara",
+                        "delete_success": "Mpanjifa voafafa soa aman-tsara",
+                        "delete_confirm": "Tena hanafoana ity mpanjifa ity ve ianao?",
+                        "table": {
+                            "name": "Anarana",
+                            "email": "Imailaka",
+                            "phone": "Finday",
+                            "orders": "Kaomandy",
+                            "status": "Toe-javatra",
+                            "address": "Adiresy"
+                        }
+                    },
+                    "orders": {
+                        "new_order": "Kaomandy Vaovao",
+                        "create": "Hamorona Kaomandy",
+                        "create_success": "Kaomandy noforonina soa aman-tsara",
+                        "items": "Entana",
+                        "add_item": "Hanampy entana",
+                        "select_customer": "Misafidia mpanjifa...",
+                        "select_product": "Misafidia entana...",
+                        "select_customer_error": "Azafady misafidia mpanjifa",
+                        "select_product_error": "Azafady manampia entana iray farafahakeliny",
+                        "status_updated": "Toe-javatra nohavaozina soa aman-tsara",
+                        "update_status": "Hanavao ny toe-javatra",
+                        "mark_shipped": "Mariho ho nalefa",
+                        "mark_delivered": "Mariho ho voatana",
+                        "cancel_order": "Hanafoana ny kaomandy",
+                        "detail_title": "Kaomandy",
+                        "all_statuses": "Ny toe-javatra rehetra",
+                        "table": {
+                            "id": "ID Kaomandy",
+                            "customer": "Mpanjifa",
+                            "date": "Daty",
+                            "status": "Toe-javatra",
+                            "total": "Vola",
+                            "product": "Entana",
+                            "quantity": "Isa"
+                        },
+                        "status": {
+                            "en_attente": "Miandry",
+                            "expediee": "Nalefa",
+                            "livree": "Voatana",
+                            "annulee": "Nofoanana",
+                            "pending": "Miandry",
+                            "shipped": "Nalefa",
+                            "delivered": "Voatana",
+                            "cancelled": "Nofoanana"
                         }
                     },
                     "stock": {

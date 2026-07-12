@@ -97,6 +97,40 @@ export class StockService {
     }
   }
 
+  async reverseMovement(
+    movementId: string,
+    reason?: string,
+  ): Promise<StockMovement> {
+    const originalMovement = await this.stockMovementRepository.findOne({
+      where: { id: movementId },
+    });
+    if (!originalMovement) {
+      throw new NotFoundException(
+        `Stock movement with ID ${movementId} not found`,
+      );
+    }
+
+    // Determine the opposite movement type
+    const reverseType =
+      originalMovement.type === StockMovementType.ENTRY
+        ? StockMovementType.EXIT
+        : originalMovement.type === StockMovementType.EXIT
+          ? StockMovementType.ENTRY
+          : StockMovementType.ADJUSTMENT;
+
+    const reverseReason =
+      reason ||
+      `Contre-mouvement du ${originalMovement.type} #${movementId.slice(0, 8)}`;
+
+    // Use the same createMovement method to ensure atomicity
+    return this.createMovement({
+      productId: originalMovement.productId,
+      type: reverseType,
+      quantity: originalMovement.quantity,
+      reason: reverseReason,
+    });
+  }
+
   private calculateStockStatus(quantity: number, threshold: number): string {
     if (quantity <= 0) return 'RUPTURE';
     if (quantity <= threshold / 2) return 'CRITIQUE';

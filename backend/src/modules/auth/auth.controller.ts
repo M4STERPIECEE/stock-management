@@ -9,14 +9,17 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { LoginDto } from './dto/login.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import {
@@ -32,6 +35,7 @@ import {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Throttle({ default: { limit: 5, ttl: 300000 } }) // 5 attempts per 5 minutes
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -83,6 +87,7 @@ export class AuthController {
     return this.authService.updateProfile(req.user.userId, body);
   }
 
+  @Throttle({ default: { limit: 3, ttl: 300000 } }) // 3 attempts per 5 minutes
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset' })
@@ -122,6 +127,22 @@ export class AuthController {
           return cb(null, `${randomName}${extname(file.originalname)}`);
         },
       }),
+      fileFilter: (_req, file, cb) => {
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (allowedMimes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              'Only JPEG, PNG and WebP images are allowed',
+            ),
+            false,
+          );
+        }
+      },
+      limits: {
+        fileSize: 2 * 1024 * 1024, // 2 MB
+      },
     }),
   )
   @ApiBearerAuth()
@@ -132,9 +153,30 @@ export class AuthController {
 
     @UploadedFile() file: any,
   ) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded or file is too large');
+    }
     const baseUrl =
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       req.protocol + '://' + req.get('host') + '/uploads/' + file.filename;
     return this.authService.updateProfilePicture(req.user.userId, baseUrl);
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { refresh_token: { type: 'string' } },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Return new JWT tokens' })
+  async refresh(
+    @Request()
+    req: ExpressRequest & { user: { userId: string; email: string } },
+  ) {
+    return this.authService.refreshToken(req.user);
   }
 }
