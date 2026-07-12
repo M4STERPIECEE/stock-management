@@ -3,8 +3,9 @@ name: CI Feature
 on:
   push:
     branches:
-      - 'feature/**'
-      - 'bugfix/**'
+    - 'feature/**'
+    - 'bugfix/**'
+    - 'infra/**'
 
 jobs:
   build-and-test:

@@ -1,0 +1,7 @@
+package_update: true
+packages:
+- curl
+runcmd:
+- curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+- mkdir -p /root/.kube
+- ln -s /etc/rancher/k3s/k3s.yaml /root/.kube/config

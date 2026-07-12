@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: stock-management
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/m4sterpiece77k/stock-management-backend:latest
+          ports:
+            - containerPort: 3005
+          envFrom:
+            - configMapRef: { name: stock-config }
+            - secretRef: { name: stock-secrets }
+          readinessProbe:
+            httpGet: { path: /api/v1/health, port: 3005 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /api/v1/health, port: 3005 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }
+            limits: { cpu: "500m", memory: "512Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: stock-management
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 3005
+      targetPort: 3005
