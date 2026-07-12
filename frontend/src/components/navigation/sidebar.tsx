@@ -2,6 +2,7 @@ import { Box, Flex, Text, VStack, Span, Link, Avatar, Input, InputGroup, IconBut
 import React, { useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Icon from '../ui/Icon';
 
 const INK = '#151A21';
 const PAPER = '#EFF1EC';
@@ -23,9 +24,7 @@ const SidebarItem = ({ icon, label, active = false, href = "#" }: {
         <Link asChild _hover={{ textDecoration: 'none' }} w="full" display="flex">
             <RouterLink to={href}>
                 <Flex align="center" gap="3" px="3" py="2.5" rounded="lg" w="full" bg={active ? 'rgba(79, 124, 107, 0.1)' : "transparent"} color={active ? SAGE : TEXT_SUB} _hover={{ bg: active ? 'rgba(79, 124, 107, 0.1)' : PAPER, color: active ? SAGE : SAGE }} transition="all 0.2s" role="group">
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0", fontSize: '24px' }}>
-                        {icon}
-                    </span>
+                    <Icon name={icon} size={24} color={active ? SAGE : TEXT_SUB} />
                     <Text fontSize="sm" fontWeight="500">
                         {label}
                     </Text>
@@ -114,7 +113,7 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                 <Box as="aside" w="64" bg="white" borderRight="1px" borderColor={BORDER_COLOR} display={{ base: "none", md: "flex" }} flexDirection="column" zIndex="20">
                     <Flex h="16" align="center" gap="3" px="6" borderBottom="1px" borderColor={BORDER_COLOR}>
                         <Flex w="8" h="8" rounded="md" bg={SAGE} align="center" justify="center" color="white">
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                            <Icon name="inventory_2" size={20} />
                         </Flex>
                         <Text fontSize="lg" fontWeight="bold" letterSpacing="tight" color={TEXT_MAIN}>
                             StockManager
@@ -152,7 +151,7 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                         </Text>
                                     </Flex>
                                     <Box color={TEXT_SUB}>
-                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>expand_more</span>
+                                        <Icon name="expand_more" size={20} />
                                     </Box>
                                 </Flex>
                             </Popover.Trigger>
@@ -161,14 +160,14 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                                     <VStack align="stretch" gap="1">
                                         <Button variant="ghost" justifyContent="flex-start" h="10" w="full" color={TEXT_SUB} bg="transparent" _hover={{ bg: PAPER, color: SAGE }} onClick={() => { setIsProfileMenuOpen(false); navigate('/profile'); }}>
                                             <Flex align="center" gap="2" w="full">
-                                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>account_circle</span>
+                                                <Icon name="account_circle" size={20} />
                                                 <Text fontSize="sm" fontWeight="500">{t('sidebar.profile')}</Text>
                                             </Flex>
                                         </Button>
                                         <Separator />
                                         <Button variant="ghost" justifyContent="flex-start" h="10" colorPalette="red" w="full" bg="transparent" color="red.500" borderWidth="1px" borderColor="transparent" _hover={{ bg: 'red.50', borderColor: 'red.500' }} onClick={() => { setIsProfileMenuOpen(false); setIsLogoutDialogOpen(true); }}>
                                             <Flex align="center" gap="2" w="full">
-                                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>logout</span>
+                                                <Icon name="logout" size={20} />
                                                 <Text fontSize="sm" fontWeight="500">{t('sidebar.logout')}</Text>
                                             </Flex>
                                         </Button>
@@ -182,7 +181,7 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                     <Box as="header" h="16" px="6" bg="white" borderBottom="1px" borderColor={BORDER_COLOR} position="sticky" top="0" zIndex="10" display="flex" alignItems="center" justifyContent="space-between">
                         <Flex align="center" gap="4">
                             <IconButton display={{ base: "flex", md: "none" }} aria-label="Menu" variant="ghost" size="sm" color={TEXT_MAIN} _focusVisible={{ outline: 'none' }}>
-                                <span className="material-symbols-outlined">menu</span>
+                                <Icon name="menu" size={24} />
                             </IconButton>
                             <Text fontSize="lg" fontWeight="bold" color={TEXT_MAIN}>
                                 {getPageTitle(location.pathname)}
@@ -202,7 +201,7 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
                         <Dialog.Header>
                             <Flex direction="column" align="center" gap="4" pt="4" w="full" textAlign="center">
                                 <Box boxSize="14" mx="auto" rounded="full" bg="red.50" color="red.500" display="flex" alignItems="center" justifyContent="center">
-                                    <span className="material-symbols-outlined" style={{ fontSize: '40px' }}>logout</span>
+                                    <Icon name="logout" size={40} />
                                 </Box>
                                 <Dialog.Title fontSize="xl" fontWeight="bold" textAlign="center" w="full" color={TEXT_MAIN}>
                                     {t('sidebar.logout_confirm')}

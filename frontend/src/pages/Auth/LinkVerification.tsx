@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text, Button, Link } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import Icon from '../../components/ui/Icon';
 
 const INK = '#151A21';
 const INK_SOFT = '#1E252F';
@@ -40,7 +41,7 @@ const LinkVerification = () => {
 
                     <Flex align="center" gap="3" zIndex="1" position="absolute" top="10">
                         <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={AMBER} color={INK}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                            <Icon name="inventory_2" size={20} />
                         </Flex>
                         <Text fontSize="md" fontWeight="bold" letterSpacing="tight">StockManager</Text>
                     </Flex>
@@ -59,14 +60,14 @@ const LinkVerification = () => {
                     <Box w="full" maxW="380px" bg="white" borderRadius="xl" p={{ base: 6, md: 8 }} boxShadow="lg" textAlign="center">
                         <Flex display={{ base: 'flex', lg: 'none' }} align="center" gap="3" mb="6" justify="center">
                             <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={INK} color={AMBER}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                                <Icon name="inventory_2" size={20} />
                             </Flex>
                             <Text fontSize="md" fontWeight="bold" letterSpacing="tight" color={TEXT_MAIN}>StockManager</Text>
                         </Flex>
 
                         <Flex align="center" justify="center" mb="6">
                             <Flex align="center" justify="center" w="16" h="16" borderRadius="full" bg={SAGE} color="white">
-                                <span className="material-symbols-outlined" style={{ fontSize: '36px' }}>mark_email_read</span>
+                                <Icon name="mark_email_read" size={36} />
                             </Flex>
                         </Flex>
 
@@ -89,7 +90,7 @@ const LinkVerification = () => {
                             </Button>
 
                             <Link fontSize="sm" fontWeight="semibold" color={SAGE_DARK} _hover={{ color: AMBER }} onClick={() => navigate('/login')} display="flex" alignItems="center" justifyContent="center" gap="1">
-                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
+                                <Icon name="arrow_back" size={16} />
                                 {t('auth.link_verification.back_to_login')}
                             </Link>
                         </Flex>

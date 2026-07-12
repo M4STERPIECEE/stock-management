@@ -21,8 +21,8 @@ export const system = createSystem(
           paper: { value: "#EFF1EC" },
         },
         fonts: {
-          heading: { value: "'Inter', sans-serif" },
-          body: { value: "'Inter', sans-serif" },
+          heading: { value: "var(--font-heading)" },
+          body: { value: "var(--font-sans)" },
         },
       }),
       semanticTokens: defineSemanticTokens({

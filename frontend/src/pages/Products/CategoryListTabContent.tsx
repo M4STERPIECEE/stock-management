@@ -5,6 +5,7 @@ import { useColorMode } from '../../components/ui/color-mode';
 import AddCategoryModal from './modal/AddCategoryModal';
 import { useEffect } from 'react';
 import { useAppToast } from '../../hooks/useAppToast';
+import Icon from '../../components/ui/Icon';
 
 type CategoryRow = {
     id: string;
@@ -93,12 +94,12 @@ const CategoryListTabContent = () => {
     return (
         <Flex direction="column" gap="6">
             <Flex bg={cardBg} p="4" borderRadius="xl" border="1px solid" borderColor={borderColor} boxShadow="sm" justify="space-between" align="center" wrap="wrap" gap="4">
-                <InputGroup maxW="md" minW="280px" startElement={<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>search</span>} startElementProps={{ color: subText }}>
+                <InputGroup maxW="md" minW="280px" startElement={<Icon name="search" size={20} />} startElementProps={{ color: subText }}>
                     <Input placeholder={t('products.categories.search_placeholder')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} bg={inputBg} border="1px solid" borderColor={inputBorder} _focus={{ borderColor: 'primary', outline: 'none' }} borderRadius="lg" fontSize="sm"/>
                 </InputGroup>
                 <Button h="10" px="4" bg="primary" color="white" _hover={{ bg: 'blue.600' }} borderRadius="lg" fontSize="sm" fontWeight="bold" boxShadow="sm" onClick={() => setIsAddModalOpen(true)}>
                     <Flex align="center" gap="2">
-                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
+                        <Icon name="add" size={20} />
                         <span>{t('products.categories.new_category')}</span>
                     </Flex>
                 </Button>
@@ -174,10 +175,10 @@ const CategoryListTabContent = () => {
                                             <TableCell px="4" py="4" textAlign="right">
                                                 <HStack justify="flex-end" gap="2">
                                                     <IconButton aria-label="Modifier" size="sm" variant="ghost" color={subText} _hover={{ bg: cardBg, color: 'primary', boxShadow: 'sm' }} _focusVisible={{ outline: 'none' }}>
-                                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                                                        <Icon name="edit" size={18} />
                                                     </IconButton>
                                                     <IconButton aria-label="Supprimer" size="sm" variant="ghost" color={subText} _hover={{ bg: cardBg, color: 'red.600', boxShadow: 'sm' }} _focusVisible={{ outline: 'none' }}>
-                                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                                                        <Icon name="delete" size={18} />
                                                     </IconButton>
                                                 </HStack>
                                             </TableCell>
@@ -194,13 +195,13 @@ const CategoryListTabContent = () => {
                     </Text>
                     <HStack gap="2">
                         <IconButton aria-label="Previous" size="sm" variant="outline" borderColor={borderColor} color={subText} disabled>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
+                            <Icon name="chevron_left" size={20} />
                         </IconButton>
                         <Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
                             1
                         </Button>
                         <IconButton aria-label="Next" size="sm" variant="outline" borderColor={borderColor} color={subText} disabled>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
+                            <Icon name="chevron_right" size={20} />
                         </IconButton>
                     </HStack>
                 </Flex>

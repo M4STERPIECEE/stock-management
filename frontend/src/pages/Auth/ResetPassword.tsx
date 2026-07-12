@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text, Button, Input, Stack, Link, IconButton, Grid, GridItem } from '@chakra-ui/react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppToast } from '../../hooks/useAppToast';
+import Icon from '../../components/ui/Icon';
 
 const INK = '#151A21';
 const PAPER = '#EFF1EC';
@@ -35,9 +36,7 @@ const ResetPassword = () => {
 
     const RequirementItem = ({ met, label }: { met: boolean, label: string }) => (
         <Flex align="center" gap="2" color={met ? SAGE : TEXT_SUB}>
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                {met ? 'check_circle' : 'radio_button_unchecked'}
-            </span>
+        <Icon name={met ? 'check_circle' : 'radio_button_unchecked'} size={18} />
             <Text fontSize="sm" fontWeight="medium">{label}</Text>
         </Flex>
     );
@@ -111,7 +110,7 @@ const ResetPassword = () => {
 
                     <Flex align="center" gap="3" zIndex="1" position="absolute" top="10">
                         <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={AMBER} color={INK}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                            <Icon name="inventory_2" size={20} />
                         </Flex>
                         <Text fontSize="md" fontWeight="bold" letterSpacing="tight">StockManager</Text>
                     </Flex>
@@ -130,7 +129,7 @@ const ResetPassword = () => {
                     <Box w="full" maxW="420px" bg="white" borderRadius="xl" p={{ base: 6, md: 8 }} boxShadow="lg">
                         <Flex display={{ base: 'flex', lg: 'none' }} align="center" gap="3" mb="6">
                             <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={INK} color={AMBER}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                                <Icon name="inventory_2" size={20} />
                             </Flex>
                             <Text fontSize="md" fontWeight="bold" letterSpacing="tight" color={TEXT_MAIN}>StockManager</Text>
                         </Flex>
@@ -147,7 +146,7 @@ const ResetPassword = () => {
 
                         {isTokenMissing && (
                             <Box mb="4" p="3" bg="#B3431F" color="white" borderRadius="md" display="flex" alignItems="center" gap="2" fontSize="sm">
-                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>error</span>
+                                <Icon name="error" size={20} />
                                 <Text fontWeight="medium">{t('auth.reset.token_missing')}</Text>
                             </Box>
                         )}
@@ -161,9 +160,7 @@ const ResetPassword = () => {
                                     <Box position="relative">
                                         <Input disabled={isTokenMissing} css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }} type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" pr="12" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                         <IconButton disabled={isTokenMissing} aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={TEXT_SUB} bg="transparent" _hover={{ bg: "transparent", color: INK }} _active={{ bg: "transparent" }} onClick={() => setShowPassword(!showPassword)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                                                {showPassword ? 'visibility_off' : 'visibility'}
-                                            </span>
+                                            <Icon name={showPassword ? 'visibility_off' : 'visibility'} size={18} />
                                         </IconButton>
                                     </Box>
                                 </Box>
@@ -189,9 +186,7 @@ const ResetPassword = () => {
                                     <Box position="relative">
                                         <Input disabled={isTokenMissing} css={{ "&::-ms-reveal, &::-ms-clear": { display: "none" } }} type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" pr="12" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                         <IconButton disabled={isTokenMissing} aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={TEXT_SUB} bg="transparent" _hover={{ bg: "transparent", color: INK }} _active={{ bg: "transparent" }} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                                                {showConfirmPassword ? 'visibility_off' : 'visibility'}
-                                            </span>
+                                            <Icon name={showConfirmPassword ? 'visibility_off' : 'visibility'} size={18} />
                                         </IconButton>
                                     </Box>
                                 </Box>
@@ -201,7 +196,7 @@ const ResetPassword = () => {
                                 </Button>
 
                                 <Link fontSize="sm" fontWeight="semibold" color={SAGE_DARK} _hover={{ color: AMBER }} onClick={() => navigate('/login')} display="flex" alignItems="center" justifyContent="center" gap="1">
-                                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
+                                    <Icon name="arrow_back" size={16} />
                                     {t('auth.reset.back_to_login')}
                                 </Link>
                             </Stack>

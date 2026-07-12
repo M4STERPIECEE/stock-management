@@ -2,6 +2,7 @@ import { Box, Button, Flex, Heading, HStack, Input, Popover, Portal, Text, VStac
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
+import Icon from '../../components/ui/Icon';
 
 interface Country {
     code: string;
@@ -61,7 +62,7 @@ const ProfileInfoSection = ({ firstName, setFirstName, lastName, setLastName, ph
                     <Text fontSize="sm" fontWeight="medium" mb={2} color={mainText}>{t('profile.email')}</Text>
                     <Box position="relative">
                         <Box position="absolute" left="3" top="2.5" color="gray.400" zIndex="1" pointerEvents="none">
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>mail</span>
+                            <Icon name="mail" size={20} />
                         </Box>
                         <Input h="11" rounded="lg" bg={colorMode === 'light' ? "gray.100" : "gray.900"} borderColor={borderColor} color="gray.500" pl="10" pr="4" focusRing="none" value={user?.email || ""} cursor="not-allowed" disabled />
                     </Box>
@@ -78,7 +79,7 @@ const ProfileInfoSection = ({ firstName, setFirstName, lastName, setLastName, ph
                                             <Text fontSize="sm" color={mainText}>{selectedCountry.code}</Text>
                                         </HStack>
                                         {isEditing && (
-                                            <span className="material-symbols-outlined" style={{ fontSize: '18px', color: subText }}>expand_more</span>
+                                            <Icon name="expand_more" size={18} color={subText} />
                                         )}
                                     </Button>
                                 </Popover.Trigger>

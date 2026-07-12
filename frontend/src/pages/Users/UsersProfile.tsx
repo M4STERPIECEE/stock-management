@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Flex, Text, Heading, VStack, HStack, Button, Avatar, Badge, Container, IconButton } from '@chakra-ui/react';
 import { useColorMode } from '../../components/ui/color-mode';
+import Icon from '../../components/ui/Icon';
 import Sidebar from '../../components/navigation/sidebar';
 import { useTranslation } from 'react-i18next';
 import { useAppToast } from '../../hooks/useAppToast';
@@ -263,7 +264,7 @@ const UsersProfile = () => {
                                             <Avatar.Fallback name={user?.username} />
                                         </Avatar.Root>
                                         <IconButton aria-label="Edit avatar" position="absolute" bottom="0" right="0" size="xs" rounded="full" bg="primary" color="white" shadow="lg" _hover={{ bg: "blue.700" }} opacity="0" _groupHover={{ opacity: 1 }} transition="all 0.2s" onClick={() => fileInputRef.current?.click()}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>edit</span>
+                                            <Icon name="edit" size={14} />
                                         </IconButton>
                                     </Box>
                                     <VStack align="flex-start" gap={1}>
@@ -281,7 +282,7 @@ const UsersProfile = () => {
                                     </VStack>
                                 </Flex>
                                 <Button variant="outline" gap={2} rounded="lg" h="10" px={4} fontWeight="bold" color={colorMode === 'light' ? "#111418" : "white"} bg={colorMode === 'light' ? "white" : "transparent"} borderColor={borderColor} _hover={{ bg: colorMode === 'light' ? "gray.50" : "rgba(255, 255, 255, 0.05)", borderColor: colorMode === 'light' ? "gray.300" : borderColor }} w={{ base: "full", md: "auto" }} onClick={() => fileInputRef.current?.click()}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>photo_camera</span>
+                                    <Icon name="photo_camera" size={20} />
                                     {t('profile.edit')} photo
                                 </Button>
                             </Flex>
@@ -291,15 +292,15 @@ const UsersProfile = () => {
                                 <Box position={{ lg: "sticky" }} top={{ lg: "24" }} bg={cardBg} borderRadius="xl" border="1px solid" borderColor={borderColor} shadow="sm" overflow="hidden">
                                     <VStack align="stretch" gap={0}>
                                         <Button variant="ghost" justifyContent="flex-start" h="14" px={6} rounded="none" gap={3} position="relative" bg={activeSection === 'settings__information' ? (colorMode === 'light' ? "rgba(19, 111, 236, 0.08)" : "rgba(19, 111, 236, 0.2)") : "transparent"} color={activeSection === 'settings__information' ? "primary" : subText} fontWeight={activeSection === 'settings__information' ? "bold" : "medium"} _before={activeSection === 'settings__information' ? { content: '""', position: 'absolute', left: '0', top: '20%', height: '60%', width: '4px', bg: 'primary', borderTopRightRadius: 'full', borderBottomRightRadius: 'full', } : {}} _hover={{ bg: colorMode === 'light' ? "gray.50" : "gray.800", color: activeSection === 'settings__information' ? "primary" : mainText }} onClick={() => scrollToSection('settings__information')}>
-                                            <span className="material-symbols-outlined">person</span>
+                                            <Icon name="person" size={20} />
                                             {t('profile.personal_info')}
                                         </Button>
                                         <Button variant="ghost" justifyContent="flex-start" h="14" px={6} rounded="none" gap={3} position="relative" bg={activeSection === 'settings__preference' ? (colorMode === 'light' ? "rgba(19, 111, 236, 0.08)" : "rgba(19, 111, 236, 0.2)") : "transparent"} color={activeSection === 'settings__preference' ? "primary" : subText} fontWeight={activeSection === 'settings__preference' ? "bold" : "medium"} _before={activeSection === 'settings__preference' ? { content: '""', position: 'absolute', left: '0', top: '20%', height: '60%', width: '4px', bg: 'primary', borderTopRightRadius: 'full', borderBottomRightRadius: 'full', } : {}} _hover={{ bg: colorMode === 'light' ? "gray.50" : "gray.800", color: activeSection === 'settings__preference' ? "primary" : mainText }} onClick={() => scrollToSection('settings__preference')}>
-                                            <span className="material-symbols-outlined">settings</span>
+                                            <Icon name="settings" size={20} />
                                             {t('profile.preferences')}
                                         </Button>
                                         <Button variant="ghost" justifyContent="flex-start" h="14" px={6} rounded="none" gap={3} position="relative" bg={activeSection === 'settings__security' ? (colorMode === 'light' ? "rgba(19, 111, 236, 0.08)" : "rgba(19, 111, 236, 0.2)") : "transparent"} color={activeSection === 'settings__security' ? "primary" : subText} fontWeight={activeSection === 'settings__security' ? "bold" : "medium"} _before={activeSection === 'settings__security' ? { content: '""', position: 'absolute', left: '0', top: '20%', height: '60%', width: '4px', bg: 'primary', borderTopRightRadius: 'full', borderBottomRightRadius: 'full', } : {}} _hover={{ bg: colorMode === 'light' ? "gray.50" : "gray.800", color: activeSection === 'settings__security' ? "primary" : mainText }} onClick={() => scrollToSection('settings__security')}>
-                                            <span className="material-symbols-outlined">lock</span>
+                                            <Icon name="lock" size={20} />
                                             {t('profile.security')}
                                         </Button>
                                     </VStack>

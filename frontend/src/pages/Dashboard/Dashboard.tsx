@@ -3,6 +3,7 @@ import Sidebar from '../../components/navigation/sidebar';
 import { Box, SimpleGrid, Flex, Text, Heading, Button, Table, Badge, HStack, VStack, Grid } from '@chakra-ui/react';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
+import Icon from '../../components/ui/Icon';
 
 const Dashboard = () => {
   const { colorMode } = useColorMode();
@@ -194,17 +195,14 @@ const Dashboard = () => {
                   </Heading>
                 </Box>
                 <Box p={2} rounded="lg" bg={card.iconBg} color={card.iconColor} _dark={{ bg: card.iconBgDark, color: card.iconColorDark }}>
-                  <span className="material-symbols-outlined">{card.icon}</span>
+                  <Icon name={card.icon} />
                 </Box>
               </Flex>
               <HStack gap={2}>
                 {card.trend ? (
                   <>
                     <Flex align="center" color={card.trendColor} _dark={{ color: card.trendColorDark }} fontSize="sm" fontWeight="medium">
-                      <span className="material-symbols-outlined"
-                        style={{ fontSize: '14px' }}>
-                        {card.trend === 'up' ? 'trending_up' : 'trending_down'}
-                      </span>
+                      <Icon name={card.trend === 'up' ? 'trending_up' : 'trending_down'} size={14} />
                       <Text ml={1}>{card.trendValue}</Text>
                     </Flex>
                     <Text color="gray.400" fontSize="sm">
@@ -232,7 +230,7 @@ const Dashboard = () => {
                 <Text fontSize="sm" color={subText}>{t('dashboard.revenue_vs_previous')}</Text>
               </Box>
               <Button variant="ghost" size="sm" px={0} minW={8} h={8} rounded="lg" bg="transparent" color={colorMode === 'light' ? 'gray.500' : 'gray.400'} _hover={{ bg: colorMode === 'light' ? 'gray.100' : 'whiteAlpha.200', color: colorMode === 'light' ? 'gray.700' : 'white', }} transition="all 0.2s">
-                <span className="material-symbols-outlined">more_horiz</span>
+                <Icon name="more_horiz" />
               </Button>
             </Flex>
             <Box position="relative" w="full" h="300px">
@@ -366,9 +364,7 @@ const Dashboard = () => {
               {stockAlertsData.map((alert, index) => (
                 <Flex key={index} align="center" gap={4} p={3} bg={alert.bgColor} _dark={{ bg: alert.bgColorDark, borderColor: alert.borderColorDark }} rounded="lg" border="1px" borderColor={alert.borderColor}>
                   <Box bg={alert.iconBg} _dark={{ bg: alert.iconBgDark }} p={2} rounded="full" color={alert.iconColor}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                      {alert.icon}
-                    </span>
+                    <Icon name={alert.icon} size={20} />
                   </Box>
                   <Box flex={1}>
                     <Text fontSize="sm" fontWeight="bold" color={mainText}>
@@ -385,7 +381,7 @@ const Dashboard = () => {
               ))}
               <Button mt={2} variant="outline" borderStyle="dashed" borderWidth="2px" borderColor={colorMode === 'light' ? 'gray.600' : 'gray.600'} bg={colorMode === 'light' ? 'whiteAlpha.100' : 'transparent'} color={colorMode === 'light' ? 'gray.600' : 'gray.500'} _hover={{ color: "blue.500", borderColor: "blue.500", bg: colorMode === 'light' ? "blue.50" : "whiteAlpha.100" }} h="auto" py={2.5}>
                 <HStack gap={2}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                  <Icon name="add" size={18} />
                   <Text fontSize="sm" fontWeight="medium">{t('dashboard.add_alert')}</Text>
                 </HStack>
               </Button>
