@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text, Button, Input, Stack, Link, IconButton, Grid, GridItem } from '@chakra-ui/react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppToast } from '../../hooks/useAppToast';
+import { API_BASE_URL } from '../../config/api';
 import Icon from '../../components/ui/Icon';
 
 const INK = '#151A21';
@@ -62,8 +63,7 @@ const ResetPassword = () => {
         setIsSubmitting(true);
 
         try {
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
-            const response = await fetch(`${baseUrl}/api/v1/auth/reset-password`, {
+            const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Icon from '../ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 
 const INK = '#151A21';
 const PAPER = '#EFF1EC';
@@ -48,11 +49,8 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
             if (!token) return;
 
             try {
-                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
-                const response = await fetch(`${baseUrl}/api/v1/auth/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    headers: authHeaders()
                 });
                 if (response.ok) {
                     const data = await response.json();
@@ -90,12 +88,9 @@ const NavigationContent = ({ children }: { children: React.ReactNode }) => {
         const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
         if (token) {
             try {
-                const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
-                await fetch(`${baseUrl}/api/v1/auth/logout`, {
+                await fetch(`${API_BASE_URL}/auth/logout`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: authHeaders()
                 });
             } catch {
                 console.error("Logout request failed");

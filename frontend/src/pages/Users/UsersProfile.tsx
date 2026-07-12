@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppToast } from '../../hooks/useAppToast';
 import ProfileInfoSection from './ProfileInfoSection';
 import ProfileSettings from './ProfileSettings';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 
 const UsersProfile = () => {
     const { i18n } = useTranslation();
@@ -56,11 +57,8 @@ const UsersProfile = () => {
         if (!token) return;
 
         try {
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
-            const response = await fetch(`${baseUrl}/api/v1/auth/profile`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                headers: authHeaders()
             });
             if (response.ok) {
                 const data = await response.json();
@@ -102,15 +100,11 @@ const UsersProfile = () => {
         reader.onloadend = async () => {
             const base64String = reader.result as string;
             const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
 
             try {
-                const response = await fetch(`${baseUrl}/api/v1/auth/update-profile`, {
+                const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: authHeaders(),
                     body: JSON.stringify({
                         profilePicture: base64String
                     })
@@ -137,17 +131,13 @@ const UsersProfile = () => {
     const handleSaveProfile = async () => {
         const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
         if (!token) return;
-        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
 
         const fullPhoneNumber = phoneNumber ? `${phoneCode}${phoneNumber}` : null;
 
         try {
-            const response = await fetch(`${baseUrl}/api/v1/auth/update-profile`, {
+            const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: authHeaders(),
                 body: JSON.stringify({
                     phoneNumber: fullPhoneNumber,
                     firstName: firstName,
@@ -184,15 +174,11 @@ const UsersProfile = () => {
         setIsUpdatingPassword(true);
         const token = window.localStorage.getItem('access_token') || window.sessionStorage.getItem('access_token');
         if (!token) return;
-        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
 
         try {
-            const response = await fetch(`${baseUrl}/api/v1/auth/update-profile`, {
+            const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers: authHeaders(),
                 body: JSON.stringify({
                     password: newPassword
                 })

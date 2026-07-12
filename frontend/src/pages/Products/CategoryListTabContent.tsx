@@ -3,6 +3,7 @@ import { Badge, Box, Button, Checkbox, Flex, HStack, IconButton, Input, InputGro
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
 import AddCategoryModal from './modal/AddCategoryModal';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 import { useEffect } from 'react';
 import { useAppToast } from '../../hooks/useAppToast';
 import Icon from '../../components/ui/Icon';
@@ -46,14 +47,11 @@ const CategoryListTabContent = () => {
     const fetchCategories = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-            const url = new URL('http://localhost:3005/api/v1/categories');
+            const url = new URL(`${API_BASE_URL}/categories`);
             if (searchTerm) url.searchParams.append('search', searchTerm);
             
             const response = await fetch(url.toString(), {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
+                headers: authHeaders(),
             });
             if (response.ok) {
                 const data = await response.json();

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useAppToast } from '../../hooks/useAppToast';
 import Icon from '../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 
 interface Customer {
 	id: string;
@@ -54,14 +55,13 @@ const Customers = () => {
 	const fetchCustomers = useCallback(async () => {
 		setLoading(true);
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const url = new URL('http://localhost:3005/api/v1/customers');
+			const url = new URL(`${API_BASE_URL}/customers`);
 			if (debouncedSearchTerm) url.searchParams.append('search', debouncedSearchTerm);
 			url.searchParams.append('page', currentPage.toString());
 			url.searchParams.append('limit', DEFAULT_PAGE_SIZE.toString());
 
 			const response = await fetch(url.toString(), {
-				headers: { 'Authorization': `Bearer ${token}` }
+				headers: authHeaders()
 			});
 			if (response.ok) {
 				const data = await response.json();
@@ -109,10 +109,9 @@ const Customers = () => {
 	const handleDelete = async (id: string) => {
 		if (!window.confirm(t('customers.delete_confirm', 'Are you sure you want to delete this customer?'))) return;
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-			const response = await fetch(`http://localhost:3005/api/v1/customers/${id}`, {
+			const response = await fetch(`${API_BASE_URL}/customers/${id}`, {
 				method: 'DELETE',
-				headers: { 'Authorization': `Bearer ${token}` }
+				headers: authHeaders()
 			});
 			if (response.ok) {
 				showToast({ title: t('customers.delete_success', 'Customer deleted successfully'), status: 'success' });
@@ -130,18 +129,14 @@ const Customers = () => {
 		e.preventDefault();
 		setFormLoading(true);
 		try {
-			const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
 			const url = editingCustomer
-				? `http://localhost:3005/api/v1/customers/${editingCustomer.id}`
-				: 'http://localhost:3005/api/v1/customers';
+				? `${API_BASE_URL}/customers/${editingCustomer.id}`
+				: `${API_BASE_URL}/customers`;
 			const method = editingCustomer ? 'PATCH' : 'POST';
 
 			const response = await fetch(url, {
 				method,
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
+				headers: authHeaders(),
 				body: JSON.stringify(formData),
 			});
 

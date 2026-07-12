@@ -3,6 +3,7 @@ import { Box, Flex, Text, Button, Input, Stack, Link, InputGroup } from '@chakra
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppToast } from '../../hooks/useAppToast';
+import { API_BASE_URL } from '../../config/api';
 import Icon from '../../components/ui/Icon';
 
 const INK = '#151A21';
@@ -27,8 +28,7 @@ const ForgotPasswordFormContent = () => {
         setIsSubmitting(true);
 
         try {
-            const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3005';
-            const response = await fetch(`${baseUrl}/api/v1/auth/forgot-password`, {
+            const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

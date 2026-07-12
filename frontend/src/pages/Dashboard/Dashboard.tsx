@@ -4,6 +4,7 @@ import { Box, SimpleGrid, Flex, Text, Heading, Button, Table, Badge, HStack, VSt
 import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
 import Icon from '../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../config/api';
 
 const Dashboard = () => {
   const { colorMode } = useColorMode();
@@ -23,9 +24,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-        const response = await fetch('http://localhost:3005/api/v1/dashboard/summary', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const response = await fetch(`${API_BASE_URL}/dashboard/summary`, {
+          headers: authHeaders()
         });
         if (response.ok) {
           const data = await response.json();

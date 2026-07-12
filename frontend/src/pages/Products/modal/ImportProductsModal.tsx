@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import * as XLSX from 'xlsx';
 import { useColorMode } from '../../../components/ui/color-mode';
 import Icon from '../../../components/ui/Icon';
+import { API_BASE_URL, authHeaders } from '../../../config/api';
 
 interface ImportProductsModalProps {
     isOpen: boolean;
@@ -90,13 +91,9 @@ const ImportProductsModal = ({ isOpen, onClose, onSuccess }: ImportProductsModal
                     };
                 });
 
-                const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-                const response = await fetch('http://localhost:3005/api/v1/products/bulk', {
+                const response = await fetch(`${API_BASE_URL}/products/bulk`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
+                    headers: authHeaders(),
                     body: JSON.stringify(formattedData),
                 });
 
