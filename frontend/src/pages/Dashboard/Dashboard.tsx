@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Sidebar from '../../components/navigation/sidebar';
 import { Box, SimpleGrid, Flex, Text, Heading, Button, Table, Badge, HStack, VStack, Grid } from '@chakra-ui/react';
 import { useColorMode } from '../../components/ui/color-mode';
@@ -7,6 +8,8 @@ const Dashboard = () => {
   const { colorMode } = useColorMode();
   const { t } = useTranslation();
 
+  const [summaryData, setSummaryData] = useState<null | { revenue?: any; ordersByStatus?: any; stockValue?: number; alerts?: { lowStock: number; outOfStock: number }; recentOrders?: any[] }>(null);
+  const [loading, setLoading] = useState(true);
 
   const cardBg = colorMode === 'light' ? 'white' : 'gray.800';
   const borderColor = colorMode === 'light' ? 'gray.200' : 'gray.700';
@@ -16,32 +19,65 @@ const Dashboard = () => {
   const headerBg = colorMode === 'light' ? 'gray.50' : 'gray.800';
   const gradientId = "paint0_linear_1131_5935";
 
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        const response = await fetch('http://localhost:3005/api/v1/dashboard/summary', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setSummaryData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard summary:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSummary();
+  }, []);
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('fr-MG', { style: 'currency', currency: 'MGA', minimumFractionDigits: 0 }).format(value);
+  };
+
+  const revenue = summaryData?.revenue?.current || 0;
+  const revenueChange = summaryData?.revenue?.change || 0;
+  const ordersByStatus = summaryData?.ordersByStatus || {};
+  const totalOrders = Object.values(ordersByStatus).reduce((a: number, b: any) => a + (Number(b) || 0), 0);
+  const stockValue = summaryData?.stockValue || 0;
+  const lowStockCount = summaryData?.alerts?.lowStock || 0;
+  const outOfStockCount = summaryData?.alerts?.outOfStock || 0;
+  const recentOrders = summaryData?.recentOrders || [];
+
   const statsCardsData = [
     {
       titleKey: 'dashboard.total_revenue',
-      value: '124 500 Ar',
+      value: formatCurrency(revenue),
       icon: 'payments',
       iconBg: 'green.50',
       iconColor: 'green.600',
       iconBgDark: 'green.900/20',
       iconColorDark: 'green.400',
-      trend: 'up',
-      trendValue: '5.2%',
-      trendColor: 'green.600',
-      trendColorDark: 'green.400',
+      trend: revenueChange >= 0 ? 'up' : 'down',
+      trendValue: `${Math.abs(revenueChange).toFixed(1)}%`,
+      trendColor: revenueChange >= 0 ? 'green.600' : 'red.600',
+      trendColorDark: revenueChange >= 0 ? 'green.400' : 'red.400',
       showBorder: true,
-      borderColor: 'green.500'
+      borderColor: revenueChange >= 0 ? 'green.500' : 'red.500'
     },
     {
       titleKey: 'dashboard.orders',
-      value: '342',
+      value: totalOrders.toString(),
       icon: 'shopping_bag',
       iconBg: 'blue.50',
       iconColor: 'blue.500',
       iconBgDark: 'blue.900/20',
       iconColorDark: 'blue.400',
       trend: 'up',
-      trendValue: '1.8%',
+      trendValue: '-',
       trendColor: 'green.600',
       trendColorDark: 'green.400',
       showBorder: true,
@@ -49,22 +85,22 @@ const Dashboard = () => {
     },
     {
       titleKey: 'dashboard.stock_value',
-      value: '45 200 Ar',
+      value: formatCurrency(stockValue),
       icon: 'inventory',
       iconBg: 'orange.50',
       iconColor: 'orange.600',
       iconBgDark: 'orange.900/20',
       iconColorDark: 'orange.400',
-      trend: 'down',
-      trendValue: '0.5%',
-      trendColor: 'red.600',
-      trendColorDark: 'red.400',
+      trend: 'up',
+      trendValue: '-',
+      trendColor: 'green.600',
+      trendColorDark: 'green.400',
       showBorder: true,
       borderColor: 'orange.500'
     },
     {
       titleKey: 'dashboard.low_stock',
-      value: '12',
+      value: lowStockCount.toString(),
       valueKey: 'dashboard.items',
       icon: 'warning',
       iconBg: 'red.50',
@@ -80,46 +116,21 @@ const Dashboard = () => {
     }
   ];
 
-  const recentOrdersData = [
-    {
-      id: '#4532',
-      product: 'MacBook Pro M2',
-      customer: 'Sophie Martin',
-      statusKey: 'dashboard.shipped',
-      statusBg: 'green.100',
-      statusColor: 'green.800',
-      statusBgDark: 'green.900/30',
-      statusColorDark: 'green.400',
-      amount: '2 450 Ar'
-    },
-    {
-      id: '#4531',
-      product: 'iPhone 15 Pro',
-      customer: 'Thomas Dubois',
-      statusKey: 'dashboard.pending',
-      statusBg: 'yellow.100',
-      statusColor: 'yellow.800',
-      statusBgDark: 'yellow.900/30',
-      statusColorDark: 'yellow.400',
-      amount: '1 290 Ar'
-    },
-    {
-      id: '#4530',
-      product: 'Sony WH-1000XM5',
-      customer: 'Marie Leroy',
-      statusKey: 'dashboard.processing',
-      statusBg: 'blue.100',
-      statusColor: 'blue.800',
-      statusBgDark: 'blue.900/30',
-      statusColorDark: 'blue.400',
-      amount: '350 Ar'
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'LIVREE': return { statusBg: 'green.100', statusColor: 'green.800', statusBgDark: 'green.900/30', statusColorDark: 'green.400', label: t('orders.status.livree') };
+      case 'EXPEDIEE': return { statusBg: 'blue.100', statusColor: 'blue.800', statusBgDark: 'blue.900/30', statusColorDark: 'blue.400', label: t('orders.status.expediee') };
+      case 'EN_ATTENTE': return { statusBg: 'yellow.100', statusColor: 'yellow.800', statusBgDark: 'yellow.900/30', statusColorDark: 'yellow.400', label: t('orders.status.en_attente') };
+      case 'ANNULEE': return { statusBg: 'red.100', statusColor: 'red.800', statusBgDark: 'red.900/30', statusColorDark: 'red.400', label: t('orders.status.annulee') };
+      default: return { statusBg: 'gray.100', statusColor: 'gray.800', statusBgDark: 'gray.900/30', statusColorDark: 'gray.400', label: status };
     }
-  ];
+  };
 
-  const stockAlertsData = [
-    {
-      titleKey: 'dashboard.mechanical_keyboard',
-      unitsLeft: 2,
+  const stockAlertsData = [];
+  if (outOfStockCount > 0) {
+    stockAlertsData.push({
+      titleKey: 'dashboard.out_of_stock',
+      unitsLeft: outOfStockCount,
       icon: 'warning',
       bgColor: 'red.50',
       bgColorDark: 'red.900/10',
@@ -130,10 +141,12 @@ const Dashboard = () => {
       iconColor: 'red.600',
       textColor: 'red.600',
       textColorDark: 'red.400'
-    },
-    {
-      titleKey: 'dashboard.ergonomic_mouse',
-      unitsLeft: 5,
+    });
+  }
+  if (lowStockCount > 0) {
+    stockAlertsData.push({
+      titleKey: 'dashboard.low_stock',
+      unitsLeft: lowStockCount,
       icon: 'low_priority',
       bgColor: 'orange.50',
       bgColorDark: 'orange.900/10',
@@ -144,9 +157,8 @@ const Dashboard = () => {
       iconColor: 'orange.600',
       textColor: 'orange.600',
       textColorDark: 'orange.400'
-    }
-  ];
-
+    });
+  }
 
   return (
     <Sidebar>
@@ -308,27 +320,38 @@ const Dashboard = () => {
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                  {recentOrdersData.map((order, index) => (
-                    <Table.Row key={index} _hover={{ bg: hoverBg }}>
-                      <Table.Cell px={6} py={4} fontWeight="medium" color={mainText}>
-                        {order.id}
-                      </Table.Cell>
-                      <Table.Cell px={6} py={4} color="gray.600" _dark={{ color: "gray.300" }}>
-                        {order.product}
-                      </Table.Cell>
-                      <Table.Cell px={6} py={4} color="gray.600" _dark={{ color: "gray.300" }}>
-                        {order.customer}
-                      </Table.Cell>
-                      <Table.Cell px={6} py={4}>
-                        <Badge bg={order.statusBg} color={order.statusColor} _dark={{ bg: order.statusBgDark, color: order.statusColorDark }} px={2.5} py={0.5} rounded="full" textTransform="none">
-                          {t(order.statusKey)}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell px={6} py={4} textAlign="right" fontWeight="medium" color={mainText}>
-                        {order.amount}
+                  {recentOrders.length === 0 ? (
+                    <Table.Row>
+                      <Table.Cell colSpan={5} textAlign="center" py={8} color="gray.500">
+                        {t('common.no_results')}
                       </Table.Cell>
                     </Table.Row>
-                  ))}
+                  ) : (
+                    recentOrders.slice(0, 5).map((order: any, index: number) => {
+                      const style = getStatusStyle(order.status);
+                      return (
+                        <Table.Row key={order.id || index} _hover={{ bg: hoverBg }}>
+                          <Table.Cell px={6} py={4} fontWeight="medium" color={mainText} fontFamily="mono" fontSize="sm">
+                            #{order.id?.slice(0, 8) || '-'}
+                          </Table.Cell>
+                          <Table.Cell px={6} py={4} color="gray.600" _dark={{ color: "gray.300" }}>
+                            -
+                          </Table.Cell>
+                          <Table.Cell px={6} py={4} color="gray.600" _dark={{ color: "gray.300" }}>
+                            {order.customer || '-'}
+                          </Table.Cell>
+                          <Table.Cell px={6} py={4}>
+                            <Badge bg={style.statusBg} color={style.statusColor} _dark={{ bg: style.statusBgDark, color: style.statusColorDark }} px={2.5} py={0.5} rounded="full" textTransform="none">
+                              {style.label}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell px={6} py={4} textAlign="right" fontWeight="medium" color={mainText}>
+                            {formatCurrency(Number(order.totalAmount) || 0)}
+                          </Table.Cell>
+                        </Table.Row>
+                      );
+                    })
+                  )}
                 </Table.Body>
               </Table.Root>
             </Box>

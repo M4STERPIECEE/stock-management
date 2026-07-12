@@ -9,7 +9,8 @@ export default () => ({
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'secretKey',
-    expiresIn: '1d',
+    refreshSecret: process.env.REFRESH_TOKEN_SECRET || 'refreshSecretKey',
+    expiresIn: '1h',
   },
   admin: {
     email: process.env.ADMIN_EMAIL,
@@ -20,5 +21,9 @@ export default () => ({
     user: process.env.MAIL_USER,
     password: process.env.MAIL_PASSWORD,
     from: process.env.MAIL_FROM,
+  },
+  throttle: {
+    ttl: parseInt(process.env.THROTTLE_TTL || '60000', 10),
+    limit: parseInt(process.env.THROTTLE_LIMIT || '60', 10),
   },
 });

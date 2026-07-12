@@ -38,9 +38,22 @@ export class AuthService {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       lastName: user.lastName,
     };
+    const refreshPayload = { sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
+      refresh_token: this.jwtService.sign(refreshPayload, {
+        secret: 'refreshSecretKey',
+        expiresIn: '7d',
+      }),
     };
+  }
+
+  async refreshToken(user: { userId: string; email: string }) {
+    const userData = await this.usersService.findOneById(user.userId);
+    if (!userData) {
+      throw new Error('User not found');
+    }
+    return this.login(userData);
   }
 
   async forgotPassword(email: string) {
