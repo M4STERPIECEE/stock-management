@@ -1,33 +1,11 @@
 import { motion } from 'framer-motion';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-	Box,
-	Button,
-	Flex,
-	HStack,
-	IconButton,
-	Input,
-	InputGroup,
-	TableBody,
-	TableCell,
-	TableColumnHeader,
-	TableHeader,
-	TableRoot,
-	TableRow,
-	Text,
-	VStack,
-	Spinner,
-	Center,
-	Badge,
-	Dialog,
-	Portal,
-	Stack,
-	Field,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, IconButton, Input, InputGroup, TableBody, TableCell, TableColumnHeader, TableHeader, TableRoot, TableRow, Text, VStack, Spinner, Center, Badge, Dialog, Portal, Stack, Field } from '@chakra-ui/react';
 import Sidebar from '../../components/navigation/sidebar';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useAppToast } from '../../hooks/useAppToast';
+import Icon from '../../components/ui/Icon';
 
 interface Customer {
 	id: string;
@@ -219,7 +197,7 @@ const Customers = () => {
 				{/* Toolbar */}
 				<Flex bg={cardBg} p="4" borderRadius="xl" border="1px solid" borderColor={borderColor} boxShadow="sm" justify="space-between" align="center" wrap="wrap" gap="4">
 					<InputGroup maxW="md" minW="280px"
-						startElement={<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>search</span>}
+						startElement={<Icon name="search" size={20} />}
 						startElementProps={{ color: subText }}>
 						<Input placeholder={t('customers.search_placeholder')}
 							bg={inputBg} border="1px solid" borderColor={inputBorder}
@@ -228,13 +206,12 @@ const Customers = () => {
 					</InputGroup>
 					<Button h="10" px="4" bg="primary" color="white" _hover={{ bg: 'blue.600' }} borderRadius="lg" fontSize="sm" fontWeight="bold" boxShadow="sm" onClick={handleAdd}>
 						<Flex align="center" gap="2">
-							<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
+							<Icon name="add" size={20} />
 							<span>{t('customers.add_customer')}</span>
 						</Flex>
 					</Button>
 				</Flex>
 
-				{/* Table */}
 				<Box bg={cardBg} borderRadius="xl" border="1px solid" borderColor={borderColor} boxShadow="sm" overflow="hidden">
 					<Box overflowX="auto">
 						<TableRoot>
@@ -259,7 +236,7 @@ const Customers = () => {
 									<TableRow>
 										<TableCell colSpan={6} textAlign="center" py="10">
 											<VStack gap={2}>
-												<span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'gray' }}>group_off</span>
+												<Icon name="group_off" size={48} color="gray" />
 												<Text color={subText} fontSize="lg">{t('common.no_results')}</Text>
 											</VStack>
 										</TableCell>
@@ -294,12 +271,12 @@ const Customers = () => {
 														<IconButton aria-label="Edit" size="sm" variant="ghost" color={subText}
 															_hover={{ bg: cardBg, color: 'primary', boxShadow: 'sm' }} _focusVisible={{ outline: 'none' }}
 															onClick={() => handleEdit(customer)}>
-															<span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+															<Icon name="edit" size={18} />
 														</IconButton>
 														<IconButton aria-label="Delete" size="sm" variant="ghost" color={subText}
 															_hover={{ bg: cardBg, color: 'red.600', boxShadow: 'sm' }} _focusVisible={{ outline: 'none' }}
 															onClick={() => handleDelete(customer.id)}>
-															<span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+															<Icon name="delete" size={18} />
 														</IconButton>
 													</HStack>
 												</TableCell>
@@ -310,7 +287,6 @@ const Customers = () => {
 							</TableBody>
 						</TableRoot>
 					</Box>
-					{/* Pagination */}
 					<Flex justify="space-between" align="center" p="4" borderTop="1px solid" borderColor={borderColor} bg={cardBg}>
 						<Text fontSize="sm" color={subText}>
 							{t('products.pagination.showing')} <Text as="span" fontWeight="medium" color={mainText}>{from}</Text> {t('products.pagination.to')} <Text as="span" fontWeight="medium" color={mainText}>{to}</Text> {t('products.pagination.of')} <Text as="span" fontWeight="medium" color={mainText}>{totalItems}</Text> {t('products.pagination.results')}
@@ -318,14 +294,14 @@ const Customers = () => {
 						<HStack gap="2">
 							<IconButton aria-label="Previous" size="sm" variant="outline" borderColor={borderColor} color={subText}
 								onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-								<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
+								<Icon name="chevron_left" size={20} />
 							</IconButton>
 							<Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
 								{currentPage}
 							</Button>
 							<IconButton aria-label="Next" size="sm" variant="outline" borderColor={borderColor} color={subText}
 								onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-								<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
+								<Icon name="chevron_right" size={20} />
 							</IconButton>
 						</HStack>
 					</Flex>

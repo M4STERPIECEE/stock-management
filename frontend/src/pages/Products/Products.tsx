@@ -9,6 +9,7 @@ import CategoryListTabContent from './CategoryListTabContent';
 import AddProductModal from './modal/AddProductModal';
 import ImportProductsModal from './modal/ImportProductsModal';
 import { useAppToast } from '../../hooks/useAppToast';
+import Icon from '../../components/ui/Icon';
 
 const Products = () => {
     const { t } = useTranslation();
@@ -45,17 +46,13 @@ const Products = () => {
                             <HStack gap="3">
                                 <Button h="10" px="4" bg={cardBg} border="1px solid" borderColor={borderColor} color={mainText} _hover={{ bg: colorMode === 'dark' ? 'whiteAlpha.100' : 'gray.50' }} borderRadius="lg" fontSize="sm" fontWeight="bold" onClick={() => setIsImportModalOpen(true)}>
                                     <Flex align="center" gap="2">
-                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                                            upload
-                                        </span>
+                                        <Icon name="upload" size={20} />
                                         <span>{t('products.import', 'Importer')}</span>
                                     </Flex>
                                 </Button>
                                 <Button h="10" px="4" bg="primary" color="white" _hover={{ bg: 'blue.600' }} borderRadius="lg" fontSize="sm" fontWeight="bold" boxShadow="sm" onClick={() => setIsAddProductModalOpen(true)}>
                                     <Flex align="center" gap="2">
-                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                                            add
-                                        </span>
+                                        <Icon name="add" size={20} />
                                         <span>{t('products.add_product')}</span>
                                     </Flex>
                                 </Button>

@@ -1,5 +1,7 @@
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-sans: 'Poppins', -apple-system, sans-serif;
+  --font-heading: var(--font-sans);
+  font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
 

@@ -14,6 +14,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../../components/ui/color-mode';
 import { useAppToast } from '../../../hooks/useAppToast';
+import Icon from '../../../components/ui/Icon';
 
 interface AddCategoryModalProps {
 	isOpen: boolean;
@@ -62,8 +63,8 @@ const PopoverSelect = ({
 					<Text fontSize="sm" color={value ? mainText : subText} fontWeight={value ? 'medium' : 'normal'}>
 						{selectedLabel}
 					</Text>
-					<span className="material-symbols-outlined" style={{ fontSize: '20px', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: subText, }} >
-						expand_more
+					<span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', display: 'inline-flex' }}>
+						<Icon name="expand_more" size={20} color={subText} />
 					</span>
 				</Button>
 			</Popover.Trigger>

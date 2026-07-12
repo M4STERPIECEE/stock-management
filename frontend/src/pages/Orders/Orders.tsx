@@ -28,6 +28,7 @@ import Sidebar from '../../components/navigation/sidebar';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useAppToast } from '../../hooks/useAppToast';
+import Icon from '../../components/ui/Icon';
 
 type OrderStatus = 'EN_ATTENTE' | 'EXPEDIEE' | 'LIVREE' | 'ANNULEE';
 
@@ -342,7 +343,7 @@ const Orders = () => {
 					</HStack>
 					<Button h="10" px="4" bg="primary" color="white" _hover={{ bg: 'blue.600' }} borderRadius="lg" fontSize="sm" fontWeight="bold" boxShadow="sm" onClick={handleCreateOpen}>
 						<Flex align="center" gap="2">
-							<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
+							<Icon name="add" size={20} />
 							<span>{t('orders.new_order')}</span>
 						</Flex>
 					</Button>
@@ -373,7 +374,7 @@ const Orders = () => {
 									<TableRow>
 										<TableCell colSpan={6} textAlign="center" py="10">
 											<VStack gap={2}>
-												<span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'gray' }}>shopping_cart_off</span>
+												<Icon name="shopping_cart_off" size={48} color="gray" />
 												<Text color={subText} fontSize="lg">{t('common.no_results')}</Text>
 											</VStack>
 										</TableCell>
@@ -400,7 +401,7 @@ const Orders = () => {
 												<IconButton aria-label="View" size="sm" variant="ghost" color={subText}
 													_hover={{ bg: cardBg, color: 'primary', boxShadow: 'sm' }} _focusVisible={{ outline: 'none' }}
 													onClick={(e) => { e.stopPropagation(); handleViewDetail(order.id); }}>
-													<span className="material-symbols-outlined" style={{ fontSize: '18px' }}>visibility</span>
+													<Icon name="visibility" size={18} />
 												</IconButton>
 											</TableCell>
 										</TableRow>
@@ -417,14 +418,14 @@ const Orders = () => {
 						<HStack gap="2">
 							<IconButton aria-label="Previous" size="sm" variant="outline" borderColor={borderColor} color={subText}
 								onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-								<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
+								<Icon name="chevron_left" size={20} />
 							</IconButton>
 							<Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
 								{currentPage}
 							</Button>
 							<IconButton aria-label="Next" size="sm" variant="outline" borderColor={borderColor} color={subText}
 								onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-								<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
+								<Icon name="chevron_right" size={20} />
 							</IconButton>
 						</HStack>
 					</Flex>
@@ -464,7 +465,7 @@ const Orders = () => {
 												<Text fontSize="sm" fontWeight="medium" color={mainText}>{t('orders.items', 'Order Items')}</Text>
 												<Button size="sm" variant="outline" borderColor={borderColor} onClick={addOrderLine}>
 													<Flex align="center" gap="1">
-														<span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>
+														<Icon name="add" size={16} />
 														{t('orders.add_item', 'Add item')}
 													</Flex>
 												</Button>
@@ -498,7 +499,7 @@ const Orders = () => {
 													<IconButton aria-label="Remove" size="sm" variant="ghost" color="red.500"
 														onClick={() => removeOrderLine(index)} disabled={orderLines.length <= 1}
 														_hover={{ bg: 'red.50' }}>
-														<span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
+														<Icon name="close" size={18} />
 													</IconButton>
 												</Flex>
 											))}

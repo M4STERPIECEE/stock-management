@@ -19,6 +19,7 @@ import {
 import Sidebar from '../../components/navigation/sidebar';
 import { useColorMode } from '../../components/ui/color-mode';
 import { useTranslation } from 'react-i18next';
+import Icon from '../../components/ui/Icon';
 
 const Stock = () => {
     const { colorMode } = useColorMode();
@@ -193,14 +194,14 @@ const Stock = () => {
                                 <Flex justify="space-between" align="center" mb="2">
                                     <Text color={subText} fontSize="xs" fontWeight="medium" textTransform="uppercase" letterSpacing="wider">{card.title}</Text>
                                     <Box p="1.5" bg={card.iconBg} _dark={{ bg: card.iconBgDark }} color={card.subtitleColor ? `${card.subtitleColor}.500` : "primary"} borderRadius="lg">
-                                        <span className="material-symbols-outlined">{card.icon}</span>
+                                        <Icon name={card.icon} size={20} />
                                     </Box>
                                 </Flex>
                                 <Flex align="flex-end" gap="2">
                                     <Text color={mainText} fontSize="3xl" fontWeight="bold">{card.value}</Text>
                                     {card.badge && (
                                         <Badge bg={`${card.badgeColor}.50`} _dark={{ bg: `${card.badgeColor}.900/20`, color: `${card.badgeColor}.400` }} color={`${card.badgeColor}.600`} px="1.5" py="0.5" mb="1" display="flex" alignItems="center">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '16px', marginRight: '2px' }}>trending_up</span>
+                                            <Icon name="trending_up" size={16} />
                                             {card.badge}
                                         </Badge>
                                     )}
@@ -215,7 +216,7 @@ const Stock = () => {
                     {/* Barre de filtres */}
                     <Flex direction={{ base: "column", lg: "row" }} gap="4" align={{ lg: "center" }} justify="space-between" bg={cardBg} p="4" borderRadius="xl" border="1px" borderColor={borderColor} shadow="sm">
                         <Box flex="1" maxW={{ lg: "lg" }} w="full">
-                            <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ color: "#94a3b8" }}>search</span>}>
+                            <InputGroup w="full" startElement={<Icon name="search" size={20} color="#94a3b8" />}>
                                 <Input 
                                     placeholder={t('stock.search_placeholder')} 
                                     bg={bg} 
@@ -234,16 +235,16 @@ const Stock = () => {
                         </Box>
                         <HStack gap="2" overflowX="auto" pb={{ base: "2", lg: "0" }}>
                             <Button variant="ghost" bg={bg} color={mainText} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                                {t('stock.all_products')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
+                                {t('stock.all_products')} <Icon name="keyboard_arrow_down" size={18} />
                             </Button>
                             <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                                {t('stock.category')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
+                                {t('stock.category')} <Icon name="keyboard_arrow_down" size={18} />
                             </Button>
                             <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                                {t('stock.supplier')} <span className="material-symbols-outlined" style={{ fontSize: '18px', marginLeft: '4px' }}>keyboard_arrow_down</span>
+                                {t('stock.supplier')} <Icon name="keyboard_arrow_down" size={18} />
                             </Button>
                             <Button variant="outline" bg={cardBg} color={mainText} borderColor={borderColor} fontSize="sm" fontWeight="medium" borderRadius="lg" px="3" py="1.5" h="auto">
-                                <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '4px' }}>filter_list</span> {t('stock.filters')}
+                                <Icon name="filter_list" size={18} /> {t('stock.filters')}
                             </Button>
                         </HStack>
                     </Flex>
@@ -318,7 +319,7 @@ const Stock = () => {
                                                                     onClick={() => handleStockUpdate(product.id, 'EXIT', 1)} 
                                                                     disabled={product.stockQuantity <= 0}
                                                                 >
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>remove</span>
+                                                                    <Icon name="remove" size={18} />
                                                                 </IconButton>
                                                                 <Box w="8" textAlign="center" fontSize="sm" fontWeight="semibold" color={!status.isLow ? mainText : `${status.color}.900`} _dark={{ color: `${status.color}.100` }}>
                                                                     {product.stockQuantity}
@@ -331,7 +332,7 @@ const Stock = () => {
                                                                     _dark={{ color: status.dotColor }} 
                                                                     onClick={() => handleStockUpdate(product.id, 'ENTRY', 1)}
                                                                 >
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                                                    <Icon name="add" size={18} />
                                                                 </IconButton>
                                                             </Flex>
                                                             <Box display={{ base: "none", xl: "block" }} w="16" h="1.5" bg={bg} borderRadius="full" overflow="hidden">
@@ -364,7 +365,7 @@ const Stock = () => {
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
                                     disabled={currentPage === 1}
                                 >
-                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
+                                    <Icon name="chevron_left" size={20} />
                                 </IconButton>
                                 <Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
                                     {currentPage}
@@ -378,7 +379,7 @@ const Stock = () => {
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
                                     disabled={currentPage === totalPages}
                                 >
-                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
+                                    <Icon name="chevron_right" size={20} />
                                 </IconButton>
                             </HStack>
                         </Flex>

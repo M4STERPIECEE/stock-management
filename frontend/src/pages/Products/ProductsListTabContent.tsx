@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { Badge, Box, Button, Flex, HStack, IconButton, Input, InputGroup, Popover, Portal, TableBody, TableCell, TableColumnHeader, TableHeader, TableRoot, TableRow, Text, VStack, Spinner, Center, SimpleGrid } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
+import Icon from '../../components/ui/Icon';
 
 interface Category {
     id: string;
@@ -77,8 +78,8 @@ const PopoverSelect = ({
                     <Text fontSize="sm" color={value ? mainText : subText} fontWeight={value ? 'medium' : 'normal'}>
                         {selectedLabel}
                     </Text>
-                    <span className="material-symbols-outlined" style={{ fontSize: '20px', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: subText, }} >
-                        expand_more
+                    <span style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', display: 'inline-flex' }}>
+                        <Icon name="expand_more" size={20} color={subText} />
                     </span>
                 </Button>
             </Popover.Trigger>
@@ -126,13 +127,9 @@ const SortableHeader = ({
             <HStack gap="1">
                 <Text>{label}</Text>
                 {isSorted ? (
-                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
-                        {currentSortOrder === 'ASC' ? 'arrow_upward' : 'arrow_downward'}
-                    </span>
+                    <Icon name={currentSortOrder === 'ASC' ? 'arrow_upward' : 'arrow_downward'} size={16} />
                 ) : (
-                    <span className="material-symbols-outlined" style={{ fontSize: '16px', opacity: 0.3 }}>
-                        swap_vert
-                    </span>
+                    <Icon name="swap_vert" size={16} />
                 )}
             </HStack>
         </TableColumnHeader>
@@ -321,7 +318,7 @@ const ProductsListTabContent = () => {
     return (
         <Flex direction="column" gap="6">
             <Flex bg={toolbarBg} p="4" borderRadius="xl" border="1px solid" borderColor={borderColor} boxShadow="sm" justify="space-between" align="center" wrap="wrap" gap="4">
-                <InputGroup maxW="md" minW="280px" startElement={<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>search</span>} startElementProps={{ color: subText }}>
+                <InputGroup maxW="md" minW="280px" startElement={<Icon name="search" size={20} />} startElementProps={{ color: subText }}>
                     <Input placeholder={t('products.search_placeholder')} bg={inputBg} border="1px solid" borderColor={inputBorder} _focus={{ borderColor: 'primary', outline: 'none' }} borderRadius="lg" fontSize="sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </InputGroup>
                 <HStack gap="3" overflowX="auto" pb={{ base: '1', sm: '0' }}>
@@ -329,10 +326,10 @@ const ProductsListTabContent = () => {
                     <PopoverSelect value={stockValue} onChange={setStockValue} placeholder={t('products.stock_status')} options={stockOptions} mainText={mainText} subText={subText} borderColor={inputBorder} bg={cardBg} hoverBg={selectHoverBg} selectedBg={selectSelectedBg} />
                     <Flex align="center" bg={inputBg} border="1px solid" borderColor={inputBorder} borderRadius="lg" p="1">
                         <IconButton aria-label="List view" size="sm" variant="ghost" bg={viewMode === 'list' ? cardBg : 'transparent'} shadow={viewMode === 'list' ? 'sm' : 'none'} color={viewMode === 'list' ? 'primary' : subText} _focusVisible={{ outline: 'none' }} onClick={() => setViewMode('list')} >
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>format_list_bulleted</span>
+                            <Icon name="format_list_bulleted" size={20} />
                         </IconButton>
                         <IconButton aria-label="Grid view" size="sm" variant="ghost" bg={viewMode === 'grid' ? cardBg : 'transparent'} shadow={viewMode === 'grid' ? 'sm' : 'none'} color={viewMode === 'grid' ? 'primary' : subText} _hover={{ bg: colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.100', color: mainText }} _focusVisible={{ outline: 'none' }} onClick={() => setViewMode('grid')} >
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>grid_view</span>
+                            <Icon name="grid_view" size={20} />
                         </IconButton>
                     </Flex>
                 </HStack>
@@ -348,7 +345,7 @@ const ProductsListTabContent = () => {
                 ) : filteredProducts.length === 0 ? (
                     <Center py={20} bg={cardBg} borderRadius="xl" border="1px solid" borderColor={borderColor}>
                         <VStack gap={2}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'gray' }}>inventory_2</span>
+                            <Icon name="inventory_2" size={48} color="gray" />
                             <Text color={subText} fontSize="lg">{t('common.no_results')}</Text>
                         </VStack>
                     </Center>
@@ -403,10 +400,10 @@ const ProductsListTabContent = () => {
                                             <TableCell px="4" py="4" textAlign="right">
                                                 <HStack justify="flex-end" gap="2">
                                                     <IconButton aria-label="Modifier" size="sm" variant="ghost" color={subText} _hover={{ bg: cardBg, color: 'primary', boxShadow: 'sm' }} _focusVisible={{ outline: 'none' }}>
-                                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                                                        <Icon name="edit" size={18} />
                                                     </IconButton>
                                                     <IconButton aria-label="Supprimer" size="sm" variant="ghost" color={subText} _hover={{ bg: cardBg, color: 'red.600', boxShadow: 'sm' }} _focusVisible={{ outline: 'none' }}>
-                                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                                                        <Icon name="delete" size={18} />
                                                     </IconButton>
                                                 </HStack>
                                             </TableCell>
@@ -446,10 +443,10 @@ const ProductsListTabContent = () => {
                                             </Text>
                                             <HStack gap="1" opacity="0" _groupHover={{ opacity: 1 }} transition="opacity 0.2s">
                                                 <IconButton aria-label="Modifier" size="sm" variant="subtle" colorScheme="blue" borderRadius="lg">
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                                                    <Icon name="edit" size={18} />
                                                 </IconButton>
                                                 <IconButton aria-label="Supprimer" size="sm" variant="subtle" colorScheme="red" borderRadius="lg">
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                                                    <Icon name="delete" size={18} />
                                                 </IconButton>
                                             </HStack>
                                         </Flex>
@@ -466,13 +463,13 @@ const ProductsListTabContent = () => {
                     </Text>
                     <HStack gap="2">
                         <IconButton aria-label="Previous" size="sm" variant="outline" borderColor={borderColor} color={subText} onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_left</span>
+                            <Icon name="chevron_left" size={20} />
                         </IconButton>
                         <Button size="sm" bg="primary" color="white" _hover={{ bg: 'blue.600' }}>
                             {currentPage}
                         </Button>
                         <IconButton aria-label="Next" size="sm" variant="outline" borderColor={borderColor} color={subText} onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>chevron_right</span>
+                            <Icon name="chevron_right" size={20} />
                         </IconButton>
                     </HStack>
                 </Flex>

@@ -2,6 +2,7 @@ import { Box, Button, Flex, Grid, GridItem, Heading, HStack, IconButton, Input, 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useColorMode } from '../../components/ui/color-mode';
+import Icon from '../../components/ui/Icon';
 
 interface Props {
     currentPassword: string;
@@ -52,9 +53,7 @@ const ProfileSettings = ({
 
     const RequirementItem = ({ met, label }: { met: boolean, label: string }) => (
         <Flex align="center" gap="2" color={met ? "green.500" : "gray.400"}>
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                {met ? 'check_circle' : 'radio_button_unchecked'}
-            </span>
+            <Icon name={met ? 'check_circle' : 'radio_button_unchecked'} size={18} />
             <Text fontSize="sm" fontWeight="medium">{label}</Text>
         </Flex>
     );
@@ -73,14 +72,10 @@ const ProfileSettings = ({
                             <Popover.Trigger asChild>
                                 <Button variant="outline" h="10" px={4} minW="160px" justifyContent="space-between" borderColor={borderColor} bg={colorMode === 'light' ? "white" : "transparent"} _hover={{ bg: colorMode === 'light' ? "gray.50" : "whiteAlpha.50" }} gap={3}>
                                     <HStack gap={2}>
-                                        <span className="material-symbols-outlined" style={{ fontSize: '18px', color: colorMode === 'light' ? "#3182ce" : "#63b3ed" }}>
-                                            {currentLang.icon}
-                                        </span>
+                                        <Icon name={currentLang.icon} size={18} color={colorMode === 'light' ? "#3182ce" : "#63b3ed"} />
                                         <Text fontSize="sm" color={mainText}>{currentLang.label}</Text>
                                     </HStack>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '20px', transform: isLangMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: subText }}>
-                                        expand_more
-                                    </span>
+                                    <Icon name="expand_more" size={20} color={subText} />
                                 </Button>
                             </Popover.Trigger>
                             <Portal>
@@ -89,14 +84,10 @@ const ProfileSettings = ({
                                         <VStack gap={1} align="stretch">
                                             {languages.map((lang) => (
                                                 <Button key={lang.code} variant="ghost" justifyContent="flex-start" h="10" px={3} gap={3} bg={currentLang.code === lang.code ? (colorMode === 'light' ? "blue.50" : "blue.900/20") : "transparent"} color={currentLang.code === lang.code ? "primary" : mainText} fontWeight={currentLang.code === lang.code ? "bold" : "medium"} _hover={{ bg: colorMode === 'light' ? "gray.50" : "whiteAlpha.100" }} onClick={() => { i18n.changeLanguage(lang.code); setIsLangMenuOpen(false); }}>
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                                                        {lang.icon}
-                                                    </span>
+                                                    <Icon name={lang.icon} size={18} />
                                                     <Text fontSize="sm" flex={1}>{lang.label}</Text>
                                                     {currentLang.code === lang.code && (
-                                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                                                            check
-                                                        </span>
+                                                        <Icon name="check" size={18} />
                                                     )}
                                                 </Button>
                                             ))}
@@ -115,7 +106,7 @@ const ProfileSettings = ({
                     <Box bg={colorMode === 'light' ? "rgba(19, 111, 236, 0.05)" : "rgba(19, 111, 236, 0.15)"} border="1px solid" borderColor="primary/20" rounded="lg" p={4}>
                         <Flex align="flex-start" gap={3}>
                             <Box color="primary" mt={0.5}>
-                                <span className="material-symbols-outlined">verified_user</span>
+                                <Icon name="verified_user" size={20} />
                             </Box>
                             <Box>
                                 <Text color={mainText} fontWeight="bold" fontSize="sm">{t('profile.2fa')}</Text>
@@ -138,9 +129,7 @@ const ProfileSettings = ({
                                 <Box position="relative">
                                     <Input type={showNewPassword ? "text" : "password"} h="11" rounded="lg" bg={contentBg} borderColor={borderColor} color={mainText} px={4} pr="10" focusRingColor="primary" placeholder="••••••••" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                                     <IconButton aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={subText} bg="transparent" _hover={{ bg: "transparent", color: "primary" }} _active={{ bg: "transparent" }} onClick={() => setShowNewPassword(!showNewPassword)}>
-                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                                            {showNewPassword ? 'visibility_off' : 'visibility'}
-                                        </span>
+                                        <Icon name={showNewPassword ? 'visibility_off' : 'visibility'} size={20} />
                                     </IconButton>
                                 </Box>
                             </Box>
@@ -164,9 +153,7 @@ const ProfileSettings = ({
                                 <Box position="relative">
                                     <Input type={showConfirmPassword ? "text" : "password"} h="11" rounded="lg" bg={contentBg} borderColor={borderColor} color={mainText} px={4} pr="10" focusRingColor="primary" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                                     <IconButton aria-label="Toggle password visibility" variant="ghost" position="absolute" right="0" top="0" bottom="0" h="full" px="3" color={subText} bg="transparent" _hover={{ bg: "transparent", color: "primary" }} _active={{ bg: "transparent" }} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
-                                            {showConfirmPassword ? 'visibility_off' : 'visibility'}
-                                        </span>
+                                        <Icon name={showConfirmPassword ? 'visibility_off' : 'visibility'} size={20} />
                                     </IconButton>
                                 </Box>
                             </Box>

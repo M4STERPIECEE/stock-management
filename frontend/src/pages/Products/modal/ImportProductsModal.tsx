@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import * as XLSX from 'xlsx';
 import { useColorMode } from '../../../components/ui/color-mode';
+import Icon from '../../../components/ui/Icon';
 
 interface ImportProductsModalProps {
     isOpen: boolean;
@@ -136,9 +137,7 @@ const ImportProductsModal = ({ isOpen, onClose, onSuccess }: ImportProductsModal
                                 <Box border="2px dashed" borderColor={borderColor} borderRadius="xl" p="10" textAlign="center" transition="all 0.2s" _hover={{ borderColor: 'primary', bg: colorMode === 'dark' ? 'whiteAlpha.50' : 'gray.50' }} cursor="pointer" position="relative" >
                                     <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileChange} style={{ opacity: 0, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', cursor: 'pointer' }} />
                                     <VStack gap="2">
-                                        <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'gray' }}>
-                                            upload_file
-                                        </span>
+                                        <Icon name="upload_file" size={48} color="gray" />
                                         <Text fontWeight="medium" color={mainText}>{fileName || t('products.import_drag_drop', 'Cliquez ou glissez un fichier Excel ici')}</Text>
                                         <Text fontSize="xs" color={subText}>
                                             Colonnes requises: PRODUCT NAME, CATEGORY, PRICE, STOCK, Min STOCK Treshold

@@ -3,6 +3,7 @@ import { Box, Flex, Text, Button, Input, Stack, Link, InputGroup } from '@chakra
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppToast } from '../../hooks/useAppToast';
+import Icon from '../../components/ui/Icon';
 
 const INK = '#151A21';
 const PAPER = '#EFF1EC';
@@ -73,7 +74,7 @@ const ForgotPasswordFormContent = () => {
 
                     <Flex align="center" gap="3" zIndex="1" position="absolute" top="10">
                         <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={AMBER} color={INK}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                            <Icon name="inventory_2" size={20} />
                         </Flex>
                         <Text fontSize="md" fontWeight="bold" letterSpacing="tight">StockManager</Text>
                     </Flex>
@@ -92,7 +93,7 @@ const ForgotPasswordFormContent = () => {
                     <Box w="full" maxW="380px" bg="white" borderRadius="xl" p={{ base: 6, md: 8 }} boxShadow="lg">
                         <Flex display={{ base: 'flex', lg: 'none' }} align="center" gap="3" mb="6">
                             <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={INK} color={AMBER}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                                <Icon name="inventory_2" size={20} />
                             </Flex>
                             <Text fontSize="md" fontWeight="bold" letterSpacing="tight" color={TEXT_MAIN}>StockManager</Text>
                         </Flex>
@@ -113,7 +114,7 @@ const ForgotPasswordFormContent = () => {
                                     <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.03em" mb="2" color={TEXT_SUB} textTransform="uppercase">
                                         {t('auth.forgot.email_label')}
                                     </Text>
-                                    <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#7A8494' }}>mail</span>}>
+                                    <InputGroup w="full" startElement={<Icon name="mail" size={18} color="#7A8494" />}>
                                         <Input value={email} onChange={(e) => setEmail(e.target.value)} name="email" type="email" autoComplete="email" placeholder="adresse.email@example.com" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                     </InputGroup>
                                 </Box>
@@ -131,7 +132,7 @@ const ForgotPasswordFormContent = () => {
                         </Flex>
 
                         <Link fontSize="sm" fontWeight="semibold" color={SAGE_DARK} _hover={{ color: AMBER }} onClick={() => navigate('/login')} display="flex" alignItems="center" justifyContent="center" gap="1" mt="4">
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
+                            <Icon name="arrow_back" size={16} />
                             {t('auth.forgot.back_to_login')}
                         </Link>
 

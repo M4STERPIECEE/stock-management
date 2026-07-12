@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import PageTransition from '../../components/PageTransition';
 import { useTranslation } from 'react-i18next';
 import { useAppToast } from '../../hooks/useAppToast';
+import Icon from '../../components/ui/Icon';
 
 const INK = '#151A21';
 const INK_SOFT = '#1E252F';
@@ -109,7 +110,7 @@ const LoginFormContent = () => {
 
                     <Flex align="center" gap="3" zIndex="1" position="absolute" top="10">
                         <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={AMBER} color={INK}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                            <Icon name="inventory_2" size={20} />
                         </Flex>
                         <Text fontSize="md" fontWeight="bold" letterSpacing="tight">StockManager</Text>
                     </Flex>
@@ -127,7 +128,7 @@ const LoginFormContent = () => {
                     <Box w="full" maxW="380px" bg="white" borderRadius="xl" p={{ base: 6, md: 8 }} boxShadow="lg">
                         <Flex display={{ base: 'flex', lg: 'none' }} align="center" gap="3" mb="6">
                             <Flex align="center" justify="center" w="9" h="9" borderRadius="md" bg={INK} color={AMBER}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>inventory_2</span>
+                                <Icon name="inventory_2" size={20} />
                             </Flex>
                             <Text fontSize="md" fontWeight="bold" letterSpacing="tight" color={TEXT_MAIN}>StockManager</Text>
                         </Flex>
@@ -146,7 +147,7 @@ const LoginFormContent = () => {
                                     <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.03em" mb="2" color={TEXT_SUB} textTransform="uppercase">
                                         {t('login.email_label')}
                                     </Text>
-                                    <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#7A8494' }}>person</span>}>
+                                    <InputGroup w="full" startElement={<Icon name="person" size={18} color="#7A8494" />}>
                                         <Input value={email} onChange={(e) => setEmail(e.target.value)} name="email" type="email" autoComplete="email" placeholder="adresse.email@example.com" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                     </InputGroup>
                                 </Box>
@@ -154,7 +155,7 @@ const LoginFormContent = () => {
                                     <Text fontSize="xs" fontWeight="semibold" letterSpacing="0.03em" mb="2" color={TEXT_SUB} textTransform="uppercase">
                                         {t('login.password_label')}
                                     </Text>
-                                    <InputGroup w="full" startElement={<span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#7A8494' }}>lock</span>} endElement={<IconButton variant="ghost" aria-label="Toggle password" onClick={() => setShowPassword(!showPassword)} size="sm" bg="transparent" color={TEXT_SUB} _hover={{ bg: 'transparent', color: INK }} _active={{ bg: 'transparent' }}><span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{showPassword ? 'visibility_off' : 'visibility'}</span></IconButton>}>
+                                    <InputGroup w="full" startElement={<Icon name="lock" size={18} color="#7A8494" />} endElement={<IconButton variant="ghost" aria-label="Toggle password" onClick={() => setShowPassword(!showPassword)} size="sm" bg="transparent" color={TEXT_SUB} _hover={{ bg: 'transparent', color: INK }} _active={{ bg: 'transparent' }}><Icon name={showPassword ? 'visibility_off' : 'visibility'} size={18} /></IconButton>}>
                                         <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} name="password" autoComplete="current-password" placeholder="••••••••" size="lg" bg="white" color={TEXT_MAIN} border="1px solid" borderColor={INPUT_BORDER} borderRadius="md" h="11" fontSize="sm" _placeholder={{ color: '#9AA3AF' }} _focus={{ borderColor: SAGE, boxShadow: `0 0 0 1px ${SAGE}` }} />
                                     </InputGroup>
                                 </Box>
