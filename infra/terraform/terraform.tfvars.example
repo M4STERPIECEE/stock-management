@@ -1,0 +1,5 @@
+do_token             = "CHANGE_ME"
+region                = "fra1"
+droplet_size          = "s-2vcpu-4gb"
+ssh_key_fingerprint   = "CHANGE_ME"
+environment           = "prod"

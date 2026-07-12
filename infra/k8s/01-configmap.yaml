@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stock-config
+  namespace: stock-management
+data:
+  PORT: "3005"
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_NAME: "stock_management"
+  THROTTLE_TTL: "60000"
+  THROTTLE_LIMIT: "60"
