@@ -162,6 +162,8 @@ i18n
                         }
                     },
                     "customers": {
+                        "title": "Customers",
+                        "subtitle": "Manage your customer list and their order history",
                         "add_customer": "Add Customer",
                         "edit_customer": "Edit Customer",
                         "search_placeholder": "Search by name, email or phone...",
@@ -181,6 +183,8 @@ i18n
                         }
                     },
                     "orders": {
+                        "title": "Orders",
+                        "subtitle": "Track and manage all customer orders",
                         "new_order": "New Order",
                         "create": "Create Order",
                         "create_success": "Order created successfully",
@@ -477,6 +481,8 @@ i18n
                         }
                     },
                     "customers": {
+                        "title": "Clients",
+                        "subtitle": "Gérez votre liste de clients et leur historique de commandes",
                         "add_customer": "Ajouter un Client",
                         "edit_customer": "Modifier le Client",
                         "search_placeholder": "Rechercher par nom, email ou téléphone...",
@@ -496,6 +502,8 @@ i18n
                         }
                     },
                     "orders": {
+                        "title": "Commandes",
+                        "subtitle": "Suivez et gérez toutes les commandes clients",
                         "new_order": "Nouvelle Commande",
                         "create": "Créer la Commande",
                         "create_success": "Commande créée avec succès",
@@ -792,6 +800,8 @@ i18n
                         }
                     },
                     "customers": {
+                        "title": "Mpanjifa",
+                        "subtitle": "Tantano ny lisitry ny mpanjifa sy ny tantaran'ny kaomandiny",
                         "add_customer": "Hanampy Mpanjifa",
                         "edit_customer": "Hanova Mpanjifa",
                         "search_placeholder": "Hitady amin'ny anarana, imailaka na finday...",
@@ -811,6 +821,8 @@ i18n
                         }
                     },
                     "orders": {
+                        "title": "Kaomandy",
+                        "subtitle": "Araho sy tantano ny kaomandin'ny mpanjifa rehetra",
                         "new_order": "Kaomandy Vaovao",
                         "create": "Hamorona Kaomandy",
                         "create_success": "Kaomandy noforonina soa aman-tsara",

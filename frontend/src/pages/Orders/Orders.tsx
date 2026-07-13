@@ -315,6 +315,18 @@ const Orders = () => {
 		<Sidebar>
 			<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: "easeOut" }}>
 			<Flex direction="column" gap="6">
+				{/* En-tête */}
+				<Flex direction={{ base: "column", md: "row" }} align={{ base: "flex-start", md: "center" }} justify="space-between" gap="4">
+					<Stack gap="1">
+						<Text color={mainText} fontSize="3xl" fontWeight="900" letterSpacing="tight">
+							{t('orders.title')}
+						</Text>
+						<Text color={subText} fontSize="md">
+							{t('orders.subtitle')}
+						</Text>
+					</Stack>
+				</Flex>
+
 				{/* Toolbar */}
 				<Flex bg={cardBg} p="4" borderRadius="xl" border="1px solid" borderColor={borderColor} boxShadow="sm" justify="space-between" align="center" wrap="wrap" gap="4">
 					<HStack gap="3" overflowX="auto">
