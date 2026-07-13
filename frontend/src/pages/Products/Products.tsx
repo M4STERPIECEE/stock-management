@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Button, Flex, HStack, TabsContent, TabsList, TabsRoot, TabsTrigger, Text } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+import { Box, Button, Flex, HStack, TabsList, TabsRoot, TabsTrigger, Text } from '@chakra-ui/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Sidebar from '../../components/navigation/sidebar';
 import { useColorMode } from '../../components/ui/color-mode';
@@ -59,7 +59,7 @@ const Products = () => {
                             </HStack>
                         )}
                     </Flex>
-                    <TabsRoot value={activeTab} onValueChange={(e) => setActiveTab(e.value)} variant="line" colorPalette="blue" lazyMount unmountOnExit>
+                    <TabsRoot value={activeTab} onValueChange={(e) => setActiveTab(e.value)} variant="line" colorPalette="blue">
                         <TabsList mb="4" borderBottom="1px solid" borderColor={borderColor}>
                             <TabsTrigger value="products" fontWeight="bold" color={subText} bg="transparent" _hover={{ color: mainText }} _selected={{ color: 'primary', borderColor: 'primary', bg: 'transparent' }} transition="color 0.2s">
                                 {t('products.list_tab')}
@@ -68,13 +68,33 @@ const Products = () => {
                                 {t('products.categories_tab')}
                             </TabsTrigger>
                         </TabsList>
-                        <TabsContent value="products">
-                            <ProductsListTabContent key={`products-${refreshKey}`} />
-                        </TabsContent>
-                        <TabsContent value="categories">
-                            <CategoryListTabContent key={`categories-${refreshKey}`} />
-                        </TabsContent>
                     </TabsRoot>
+                    <Box position="relative" overflow="hidden">
+                        <AnimatePresence mode="wait">
+                            {activeTab === 'products' && (
+                                <motion.div
+                                    key="products"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <ProductsListTabContent key={`products-${refreshKey}`} />
+                                </motion.div>
+                            )}
+                            {activeTab === 'categories' && (
+                                <motion.div
+                                    key="categories"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <CategoryListTabContent key={`categories-${refreshKey}`} />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </Box>
                     <AddProductModal isOpen={isAddProductModalOpen} onClose={() => setIsAddProductModalOpen(false)} onSuccess={handleAddProductSuccess} />
                     <ImportProductsModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} onSuccess={handleImportSuccess} />
                 </Flex>
